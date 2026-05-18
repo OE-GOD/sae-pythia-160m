@@ -1,0 +1,134 @@
+{
+  "pareto": {
+    "4k": {
+      "arch": "topk",
+      "mse": 33.106829453125,
+      "var_explained": 0.9781713836367035,
+      "avg_l1": 71.92595390625,
+      "L0_mean": 63.96625900268555,
+      "L0_std": 0.40713831782341003,
+      "n_dead": 1,
+      "n_alive": 4095,
+      "pct_dead": 0.0244140625,
+      "n_eval": 50000
+    },
+    "16k": {
+      "arch": "topk",
+      "mse": 25.7367024609375,
+      "var_explained": 0.9843440585736996,
+      "avg_l1": 71.30676328125,
+      "L0_mean": 63.90285873413086,
+      "L0_std": 1.0860679149627686,
+      "n_dead": 855,
+      "n_alive": 15529,
+      "pct_dead": 5.218505859375,
+      "n_eval": 50000
+    },
+    "64k": {
+      "arch": "topk",
+      "mse": 23.675103125,
+      "var_explained": 0.985307743779056,
+      "avg_l1": 70.72905421875,
+      "L0_mean": 63.83852005004883,
+      "L0_std": 1.8555978536605835,
+      "n_dead": 41698,
+      "n_alive": 23838,
+      "pct_dead": 63.6260986328125,
+      "n_eval": 50000
+    }
+  },
+  "split_threshold": 0.7,
+  "demo_splits": {
+    "121": {
+      "label_16k": "Acronym and abbreviation expansions",
+      "best_4k_idx": 2599,
+      "best_4k_sim": 0.8392712473869324,
+      "n_64k_splits": 1,
+      "top_5_64k_splits": [
+        [
+          51838,
+          0.7155042290687561
+        ]
+      ]
+    },
+    "6630": {
+      "label_16k": "French street names and abbreviations",
+      "best_4k_idx": 2599,
+      "best_4k_sim": 0.6093575358390808,
+      "n_64k_splits": 0,
+      "top_5_64k_splits": []
+    },
+    "2255": {
+      "label_16k": "Newline tokens in various contexts",
+      "best_4k_idx": 2459,
+      "best_4k_sim": 0.3950103223323822,
+      "n_64k_splits": 0,
+      "top_5_64k_splits": []
+    },
+    "12520": {
+      "label_16k": "Punctuation and formatting tokens",
+      "best_4k_idx": 2175,
+      "best_4k_sim": 0.39346784353256226,
+      "n_64k_splits": 0,
+      "top_5_64k_splits": []
+    },
+    "6767": {
+      "label_16k": "Newline tokens in various contexts",
+      "best_4k_idx": 2175,
+      "best_4k_sim": 0.3723354637622833,
+      "n_64k_splits": 0,
+      "top_5_64k_splits": []
+    },
+    "6484": {
+      "label_16k": "Newline tokens inside XML/HTML/CSS blocks",
+      "best_4k_idx": 2175,
+      "best_4k_sim": 0.3437434136867523,
+      "n_64k_splits": 0,
+      "top_5_64k_splits": []
+    },
+    "15230": {
+      "label_16k": "Newline tokens in various contexts",
+      "best_4k_idx": 2175,
+      "best_4k_sim": 0.35092487931251526,
+      "n_64k_splits": 0,
+      "top_5_64k_splits": []
+    },
+    "12117": {
+      "label_16k": "BibTeX/LaTeX citation references",
+      "best_4k_idx": 3855,
+      "best_4k_sim": 0.997043251991272,
+      "n_64k_splits": 1,
+      "top_5_64k_splits": [
+        [
+          47235,
+          0.9991369247436523
+        ]
+      ]
+    },
+    "5747": {
+      "label_16k": "Tokens related to file paths and directory structures",
+      "best_4k_idx": 3042,
+      "best_4k_sim": 0.99709552526474,
+      "n_64k_splits": 1,
+      "top_5_64k_splits": [
+        [
+          63741,
+          0.9992260336875916
+        ]
+      ]
+    },
+    "7615": {
+      "label_16k": "Newline tokens in various contexts",
+      "best_4k_idx": 2175,
+      "best_4k_sim": 0.371038019657135,
+      "n_64k_splits": 0,
+      "top_5_64k_splits": []
+    }
+  },
+  "split_count_stats": {
+    "mean": 0.3,
+    "median": 0.0,
+    "max": 1,
+    "n_evaluated": 10
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "121": {
+    "feature_id": 121,
+    "peak_activation": 107.64019012451172,
+    "mean_top_k_activation": 102.45621490478516,
+    "label": "Acronym and abbreviation expansions",
+    "classification": "POLYSEMANTIC",
+    "confidence": "medium",
+    "evidence_note": "Snippets include various acronyms and abbreviations like 'Astr', 'NAD', and 'Borough', but also unrelated words like 'rue' and 'cave'.",
+    "n_examples": 10
+  },
+  "6630": {
+    "feature_id": 6630,
+    "peak_activation": 52.5883903503418,
+    "mean_top_k_activation": 51.685028076171875,
+    "label": "French street names and abbreviations",
+    "classification": "MONOSEMANTIC",
+    "confidence": "medium",
+    "evidence_note": "Most snippets contain French words or abbreviations, with 'rue' and 'la' being common.",
+    "n_examples": 10
+  },
+  "2255": {
+    "feature_id": 2255,
+    "peak_activation": 44.43120574951172,
+    "mean_top_k_activation": 43.98995590209961,
+    "label": "Newline tokens in various contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline tokens, which are consistently activating this feature.",
+    "n_examples": 10
+  },
+  "12520": {
+    "feature_id": 12520,
+    "peak_activation": 36.477996826171875,
+    "mean_top_k_activation": 35.97282028198242,
+    "label": "Punctuation and formatting tokens",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain punctuation or formatting tokens, with a few outliers.",
+    "n_examples": 10
+  },
+  "6767": {
+    "feature_id": 6767,
+    "peak_activation": 33.51337432861328,
+    "mean_top_k_activation": 33.11767578125,
+    "label": "Newline tokens in various contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline tokens, which are the target tokens.",
+    "n_examples": 10
+  },
+  "6484": {
+    "feature_id": 6484,
+    "peak_activation": 32.501731872558594,
+    "mean_top_k_activation": 32.13099670410156,
+    "label": "Newline tokens inside XML/HTML/CSS blocks",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline characters <\\n> within the context of XML/HTML/CSS code blocks.",
+    "n_examples": 10
+  },
+  "15230": {
+    "feature_id": 15230,
+    "peak_activation": 32.10621643066406,
+    "mean_top_k_activation": 31.832881927490234,
+    "label": "Newline tokens in various contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline tokens, which are consistently highlighted as the target.",
+    "n_examples": 10
+  },
+  "12117": {
+    "feature_id": 12117,
+    "peak_activation": 30.691083908081055,
+    "mean_top_k_activation": 29.860668182373047,
+    "label": "BibTeX/LaTeX citation references",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain LaTeX-style citation references with angle brackets.",
+    "n_examples": 10
+  },
+  "5747": {
+    "feature_id": 5747,
+    "peak_activation": 30.75128936767578,
+    "mean_top_k_activation": 29.409597396850586,
+    "label": "Tokens related to file paths and directory structures",
+    "classification": "MONOSEMANTIC",
+    "confidence": "medium",
+    "evidence_note": "Most snippets contain file path or directory structure tokens, but some unrelated snippets are present.",
+    "n_examples": 10
+  },
+  "7615": {
+    "feature_id": 7615,
+    "peak_activation": 25.1130313873291,
+    "mean_top_k_activation": 24.923458099365234,
+    "label": "Newline tokens in various contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline characters, which are the target tokens.",
+    "n_examples": 10
+  },
+  "10047": {
+    "feature_id": 10047,
+    "peak_activation": 25.207130432128906,
+    "mean_top_k_activation": 24.741634368896484,
+    "label": "Newline tokens inside CSS/XSL/HTML/XML blocks",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline tokens <\\n> within the context of CSS/XSL/HTML/XML code blocks.",
+    "n_examples": 10
+  },
+  "13131": {
+    "feature_id": 13131,
+    "peak_activation": 23.804317474365234,
+    "mean_top_k_activation": 23.548633575439453,
+    "label": "Newline tokens in various contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain newline tokens, which are consistently activating this feature.",
+    "n_examples": 10
+  },
+  "13227": {
+    "feature_id": 13227,
+    "peak_activation": 24.8585262298584,
+    "mean_top_k_activation": 23.381729125976562,
+    "label": "Punctuation and special characters in academic and technical texts",
+    "classification": "POLYSEMANTIC",
+    "confidence": "medium",
+    "evidence_note": "Snippets include various punctuation marks and special characters, but they are all from academic or technical texts.",
+    "n_examples": 10
+  },
+  "11488": {
+    "feature_id": 11488,
+    "peak_activation": 23.160341262817383,
+    "mean_top_k_activation": 22.900182723999023,
+    "label": "Newline tokens in various contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain newline tokens, which are consistently activating this feature.",
+    "n_examples": 10
+  },
+  "10925": {
+    "feature_id": 10925,
+    "peak_activation": 22.79172706604004,
+    "mean_top_k_activation": 22.55916404724121,
+    "label": "Newline tokens inside academic/technical text",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain newline characters in the context of academic or technical writing.",
+    "n_examples": 10
+  },
+  "10045": {
+    "feature_id": 10045,
+    "peak_activation": 23.381591796875,
+    "mean_top_k_activation": 21.931371688842773,
+    "label": "Subword BPE continuations of multi-piece words (e.g., 'rons' in 'squadrons')",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain subword BPE continuations of longer words like 'mobil', 'ulose', 'rons', 'hydrogen', 'vitamin', and 'Lévy'.",
+    "n_examples": 10
+  },
+  "13821": {
+    "feature_id": 13821,
+    "peak_activation": 20.21977996826172,
+    "mean_top_k_activation": 20.016563415527344,
+    "label": "Newline tokens inside code and prose blocks",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline characters, which are common in both code and prose text.",
+    "n_examples": 10
+  },
+  "15245": {
+    "feature_id": 15245,
+    "peak_activation": 18.780733108520508,
+    "mean_top_k_activation": 18.62264633178711,
+    "label": "Newline tokens inside XML/HTML/CSS blocks",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline characters inside code blocks, specifically XML/HTML/CSS.",
+    "n_examples": 10
+  },
+  "12697": {
+    "feature_id": 12697,
+    "peak_activation": 20.197250366210938,
+    "mean_top_k_activation": 18.431110382080078,
+    "label": "Logical operators and negation symbols",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain logical operators like 'or' and negation symbols like '<->'.",
+    "n_examples": 10
+  },
+  "15577": {
+    "feature_id": 15577,
+    "peak_activation": 17.41218376159668,
+    "mean_top_k_activation": 17.1446475982666,
+    "label": "Newline tokens and decimal points in various contexts",
+    "classification": "POLYSEMANTIC",
+    "confidence": "medium",
+    "evidence_note": "Snippets contain newline tokens and decimal points, but they appear in different contexts without a clear common theme.",
+    "n_examples": 10
+  },
+  "7448": {
+    "feature_id": 7448,
+    "peak_activation": 16.793716430664062,
+    "mean_top_k_activation": 16.659881591796875,
+    "label": "Newline tokens inside code blocks",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline characters within code or script blocks.",
+    "n_examples": 10
+  },
+  "1989": {
+    "feature_id": 1989,
+    "peak_activation": 15.145047187805176,
+    "mean_top_k_activation": 15.051450729370117,
+    "label": "Decimal points in numerical contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain decimal points used to separate whole numbers from fractions.",
+    "n_examples": 10
+  },
+  "14584": {
+    "feature_id": 14584,
+    "peak_activation": 15.465927124023438,
+    "mean_top_k_activation": 14.987338066101074,
+    "label": "Newline tokens inside code and markup blocks",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain newline characters within code or markup, indicating a strong association with this feature.",
+    "n_examples": 10
+  },
+  "10545": {
+    "feature_id": 10545,
+    "peak_activation": 15.178671836853027,
+    "mean_top_k_activation": 14.91595458984375,
+    "label": "Newline tokens inside code blocks",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "All snippets contain newline characters within code or markup, indicating a clear concept.",
+    "n_examples": 10
+  },
+  "2757": {
+    "feature_id": 2757,
+    "peak_activation": 14.918571472167969,
+    "mean_top_k_activation": 14.813364028930664,
+    "label": "Newline tokens in code and text formatting contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain newline characters used for formatting in code or text.",
+    "n_examples": 10
+  },
+  "5196": {
+    "feature_id": 5196,
+    "peak_activation": 16.843441009521484,
+    "mean_top_k_activation": 5.745227336883545,
+    "label": "Exponentiation notation in mathematical contexts",
+    "classification": "MONOSEMANTIC",
+    "confidence": "high",
+    "evidence_note": "Most snippets contain the caret symbol (^) used to denote exponentiation in mathematical expressions.",
+    "n_examples": 9
+  }
+}

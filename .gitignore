@@ -1,0 +1,21 @@
+# Virtual environments
+.venv/
+__pycache__/
+*.pyc
+
+# Large regenerable artifacts
+checkpoints/                       # SAE weights, 200MB-800MB each
+data/acts_layer6.npy               # 1.5 GB activation cache
+data/token_stream.npy              # regenerable
+data/feature_examples.json         # 43.7 MB, regenerable
+data/feature_examples_*.json       # any variants
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Local notes
+.notes/
+TODO.md

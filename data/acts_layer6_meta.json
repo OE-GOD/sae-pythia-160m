@@ -1,0 +1,10 @@
+{
+  "model": "pythia-160m",
+  "layer": 6,
+  "hook": "blocks.6.hook_resid_post",
+  "d_model": 768,
+  "n_tokens": 999936,
+  "seq_len": 128,
+  "dtype": "float16",
+  "dataset": "NeelNanda/pile-10k"
+}

@@ -1,0 +1,298 @@
+{
+  "ckpt_a": "checkpoints/sae_layer6_topk64_full.pt",
+  "ckpt_b": "checkpoints/sae_layer6_topk64_seed42.pt",
+  "n_features": 16384,
+  "k": 64,
+  "eval_a": {
+    "arch": "topk",
+    "mse": 25.7367024609375,
+    "var_explained": 0.9843440585736996,
+    "avg_l1": 71.30676328125,
+    "L0_mean": 63.90285873413086,
+    "L0_std": 1.0860679149627686,
+    "n_dead": 855,
+    "n_alive": 15529,
+    "pct_dead": 5.218505859375,
+    "n_eval": 50000
+  },
+  "eval_b": {
+    "arch": "topk",
+    "mse": 25.70556984375,
+    "var_explained": 0.9843673248013901,
+    "avg_l1": 71.110367265625,
+    "L0_mean": 63.9293212890625,
+    "L0_std": 0.7719095945358276,
+    "n_dead": 896,
+    "n_alive": 15488,
+    "pct_dead": 5.46875,
+    "n_eval": 50000
+  },
+  "threshold_counts_all_features": {
+    "0.5": {
+      "count": 12892,
+      "fraction": 0.786865234375
+    },
+    "0.7": {
+      "count": 9783,
+      "fraction": 0.59710693359375
+    },
+    "0.9": {
+      "count": 3254,
+      "fraction": 0.1986083984375
+    },
+    "0.95": {
+      "count": 952,
+      "fraction": 0.05810546875
+    },
+    "0.99": {
+      "count": 14,
+      "fraction": 0.0008544921875
+    }
+  },
+  "labeled_features": {
+    "5747": {
+      "label": "Tokens related to file paths and directory structures",
+      "best_b_idx": 474,
+      "best_b_cos_sim": 0.9985458850860596,
+      "replicates_at_0.7": true,
+      "replicates_at_0.9": true
+    },
+    "12117": {
+      "label": "BibTeX/LaTeX citation references",
+      "best_b_idx": 13957,
+      "best_b_cos_sim": 0.9985176920890808,
+      "replicates_at_0.7": true,
+      "replicates_at_0.9": true
+    },
+    "13227": {
+      "label": "Punctuation and special characters in academic and technical texts",
+      "best_b_idx": 14282,
+      "best_b_cos_sim": 0.997108519077301,
+      "replicates_at_0.7": true,
+      "replicates_at_0.9": true
+    },
+    "12697": {
+      "label": "Logical operators and negation symbols",
+      "best_b_idx": 4981,
+      "best_b_cos_sim": 0.9924641847610474,
+      "replicates_at_0.7": true,
+      "replicates_at_0.9": true
+    },
+    "121": {
+      "label": "Acronym and abbreviation expansions",
+      "best_b_idx": 5731,
+      "best_b_cos_sim": 0.9186592698097229,
+      "replicates_at_0.7": true,
+      "replicates_at_0.9": true
+    },
+    "5196": {
+      "label": "Exponentiation notation in mathematical contexts",
+      "best_b_idx": 15701,
+      "best_b_cos_sim": 0.8277121782302856,
+      "replicates_at_0.7": true,
+      "replicates_at_0.9": false
+    },
+    "6630": {
+      "label": "French street names and abbreviations",
+      "best_b_idx": 5731,
+      "best_b_cos_sim": 0.6751954555511475,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "2255": {
+      "label": "Newline tokens in various contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.463663786649704,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "12520": {
+      "label": "Punctuation and formatting tokens",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.434513658285141,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "10045": {
+      "label": "Subword BPE continuations of multi-piece words (e.g., 'rons' in 'squadrons')",
+      "best_b_idx": 5731,
+      "best_b_cos_sim": 0.4206542372703552,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "10047": {
+      "label": "Newline tokens inside CSS/XSL/HTML/XML blocks",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.4056960642337799,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "6484": {
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.39941084384918213,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "6767": {
+      "label": "Newline tokens in various contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.39671793580055237,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "10925": {
+      "label": "Newline tokens inside academic/technical text",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.3885912299156189,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "13821": {
+      "label": "Newline tokens inside code and prose blocks",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.38158363103866577,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "11488": {
+      "label": "Newline tokens in various contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.3754449188709259,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "15230": {
+      "label": "Newline tokens in various contexts",
+      "best_b_idx": 16146,
+      "best_b_cos_sim": 0.3751528561115265,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "10545": {
+      "label": "Newline tokens inside code blocks",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.3729582726955414,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "7615": {
+      "label": "Newline tokens in various contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.3708258867263794,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "15577": {
+      "label": "Newline tokens and decimal points in various contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.36623188853263855,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "13131": {
+      "label": "Newline tokens in various contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.3606071472167969,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "14584": {
+      "label": "Newline tokens inside code and markup blocks",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.3556506335735321,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "15245": {
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.349455863237381,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "2757": {
+      "label": "Newline tokens in code and text formatting contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.3443526327610016,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "1989": {
+      "label": "Decimal points in numerical contexts",
+      "best_b_idx": 12024,
+      "best_b_cos_sim": 0.32856202125549316,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    },
+    "7448": {
+      "label": "Newline tokens inside code blocks",
+      "best_b_idx": 7529,
+      "best_b_cos_sim": 0.3280639946460724,
+      "replicates_at_0.7": false,
+      "replicates_at_0.9": false
+    }
+  },
+  "joint_width_seed_stability": {
+    "121": {
+      "cos_4k": 0.8392712473869324,
+      "cos_64k": 0.7155042290687561,
+      "cos_seed42": 0.9186592698097229,
+      "fully_stable": true
+    },
+    "6630": {
+      "cos_4k": 0.6093575358390808,
+      "cos_64k": 0.0,
+      "cos_seed42": 0.6751954555511475,
+      "fully_stable": false
+    },
+    "2255": {
+      "cos_4k": 0.3950103223323822,
+      "cos_64k": 0.0,
+      "cos_seed42": 0.463663786649704,
+      "fully_stable": false
+    },
+    "12520": {
+      "cos_4k": 0.39346784353256226,
+      "cos_64k": 0.0,
+      "cos_seed42": 0.434513658285141,
+      "fully_stable": false
+    },
+    "6767": {
+      "cos_4k": 0.3723354637622833,
+      "cos_64k": 0.0,
+      "cos_seed42": 0.39671793580055237,
+      "fully_stable": false
+    },
+    "6484": {
+      "cos_4k": 0.3437434136867523,
+      "cos_64k": 0.0,
+      "cos_seed42": 0.39941084384918213,
+      "fully_stable": false
+    },
+    "15230": {
+      "cos_4k": 0.35092487931251526,
+      "cos_64k": 0.0,
+      "cos_seed42": 0.3751528561115265,
+      "fully_stable": false
+    },
+    "12117": {
+      "cos_4k": 0.997043251991272,
+      "cos_64k": 0.9991369247436523,
+      "cos_seed42": 0.9985176920890808,
+      "fully_stable": true
+    },
+    "5747": {
+      "cos_4k": 0.99709552526474,
+      "cos_64k": 0.9992260336875916,
+      "cos_seed42": 0.9985458850860596,
+      "fully_stable": true
+    },
+    "7615": {
+      "cos_4k": 0.371038019657135,
+      "cos_64k": 0.0,
+      "cos_seed42": 0.3708258867263794,
+      "fully_stable": false
+    }
+  }
+}

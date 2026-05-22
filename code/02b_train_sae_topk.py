@@ -74,6 +74,8 @@ def parse_args():
     p.add_argument("--device", type=str, default=None)
     p.add_argument("--out", type=str, default=None)
     p.add_argument("--log-every", type=int, default=300)
+    p.add_argument("--seed", type=int, default=None,
+                   help="Random seed for SAE init + training sampling. Reproducibility for T4 study.")
     return p.parse_args()
 
 
@@ -81,6 +83,11 @@ def main():
     args = parse_args()
     device = args.device or ("mps" if torch.backends.mps.is_available() else "cpu")
     out_path = args.out or f"checkpoints/sae_layer6_topk{args.k}.pt"
+
+    if args.seed is not None:
+        torch.manual_seed(args.seed)
+        np.random.seed(args.seed)
+        print(f"seed: {args.seed}")
 
     meta = json.loads(Path(args.meta).read_text())
     d_model = meta["d_model"]

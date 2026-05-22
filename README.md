@@ -1,163 +1,191 @@
 # Sparse Autoencoder on Pythia-160M Layer 6
 
-Small-scale mechanistic-interpretability study: trained a TopK sparse autoencoder (SAE) on the residual stream at layer 6 of Pythia-160M, evaluated it five ways, looked at what features it found.
+**Reconstruction Is Not Replication** — small-scale mechanistic-interpretability study that cross-validates a TopK sparse autoencoder (SAE) across width, random seed, and architecture on the residual stream at layer 6 of Pythia-160M.
 
-**This is an in-progress portfolio piece.** Three of five planned tracks complete; two remaining. Final writeup pending.
+**Headline finding:** standard SAE quality metrics (variance explained $0.984$, CE-delta loss recovered $0.954$, auto-interp monosemanticity $0.885$) overstate feature reliability by approximately $8\times$. Only **$2.14\%$ of features ($351$ of $16{,}384$)** are stable across all four cross-validation conditions.
 
-## Headline numbers (16k-feature SAE, k=64)
+📄 **Paper:** [`paper/main.pdf`](paper/main.pdf) — 11 pages, *Reconstruction Is Not Replication: Cross-Validating Sparse Autoencoder Features on Pythia-160M*
 
-| Metric | Value |
-|---|---|
-| Variance explained | **98.43%** |
-| L0 (active features per token) | **64.0** (TopK enforces) |
-| Dead features | **5.2%** (855 / 16,384) |
-| CE delta (info loss) | **0.276 nats/token (0.40 bits/token)** |
-| **Loss recovered vs. zero-ablation** | **95.4%** |
-| Auto-interp monosemantic rate | **88.5%** (23/26 features labeled) |
+## The 6-axis scorecard
 
-The 95.4% loss-recovered number is the rigorous reconstruction metric (replace the model's layer-6 with the SAE's reconstruction; measure how much language-modeling CE degrades on held-out text). This is competitive with the strong end of the published small-model SAE band (Anthropic *Towards Monosemanticity* ~90%, DeepMind *Gemma Scope* 80-95%).
+Same SAE, six independent quality axes:
+
+```
+Reconstruction (var. explained)         [████████████████████]  0.984
+Predictive preservation (CE-delta)      [███████████████████░]  0.954
+Capacity utilization (alive features)   [██████████████████░░]  0.948
+Auto-interp monosemanticity rate        [█████████████████░░░]  0.885
+Cross-seed stability (cos > 0.9)        [███░░░░░░░░░░░░░░░░░]  0.199
+Cross-architecture stability (cos > 0.9)[██░░░░░░░░░░░░░░░░░░]  0.106
+```
+
+**88-percentage-point gap** between the strongest and weakest axis. The standard suite cannot be the only quality claim attached to an SAE.
+
+## Tracks (empirical results)
+
+Each track addresses a published open problem in mech interp:
+
+| Track | Open problem | Status | Headline result |
+|---|---|---|---|
+| T1 — Multi-width sweep ($4$k / $16$k / $64$k) | Choosing $N$, splitting | ✅ | Pareto saturates near $N \approx 4$k; $63.6\%$ dead at $N = 65$k |
+| T3 — CE-delta evaluation | Loss recovery | ✅ | $95.4\%$ loss recovered, $\Delta$CE $= 0.276$ nats/token |
+| T4 — Cross-seed replication | Stability (#11) | ✅ | Only $19.9\%$ of features at cos $> 0.9$ across seeds |
+| T5 — Auto-interp catalog (Kimi K2) | Auto-interp (#7) | ✅ | $26$ features labeled, $88.5\%$ monosemantic — but most fail replication |
+| T6 — Matryoshka SAE replication | Architecture (#1, #2) | ✅ | $10.6\%$ at cos $> 0.9$ across architectures |
+| T2 — TopK vs JumpReLU | Dead features (#1, #2) | ⏳ Pending | — |
+
+## Tools we contribute
+
+| Build | What it does | Output |
+|---|---|---|
+| **#1 — Multi-metric scorecard** | Aggregates the six axes above into one quality profile for any SAE checkpoint | `*.scorecard.md` |
+| **#2 — Feature navigator** | Per-feature stability profile across all comparison SAEs; identifies the fully stable subset | `data/feature_navigator.json`, `notes/stable_features.md` |
+| **#3 — Co-activation analysis** | PMI distribution among stable vs unstable features; surfaces candidate circuit-shaped pairs | `data/coactivation_analysis.json`, `notes/stable_feature_circuits.md` |
+
+## The 3 fully stable features
+
+Of $26$ features auto-labeled monosemantic, only $3$ survive all four cross-validation conditions at cos $> 0.9$:
+
+| Feature | Concept | Min cos across comparisons |
+|---:|---|---:|
+| `f12117` | BibTeX/LaTeX citation references | $0.997$ |
+| `f5747` | File paths and directory structures | $0.997$ |
+| `f12697` | Logical operators and negation symbols | $0.977$ |
+
+These are the strongest "real feature" candidates — their decoder direction replicates regardless of SAE width, seed, or architecture.
 
 ## Setup
 
-- **Model:** Pythia-160M (160M-param open-source transformer)
-- **Layer:** 6 (middle residual stream, hook `blocks.6.hook_resid_post`)
-- **Training data:** 1M tokens from `NeelNanda/pile-10k` (skipping training docs for held-out eval)
-- **SAE architecture:** TopK linear-encoder SAE with K = 64 active features per token, decoder columns renormalized after each step, b_dec initialized to the data mean
-- **Training:** Adam, lr=1e-3, batch 4096, 20,000 steps, no L1 penalty (TopK gives hard sparsity)
-- **Hardware:** Apple M-series via PyTorch MPS
+- **Model:** Pythia-160M (160M params, 12 layers, $d_{\text{model}} = 768$)
+- **Layer target:** 6 (middle residual stream, `blocks.6.hook_resid_post`)
+- **Training corpus:** 1M tokens from `NeelNanda/pile-10k`
+- **Reference SAE:** TopK $k = 64$, $N = 16{,}384$ features, 20k steps, Adam lr $= 10^{-3}$
+- **Comparison SAEs:** 4k width, 64k width, second random seed, Matryoshka $k_{\text{levels}} = \{16, 64, 256\}$
+- **Hardware:** Apple Silicon (MPS), $\$50$ compute budget (actual spend: $\$0$)
 
 ## Why not vanilla L1?
 
-We tried vanilla L1 first. A 20× sweep of λ ∈ {0.005, 0.02, 0.1} kept L0 stuck at ~1300 (target was 30-100). The L1 penalty shrinks feature magnitudes but doesn't actually zero them — the textbook "L1 shrinkage" failure mode. Switched to TopK; L0 becomes exact by construction. Documented in the code history.
-
-## Tracks (research questions addressed)
-
-Each track corresponds to a published open problem in mech interp:
-
-| Track | Problem | Status | Result |
-|---|---|---|---|
-| T3 — CE delta evaluation | #4 | ✅ Done | 95.4% loss recovered, ΔCE = 0.276 nats/token |
-| T5 — Auto-interp via Kimi K2 | #7 | ✅ Done | 26 features labeled, 88.5% monosemantic; surfaced feature-splitting in newline variants |
-| T1 — Multi-width sweep (4k / 16k / 64k) | #3, #5, #6 | ✅ Done | Pareto curve flat above 4k; 64% dead features at 64k width; merging signal clear, splitting muted |
-| T2 — TopK vs JumpReLU | #1, #2 | ⏳ Pending | — |
-| T4 — Replication across seeds | #11 | ⏳ Pending | — |
-
-## What the SAE found
-
-**Confirmed monosemantic features** (sample from 26 auto-labeled):
-
-| ID | Concept | Auto-interp confidence |
-|---|---|---|
-| f1989 | Decimal points in numerical contexts | high |
-| f5196 | Exponentiation notation in math | high |
-| f5747 | File paths and directory structures | high |
-| f7448 | Newline tokens inside code blocks | high |
-| f10045 | Subword BPE continuations of multi-piece words | high |
-| f12117 | BibTeX/LaTeX citation references | high |
-| f12697 | Logical operators and negation symbols | high |
-
-**Width-invariant features** (same direction in 4k, 16k, AND 64k SAEs at cos > 0.99):
-- f12117 (citation refs)
-- f5747 (file paths)
-
-These are the strongest candidates for "real" features of the model — their decoder direction is stable regardless of SAE capacity.
-
-**Feature splitting / merging:**
-- One 4k feature (f2175) is the best cos-sim match for 5+ different 16k newline-variant features → merging at smaller width is clear
-- At 64k, the wider SAE largely found a *different* basis rather than cleanly splitting 16k features → splitting is muted in practice
-
-## Honest limitations
-
-- Single layer (layer 6) only — per-layer myopia (Problem #8) not addressed
-- 1M training tokens at 16k SAE width; the model has 100B+ training tokens of complexity unrepresented
-- Auto-interp by Kimi K2 has known weaknesses: 10+ features all labeled "newline tokens" though clearly distinct by their snippets — the labeling collapses fine-grained splits the SAE found
-- No causal-intervention validation of features (Problem #10) — features are correlationally interpretable, not causally validated
-- A linear-encoder SAE is computationally matched to a single MLP layer; this constrains the class of features findable, and within that class some features may be reconstruction-correlated rather than model-used
+We tried L1 first. A $20\times$ sweep of $\lambda \in \{0.005, 0.02, 0.1\}$ kept $L_0$ stuck at $\sim 1300$ (target band: $30$-$100$). The L1 penalty is indifferent between "one feature at strength $S$" and "$S$ features at strength $1$" — the textbook L1-shrinkage failure mode. Switched to TopK; $L_0 = k$ becomes exact by construction. Detailed in the paper (Appendix A).
 
 ## Layout
 
 ```
 sae_project/
-├── README.md                      this file
+├── README.md                            this file
+├── paper/
+│   ├── main.tex                         LaTeX source (11 pages)
+│   ├── main.pdf                         compiled paper
+│   └── sae_pythia_arxiv.zip             arXiv submission bundle
 ├── code/
-│   ├── 00_verify.py               load Pythia, run one forward pass
-│   ├── 01_extract_activations.py  build 1M-token activation cache
-│   ├── 02_train_sae.py            vanilla L1 SAE (kept for reference)
-│   ├── 02b_train_sae_topk.py      TopK SAE — what we actually use
-│   ├── 03_eval_sae.py             MSE / L0 / dead-feature eval
-│   ├── 04_feature_analysis.py     find top-K max-activating examples per feature
-│   ├── 05_inspect_features.py     generate human-readable feature report
-│   ├── 06_ce_delta.py             T3 — CE delta evaluation
-│   ├── 07_auto_interp.py          T5 — Claude/Kimi/OpenAI auto-interp
-│   └── 08_width_comparison.py     T1 — Pareto + splitting analysis
+│   ├── 00_verify.py                     load Pythia + sample activation
+│   ├── 01_extract_activations.py        build 1M-token activation cache
+│   ├── 02_train_sae.py                  vanilla L1 SAE (reference baseline)
+│   ├── 02b_train_sae_topk.py            TopK SAE (the reference)
+│   ├── 02c_train_sae_matryoshka.py      Matryoshka SAE (T6)
+│   ├── 03_eval_sae.py                   MSE / L0 / dead-features eval
+│   ├── 04_feature_analysis.py           top-K max-activating examples per feature
+│   ├── 05_inspect_features.py           human-readable feature report
+│   ├── 06_ce_delta.py                   T3 — CE-delta evaluation
+│   ├── 07_auto_interp.py                T5 — Claude/Kimi/OpenAI auto-interp
+│   ├── 08_width_comparison.py           T1 — Pareto + splitting/merging
+│   ├── 09_replication_analysis.py       T4 — cross-seed replication
+│   ├── 10_matryoshka_analysis.py        T6 — cross-architecture analysis
+│   ├── 11_sae_scorecard.py              Build #1 — 6-axis scorecard
+│   ├── 12_feature_navigator.py          Build #2 — per-feature stability profile
+│   └── 13_coactivation_analysis.py      Build #3 — stable-feature co-activation
 ├── data/
-│   ├── feature_catalog.json       26 labeled features (T5 output)
-│   ├── width_comparison.json      Pareto + splitting numbers (T1 output)
-│   └── top_features.npz           raw top-K activations per feature
+│   ├── feature_catalog.json             T5 labeled features (Kimi K2)
+│   ├── width_comparison.json            T1 Pareto + splitting
+│   ├── replication_analysis.json        T4 cross-seed
+│   ├── matryoshka_analysis.json         T6 cross-arch
+│   ├── feature_navigator.json           Build #2 per-feature profiles
+│   └── top_features.npz                 raw top-K activations
 └── notes/
-    ├── feature_inspection.md      human-readable report on 80 highlight features
-    └── why_this_project.md        project rationale
+    ├── feature_inspection.md            human-readable report (80 features)
+    ├── stable_features.md               Build #2 shortlist
+    └── why_this_project.md              project rationale
 ```
 
-**Not in repo** (too large or reproducible):
-- `data/feature_examples.json` (43.7 MB) — regenerable via `04_feature_analysis.py`
-- `data/acts_layer6.npy` (1.5 GB) — regenerable via `01_extract_activations.py`
-- `data/token_stream.npy` (4 MB) — regenerable
-- `checkpoints/*.pt` (200 MB - 800 MB) — regenerable
-
-To reproduce: run the pipeline below.
+**Not in repo** (regenerable):
+- `data/feature_examples.json` (43.7 MB) — via `04_feature_analysis.py`
+- `data/acts_layer6.npy` (1.5 GB) — via `01_extract_activations.py`
+- `checkpoints/*.pt` (200 MB - 800 MB each) — via the training scripts
 
 ## Reproduce
 
 ```bash
 python3.12 -m venv .venv
-.venv/bin/pip install torch transformer_lens datasets numpy openai
+.venv/bin/pip install torch transformer_lens datasets numpy openai anthropic
 
 # 1. extract 1M-token activations  (~80s on Mac MPS)
 .venv/bin/python code/01_extract_activations.py --n-tokens 1_000_000
 
-# 2. train TopK SAE k=64, 16k features  (~50 min on Mac, faster on H100)
+# 2. train TopK SAE k=64, 16k features (reference)
 .venv/bin/python code/02b_train_sae_topk.py --steps 20000 --k 64 \
     --out checkpoints/sae_layer6_topk64_full.pt --log-every 1000
 
-# 3. eval: MSE, L0, dead features
+# 3. eval reference SAE
 .venv/bin/python code/03_eval_sae.py --ckpt checkpoints/sae_layer6_topk64_full.pt
 
 # 4. CE delta (T3)
 .venv/bin/python code/06_ce_delta.py --ckpt checkpoints/sae_layer6_topk64_full.pt
 
-# 5. feature analysis: top-K examples per feature  (~2.5 min)
+# 5. feature analysis + auto-interp (T5)
 .venv/bin/python code/04_feature_analysis.py
-
-# 6. inspect manually
-.venv/bin/python code/05_inspect_features.py
-open notes/feature_inspection.md
-
-# 7. auto-interp (T5)
-export MOONSHOT_API_KEY=...    # or ANTHROPIC_API_KEY / OPENAI_API_KEY
+export MOONSHOT_API_KEY=...
 .venv/bin/python code/07_auto_interp.py --provider kimi --model moonshot-v1-32k --n-features 50
 
-# 8. multi-width sweep (T1)  — train SAEs at 4k and 64k widths
+# 6. multi-width sweep (T1)
 .venv/bin/python code/02b_train_sae_topk.py --steps 20000 --k 64 --n-features 4096 \
     --out checkpoints/sae_layer6_topk64_w4k.pt
 .venv/bin/python code/02b_train_sae_topk.py --steps 20000 --k 64 --n-features 65536 \
     --out checkpoints/sae_layer6_topk64_w64k.pt
 .venv/bin/python code/08_width_comparison.py
+
+# 7. cross-seed (T4)
+.venv/bin/python code/02b_train_sae_topk.py --steps 20000 --k 64 --seed 42 \
+    --out checkpoints/sae_layer6_topk64_seed42.pt
+.venv/bin/python code/03_eval_sae.py --ckpt checkpoints/sae_layer6_topk64_seed42.pt
+.venv/bin/python code/09_replication_analysis.py
+
+# 8. Matryoshka SAE (T6)
+.venv/bin/python code/02c_train_sae_matryoshka.py --steps 20000 --k-levels 16,64,256 \
+    --out checkpoints/sae_layer6_matryoshka.pt
+.venv/bin/python code/10_matryoshka_analysis.py
+
+# 9. Build #1 scorecard
+.venv/bin/python code/11_sae_scorecard.py
+
+# 10. Build #2 feature navigator
+.venv/bin/python code/12_feature_navigator.py
+
+# 11. Build #3 co-activation
+.venv/bin/python code/13_coactivation_analysis.py
 ```
+
+## Honest limitations
+
+- Single layer, single model — claim is methodological, not "the 2.14% number is universal"
+- Cross-seed measured at one pair (reference + seed-42); more seeds may yield lower stability
+- No causal-intervention validation — stability is a cheap proxy, not a substitute
+- Auto-interpretation by Kimi K2 collapses fine-grained splits we know exist; a stronger labeler would likely raise monosemanticity rate further without raising cross-validation stability — *widening* the gap, not closing it
+- Linear-encoder TopK is computationally matched to a single MLP layer; stronger SAE variants could find features the model itself cannot use, exacerbating the cross-validation gap
 
 ## Context
 
-This project demonstrates competence in the protocol Anthropic's interpretability team uses on frontier models, applied at 1/100,000 the scale on a small open model. Targeted at MATS / Apollo / Goodfire applications.
+Solo work by a community-college student, in 4 weeks, on a MacBook (Apple M-series MPS), under a $50 compute budget. Targeted at MATS / Apollo / Goodfire / EleutherAI SOAR applications.
 
-Done as solo work, on a MacBook (Apple M-series MPS), under a $50 compute budget. The author has no prior mech-interp publications — this is the first.
+The author has no prior mech-interp publications — this is the first.
 
 ## References
 
 - Bricken et al., *Towards Monosemanticity* (Anthropic 2023)
 - Templeton et al., *Scaling Monosemanticity* (Anthropic 2024)
-- Gao et al., *Scaling and Evaluating Sparse Autoencoders* (OpenAI 2024) — TopK SAE
-- Lieberum et al., *Gemma Scope* (DeepMind 2024) — CE delta methodology
-- Rajamanoharan et al., *Improving Dictionary Learning with Gated SAEs* (DeepMind 2024)
+- Gao et al., *Scaling and Evaluating Sparse Autoencoders* (OpenAI 2024) — TopK
+- Rajamanoharan et al., *Gated SAEs* / *JumpReLU SAEs* (DeepMind 2024)
+- Lieberum et al., *Gemma Scope* (DeepMind 2024) — CE-delta methodology
+- Bussmann et al., *Matryoshka Sparse Autoencoders* (2025) — nested-K architecture
+- Biderman et al., *Pythia* (2023)
 
 ## License
 
@@ -165,4 +193,4 @@ MIT.
 
 ## Contact
 
-irving46764@gmail.com / [github.com/OE-GOD](https://github.com/OE-GOD)
+[irving46764@gmail.com](mailto:irving46764@gmail.com) · [github.com/OE-GOD](https://github.com/OE-GOD)

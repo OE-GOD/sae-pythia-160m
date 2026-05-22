@@ -1,0 +1,684 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{xurl}
+
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=black, citecolor=black}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny,
+  frame=single,
+  breaklines=true,
+  showstringspaces=false,
+  language=Python,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{teal},
+}
+
+\title{Reconstruction Is Not Replication: \\
+       Cross-Validating Sparse Autoencoder Features on Pythia-160M}
+
+\author{Aung Maw\\
+        Skyline College, San Francisco\\
+        \texttt{irving46764@gmail.com} \\
+        \href{https://github.com/OE-GOD}{\texttt{github.com/OE-GOD}}}
+
+\date{May 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We train a sparse autoencoder (SAE) on the layer-6 residual stream of
+Pythia-160M and evaluate it along six independent quality axes, including
+three cross-validation tests that the field rarely reports together:
+cross-width consistency (training the same SAE at $N \in \{4096, 16384,
+65536\}$ features), cross-seed replication (training at the same
+hyperparameters with a different random seed), and cross-architecture
+agreement (training a Matryoshka SAE \cite{bussmann2025matryoshka} with
+nested-$k$ bottlenecks).
+The reference SAE achieves $98.4\%$ variance explained, $95.4\%$ loss
+recovered under cross-entropy substitution (a competitive number for the
+small-model band), and $88.5\%$ auto-interp monosemanticity rate over the
+$26$ most-active features.
+The same SAE has only $19.9\%$ of features at cosine similarity $> 0.9$
+across a different random seed, and only $10.6\%$ at the same threshold
+across the Matryoshka architecture. Combining all four cross-validation
+conditions, only $2.14\%$ of features ($351$ of $16{,}384$) survive at
+cos $> 0.9$. Of the $26$ features that an automatic interpreter labeled
+as monosemantic, only $3$ are fully stable: features encoding BibTeX/LaTeX
+citation references, file paths, and logical operators / negation.
+We argue that the standard suite of SAE quality metrics
+(reconstruction, sparsity, monosemanticity rate) systematically
+\emph{overstates} feature reliability, by approximately $8\times$ on this
+setup. We release a multi-metric scorecard tool and a per-feature
+stability navigator that surface this gap on any SAE.\footnote{Code:
+\url{https://github.com/OE-GOD/sae-pythia-160m}.}
+\end{abstract}
+
+\section{Introduction}
+
+Sparse autoencoders (SAEs) have become the dominant tool for converting a
+transformer's internal activations into a sparse, interpretable basis
+\cite{bricken2023monosemanticity, templeton2024scaling}.
+The standard quality story has three parts: reconstruction (variance
+explained or MSE), sparsity (an $L_0$ target enforced by ReLU+$L_1$
+\cite{bricken2023monosemanticity}, top-$k$ \cite{gao2024topk}, or related
+mechanisms \cite{rajamanoharan2024gated, rajamanoharan2024jumprelu}), and
+interpretability (the fraction of recovered features that a human or LLM
+inspector labels as monosemantic). Most published SAE work reports these
+three.
+
+This paper asks a question the standard suite cannot answer: if you train
+the same SAE again --- with a different random seed, a different width,
+or a slightly different architectural objective --- how many of the
+features it recovered are the same?
+
+Our finding: \emph{very few}. On Pythia-160M layer 6 with $N=16{,}384$
+features and $k=64$:
+\begin{itemize}
+\item Variance explained is $98.4\%$; CE-delta loss recovered is $95.4\%$.
+\item Auto-interp on the top $26$ features classifies $88.5\%$ as
+monosemantic.
+\item But cross-seed cosine similarity is $> 0.9$ for only $19.9\%$ of
+features; cross-Matryoshka is $> 0.9$ for only $10.6\%$.
+\item Of the auto-labeled features, only $3$ of $26$ are fully stable
+across width, seed, and architecture. The rest, including all
+$11$ apparent variants of ``newline tokens'' that the SAE found, collapse
+under cross-validation.
+\end{itemize}
+
+These observations have two implications. First, when the field reports
+SAE quality as a single reconstruction or interpretability number, that
+number can overstate the reliability of recovered features by nearly an
+order of magnitude. Second, the small subset of features that does
+survive cross-validation is, plausibly, the right basis for downstream
+work --- circuit discovery, causal interventions, agent behavior auditing
+--- because those features are not artifacts of the particular SAE
+training procedure.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item Empirical: a six-axis evaluation of a TopK SAE on Pythia-160M layer
+6, including cross-width (\S\ref{sec:width}), cross-seed
+(\S\ref{sec:seed}), and cross-architecture (\S\ref{sec:matryoshka})
+replication results. The cross-validation numbers are roughly
+$\sim 5\times$--$10\times$ worse than the reconstruction and
+interpretability numbers on the same SAE.
+\item A multi-metric scorecard tool that reports all six axes side-by-side
+(\S\ref{sec:scorecard}). On our reference SAE the strongest axis is
+$0.984$ and the weakest is $0.106$, a $\sim 88$ percentage-point gap.
+\item A per-feature stability navigator that reports a feature's
+best-match identity in every comparison SAE
+(\S\ref{sec:navigator}). The output is a shortlist of $351$ fully stable
+features ($2.14\%$ of the total) that we treat as the strongest ``real
+feature'' candidates in this setup.
+\end{enumerate}
+
+\paragraph{Scope and honesty.}
+This is a single-model, single-layer study on a small open transformer
+($160$M params) with $1\text{M}$ training tokens and a $\$50$ compute
+budget. We make no claims about frontier-scale models. We do claim that
+on this benchmark the gap between reconstruction-style and
+replication-style metrics is large enough to deserve attention in any
+SAE quality report.
+
+\section{Background}
+
+The SAE setup is standard. For an activation $h \in \mathbb{R}^d$ at a
+target layer,
+\begin{align}
+f &= \sigma(W_{\text{enc}} (h - b_{\text{dec}}) + b_{\text{enc}}), \quad
+f \in \mathbb{R}^N, \\
+\hat{h} &= W_{\text{dec}} f + b_{\text{dec}},
+\end{align}
+with $\sigma$ enforcing sparsity. We use \textsc{TopK}
+\cite{gao2024topk}, which keeps the $k$ largest pre-activations and zeros
+the rest. This gives $L_0 = k$ by construction and removes the
+$L_1$-shrinkage problem \cite{rajamanoharan2024gated} we observed in an
+initial vanilla-$L_1$ run (Appendix~\ref{app:l1-shrinkage}).
+
+The Matryoshka SAE variant \cite{bussmann2025matryoshka} introduces
+nested-$k$ reconstruction bottlenecks: for $k_1 < k_2 < \dots < k_M$,
+features active at smaller $k_i$ are a strict subset of features at larger
+$k_j$, and the loss sums reconstruction over all levels:
+\begin{equation}
+\mathcal{L}_{\text{matryoshka}} = \sum_{i=1}^{M} \| h - W_{\text{dec}} f^{(k_i)}_{\text{topk}} - b_{\text{dec}} \|_2^2.
+\end{equation}
+We use this variant for the cross-architecture comparison in
+\S\ref{sec:matryoshka}.
+
+\section{Setup}
+
+\paragraph{Model and data.}
+Pythia-160M \cite{biderman2023pythia} ($d_{\text{model}}=768$, $12$
+layers), accessed via TransformerLens. Target: residual stream at the
+output of layer $6$, hook \texttt{blocks.6.hook\_resid\_post}.
+Training corpus: \texttt{NeelNanda/pile-10k}, a $10\text{k}$-document
+subset of the Pile. We tokenise the first $\sim 8{,}000$ documents into a
+flat stream and reshape into $7{,}812$ sequences of length $128$, giving
+$999{,}936$ training tokens. Held-out evaluation tokens are drawn from
+documents indexed $\geq 8{,}001$.
+
+\paragraph{SAE training.}
+The reference SAE (referred to as the ``$16$k SAE'') has $N = 16{,}384$
+features ($\sim 21 \times$ expansion over $d_{\text{model}}$), $k = 64$
+(TopK), $b_{\text{dec}}$ initialised to the empirical activation mean,
+tied initialisation ($W_{\text{enc}} = W_{\text{dec}}^\top$), decoder
+column unit-norm constraint enforced after each Adam step, $\text{lr} =
+10^{-3}$, batch size $4{,}096$, $20{,}000$ training steps.
+Three additional SAEs are trained for cross-validation:
+\begin{itemize}
+\item $N = 4{,}096$ (cross-width, smaller, \S\ref{sec:width})
+\item $N = 65{,}536$ (cross-width, larger, \S\ref{sec:width})
+\item Second random seed (\texttt{torch.manual\_seed(42)}, all other
+hyperparameters identical, \S\ref{sec:seed})
+\item Matryoshka SAE at $k_{\text{levels}} = \{16, 64, 256\}$
+(\S\ref{sec:matryoshka})
+\end{itemize}
+
+\paragraph{Hardware and compute.}
+Apple Silicon (M-series) via PyTorch MPS. All training and evaluation runs
+fit within a $\$50$ compute budget; in practice the project consumed zero
+paid compute (all on local hardware over $\sim 24$ hours of
+background time).
+
+\section{Single-SAE Results (Baseline)}
+
+\subsection{Reconstruction and sparsity}
+
+On $50{,}000$ held-out activations from the training-document set:
+variance explained $98.43\%$, mean $L_0 = 63.9 \pm 1.1$ (target $k=64$,
+exact), reconstruction MSE summed over $d_{\text{model}}$ is $25.74$.
+Dead features (features that never activate): $855 / 16{,}384 = 5.22\%$.
+
+\subsection{CE-delta evaluation}
+\label{sec:ce-delta}
+
+Following \cite{lieberum2024gemma}, we evaluate the SAE by substituting
+its reconstruction into the language model's forward pass at the trained
+layer, and measuring the increase in downstream cross-entropy on
+held-out tokens. For $100{,}000$ held-out tokens:
+\begin{align}
+\text{CE}_{\text{clean}} &= 3.107 \text{ nats/token} \\
+\text{CE}_{\text{SAE-patched}} &= 3.383 \text{ nats/token} \\
+\text{CE}_{\text{zero-ablate (mean)}} &= 9.122 \text{ nats/token}
+\end{align}
+The SAE-patched run substitutes $\hat{h} = \text{SAE}(h)$ for $h$ at layer
+$6$; the zero-ablation run substitutes the data mean
+($b_{\text{dec}}$). The loss-recovered metric is
+$1 - \Delta\text{CE} / (\text{CE}_{\text{ablate}} - \text{CE}_{\text{clean}})
+= 95.4\%$, in the strong end of the published small-model band
+\cite{bricken2023monosemanticity, lieberum2024gemma}.
+
+\subsection{Auto-interpretation catalog}
+\label{sec:autointerp}
+
+We extract top-$10$ max-activating snippets per feature on the $1\text{M}$-
+token training stream, then submit the top $26$ features (ranked by a
+mixture of peak and mean-of-top-$K$ activation) to Kimi-K2
+(\texttt{moonshot-v1-32k}) for auto-interpretation. Each receives a
+one-sentence concept label and a classification of MONOSEMANTIC,
+POLYSEMANTIC, or UNCLEAR. Total API cost: $\$0.02$.
+
+Of the $26$:
+\begin{itemize}
+\item MONOSEMANTIC: $23$ ($88.5\%$).
+\item POLYSEMANTIC: $3$ ($11.5\%$).
+\item UNCLEAR: $0$.
+\end{itemize}
+
+Representative monosemantic features (full table in
+Appendix~\ref{app:features}): \emph{Decimal points in numerical contexts}
+(f1989), \emph{Exponentiation notation in mathematical contexts} (f5196),
+\emph{Tokens related to file paths and directory structures} (f5747),
+\emph{Newline tokens inside code blocks} (f7448),
+\emph{BibTeX/LaTeX citation references} (f12117),
+\emph{Logical operators and negation symbols} (f12697).
+
+\textbf{Apparent feature splitting.} Approximately $11$ of the $23$
+monosemantic features received label variants of ``newline tokens'':
+\emph{newline tokens in various contexts}, \emph{newline tokens inside
+XML/HTML/CSS blocks}, \emph{newline tokens inside code blocks}, and so on.
+The SAE has clearly split a single semantic category into many features.
+The labeling LLM identifies each as monosemantic but cannot give distinct
+labels because the splits are subtle. This is direct evidence for
+feature splitting at $N = 16{,}384$ on this model.
+
+\section{Cross-Validation Results (the New Material)}
+
+\subsection{Cross-width sweep}
+\label{sec:width}
+
+Three SAEs trained at $N \in \{4{,}096, 16{,}384, 65{,}536\}$ with all
+other hyperparameters held fixed. Results in
+Table~\ref{tab:pareto}.
+
+\begin{table}[h]
+\centering
+\caption{Cross-width Pareto. Wider SAEs do not buy meaningful
+reconstruction beyond $N \approx 4\text{k}$ on this data scale, and
+dead-feature counts explode at $N=65{,}536$.}
+\label{tab:pareto}
+\begin{tabular}{lcccc}
+\toprule
+Width $N$ & MSE & Var.\ explained & Dead features & Alive features \\
+\midrule
+$4{,}096$  & $33.11$ & $0.9782$ & $1 \,(0.02\%)$  & $4{,}095$ \\
+$16{,}384$ & $25.74$ & $0.9843$ & $855 \,(5.22\%)$ & $15{,}529$ \\
+$65{,}536$ & $23.68$ & $0.9853$ & $41{,}698 \,(63.63\%)$ & $23{,}838$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two observations. \textbf{The Pareto curve in width is nearly flat above}
+$N = 4{,}096$: going $4\text{k} \to 64\text{k}$ ($16\times$ more
+capacity) buys $0.71$ percentage points of variance explained.
+\textbf{Dead features explode at $N = 65{,}536$}: $63.6\%$ of features
+never fire on any input.
+
+\textbf{Feature merging at small width.} We find one $4\text{k}$ feature
+(f2175) is the best cosine-similarity match for five different $16\text{k}$
+newline-variant features (cos $0.34$ to $0.39$). Smaller widths collapse
+multiple features that nominally differ at larger widths.
+
+\textbf{Feature splitting at large width does not survive seed change.}
+Anticipating \S\ref{sec:seed}: most of the apparent $16\text{k}$ features
+that look like ``finer-grained splits'' of $4\text{k}$ features do not
+have stable counterparts in a second random-seed SAE.
+
+\subsection{Cross-seed replication}
+\label{sec:seed}
+
+We train a second SAE at identical hyperparameters with
+\texttt{torch.manual\_seed(42)} (the reference SAE used the default
+implicit seed). The two SAEs have statistically indistinguishable summary
+metrics: variance explained $98.43\%$ vs.\ $98.44\%$, dead features
+$5.22\%$ vs.\ $5.47\%$, $L_0 = 63.9$ for both.
+
+For each feature in the reference, we find its best-match decoder column
+in the second SAE under cosine similarity (with decoder columns unit-norm
+across both). Distribution of best-match cosine similarities:
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Threshold & Count above & Fraction \\
+\midrule
+cos $> 0.50$ & $12{,}892$ & $0.787$ \\
+cos $> 0.70$ & $9{,}783$ & $0.597$ \\
+cos $> 0.90$ & $3{,}254$ & $\mathbf{0.199}$ \\
+cos $> 0.95$ & $952$ & $0.058$ \\
+cos $> 0.99$ & $14$ & $0.001$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Only $19.9\%$ of features have a cross-seed match above
+$\text{cos} = 0.9$.} Same model, same data, same hyperparameters, same
+architecture: only $1$ in $5$ features replicates.
+
+\textbf{All $11$ ``newline-variant'' features in the reference SAE collapse
+to a single feature in the seed-$42$ SAE.} Specifically, the
+best-match feature in the seed-$42$ SAE for each of the labeled newline
+features is the same feature (f12024) with cosine similarities of
+$0.34$--$0.46$. This directly shows that the apparent ``feature splitting''
+observed at $N = 16{,}384$ is substantially a training-noise artifact
+rather than the SAE discovering finer-grained concepts.
+
+\subsection{Cross-architecture: Matryoshka vs.\ flat TopK}
+\label{sec:matryoshka}
+
+We train a Matryoshka SAE \cite{bussmann2025matryoshka} on the same
+$1\text{M}$ activations with $k_{\text{levels}} = \{16, 64, 256\}$ and
+the same $N = 16{,}384$. Per-level variance explained:
+$\{0.9747, 0.9830, 0.9889\}$. The nested-subset invariant
+(features at $k_i$ are a strict subset of features at $k_{i+1}$) holds
+for $100\%$ of evaluated tokens by construction.
+
+Compared to the flat TopK reference at $k = 64$: the Matryoshka at the
+$k = 64$ level has slightly worse reconstruction ($0.983$ vs.\ $0.984$
+variance explained) but dramatically fewer dead features ($1.64\%$ vs.\
+$5.65\%$). The multi-level training appears to keep more capacity alive.
+
+Decoder column cosine similarity across architectures:
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Threshold & Count above & Fraction \\
+\midrule
+cos $> 0.50$ & $12{,}781$ & $0.780$ \\
+cos $> 0.70$ & $9{,}517$ & $0.581$ \\
+cos $> 0.90$ & $1{,}745$ & $\mathbf{0.106}$ \\
+cos $> 0.95$ & $144$ & $0.009$ \\
+cos $> 0.99$ & $4$ & $0.0002$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Cross-architecture stability is even worse than cross-seed:}
+$10.6\%$ of features at cos $> 0.9$, vs.\ $19.9\%$ cross-seed within the
+same architecture. Matryoshka and flat TopK find substantively different
+feature bases on the same model and the same data.
+
+\subsection{Joint stability across all conditions}
+\label{sec:navigator}
+
+For each of the $16{,}384$ features in the reference SAE, we count the
+number of cross-validation conditions in which it has a best-match cosine
+$> 0.9$. The conditions are: $4\text{k}$-width SAE, $64\text{k}$-width
+SAE, seed-$42$ SAE, Matryoshka SAE. Maximum possible score: $4$.
+
+\begin{table}[h]
+\centering
+\caption{Joint stability across all four cross-validation conditions.
+Only $2.14\%$ of features survive every comparison at cos $> 0.9$.}
+\label{tab:joint}
+\begin{tabular}{lrr}
+\toprule
+Stability score (cos $> 0.9$) & \# features & Fraction \\
+\midrule
+$0 / 4$ & $11{,}974$ & $73.08\%$ \\
+$1 / 4$ & $1{,}799$ & $10.98\%$ \\
+$2 / 4$ & $1{,}272$ & $7.76\%$ \\
+$3 / 4$ & $988$ & $6.03\%$ \\
+$\mathbf{4 / 4}$ & $\mathbf{351}$ & $\mathbf{2.14\%}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The $351$ fully stable features are the strongest ``real feature''
+candidates in this setup --- their decoder direction replicates regardless
+of width, seed, or architectural objective.
+
+\textbf{Of the $26$ auto-labeled monosemantic features, only $3$ are
+fully stable:}
+\begin{itemize}
+\item f12117 --- BibTeX/LaTeX citation references (cos $\geq 0.997$
+across every comparison)
+\item f5747 --- File paths and directory structures (cos $\geq 0.997$
+across every comparison)
+\item f12697 --- Logical operators and negation symbols (cos $\geq 0.977$
+across every comparison)
+\end{itemize}
+The remaining $23$ labeled features have stability score $\leq 1/4$:
+they are clearly identified by auto-interp but do not survive any
+non-trivial replication test. We take this as direct evidence that
+\textbf{auto-interpretation overstates feature reliability by a factor of
+approximately $8\times$} on this setup ($88.5\%$ monosemantic vs.\
+$11.5\%$ fully stable).
+
+\subsection{Multi-metric scorecard}
+\label{sec:scorecard}
+
+The six axes evaluated on the reference SAE:
+
+\begin{center}
+\begin{tabular}{lcl}
+\toprule
+Axis & Value & Source \\
+\midrule
+Reconstruction (var.\ explained) & $\mathbf{0.984}$ & basic eval \\
+Predictive preservation (CE-delta loss recovered) & $\mathbf{0.954}$ & \S\ref{sec:ce-delta} \\
+Capacity utilisation ($1 -$ dead fraction) & $\mathbf{0.948}$ & basic eval \\
+Auto-interp monosemanticity rate & $0.885$ & \S\ref{sec:autointerp} \\
+Cross-seed stability (cos $> 0.9$) & $\mathbf{0.199}$ & \S\ref{sec:seed} \\
+Cross-architecture stability (cos $> 0.9$) & $\mathbf{0.106}$ & \S\ref{sec:matryoshka} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The range is $0.106$ to $0.984$, a $\sim 88$ percentage-point gap. The
+six axes do not agree. Reporting only the strongest axis (variance
+explained) overstates the SAE's quality by nearly an order of magnitude
+relative to the weakest axis (cross-architecture stability).
+
+\section{Discussion}
+
+\subsection{The standard suite is necessary but not sufficient}
+
+Reconstruction, sparsity, and monosemanticity-rate are useful but
+incomplete. They measure how well the SAE can encode and decode a given
+model's activations and how interpretable the recovered features look.
+They do not measure whether the features are a property of the model or
+an artifact of the SAE training run. Our cross-validation results
+indicate that, on this setup, the standard suite overstates feature
+reliability by $\sim 8\times$.
+
+The implication is not that SAEs are useless --- the $3$ fully stable
+features we recover are clean, meaningful, and would survive any
+reasonable interpretability test. The implication is that without
+replication-style metrics, an SAE quality report cannot be cited as
+evidence about the underlying model.
+
+\subsection{What is the field's current practice?}
+
+Most published SAE work reports reconstruction-style metrics on a single
+trained SAE. A growing minority reports CE-delta substitution
+\cite{lieberum2024gemma}. Cross-seed replication is occasionally
+acknowledged as a limitation \cite{templeton2024scaling,
+rajamanoharan2024gated} but rarely measured quantitatively at the
+feature level. Cross-architecture replication (different SAE objectives
+on the same model) is, to our knowledge, not standard practice.
+
+We argue that cross-seed replication is the cheapest improvement
+available --- one extra training run, identical hyperparameters --- and
+should be reported alongside reconstruction in any SAE quality claim.
+
+\subsection{The shortlist of stable features as a basis for downstream work}
+
+The $351$ fully stable features ($2.14\%$ of the reference SAE) form a
+small, well-validated candidate set for downstream interpretability
+work --- circuit discovery, causal interventions, agent-behavior
+auditing. Building circuits on the full SAE risks finding patterns that
+are themselves training-noise artifacts.
+
+\subsection{Tools we release}
+
+\begin{enumerate}
+\item \texttt{11\_sae\_scorecard.py} --- given a trained SAE checkpoint
+and the standard set of evaluation JSON outputs, prints the six-axis
+quality profile (\S\ref{sec:scorecard}).
+\item \texttt{12\_feature\_navigator.py} --- given a reference SAE and
+any set of comparison SAEs, computes per-feature stability scores and
+emits both a JSON for programmatic use and a Markdown shortlist of
+fully stable features. Supports \texttt{-{}-query <feature\_id>} for
+single-feature lookup.
+\end{enumerate}
+
+\section{Limitations}
+
+\begin{itemize}
+\item \textbf{Single layer, single model.} We evaluate one residual stream
+at one layer of one $160$M-parameter model. The numerical claims of
+$2.14\%$ joint stability or $8\times$ overstatement should not be
+read as universal. The methodological claim --- that
+reconstruction-style and replication-style metrics can disagree by an
+order of magnitude --- is more transportable.
+\item \textbf{Single random seed pair.} Cross-seed stability is measured
+across exactly two SAEs (reference and seed-$42$). Stability across
+more seeds may yield different (likely lower) numbers.
+\item \textbf{No causal validation.} We do not perform feature ablations
+to test that fully stable features are also causally load-bearing for
+downstream behavior. Cross-validation stability is a cheap proxy, not
+a substitute for causal validation \cite{conmy2024automated,
+marks2024feature}.
+\item \textbf{Auto-interpretation is partial.} The Kimi-K2 labeling
+collapses fine-grained splits we know exist (e.g., $11$ newline-variant
+features all labeled ``newline tokens in various contexts''). A stronger
+labeling model would likely raise the monosemanticity rate further
+without changing the cross-validation stability, which would widen the
+reconstruction-vs.-replication gap.
+\item \textbf{Computational match.} A linear-encoder TopK SAE is
+computationally matched to a single MLP layer; this constrains the
+class of features it can find. Stronger SAE variants (multi-layer
+encoders, attention-based encoders) could fit features the model itself
+cannot use, exacerbating the cross-validation gap.
+\item \textbf{$1$M tokens is small.} Modern frontier-scale SAE work uses
+billions of activations. Some quantitative findings (e.g., the
+$N \approx 4\text{k}$ effective capacity, the $63\%$ dead-feature rate
+at $N = 65{,}536$) may shift at larger training scales.
+\end{itemize}
+
+\section{Conclusion}
+
+We evaluated a TopK SAE on Pythia-160M layer $6$ along six independent
+quality axes including three cross-validation tests. The standard
+reconstruction-style metrics (variance explained, CE-delta loss
+recovered) and the standard interpretability metric (auto-interp
+monosemanticity rate) all score the SAE highly --- between $0.88$ and
+$0.98$. The replication-style metrics (cross-seed, cross-architecture,
+cross-width consistency) score the same SAE between $0.10$ and $0.20$.
+The gap is large enough that the standard suite cannot be the only
+quality claim attached to an SAE: it overstates feature reliability by
+roughly $8\times$ on this setup.
+
+We release two tools --- a multi-metric scorecard and a per-feature
+stability navigator --- that surface this gap on any SAE. We expect
+cross-seed replication to become standard in SAE reports; the marginal
+cost is one extra training run, and the marginal information is
+substantial.
+
+\section*{Code and Artifacts}
+
+\url{https://github.com/OE-GOD/sae-pythia-160m}
+
+All checkpoints regenerable via the scripts in \texttt{code/}; raw
+analysis outputs in \texttt{data/}; the trained $16$k reference SAE,
+$4$k and $64$k width SAEs, seed-$42$ SAE, and Matryoshka SAE are
+described and reproducible via the README.
+
+\section*{Acknowledgments}
+
+This work was conducted as a solo project as part of a series of
+small-scale mechanistic interpretability replications. The author thanks
+the Anthropic, OpenAI, and DeepMind interpretability teams for publishing
+the methodology and results that made this small-scale replication
+possible.
+
+\begin{thebibliography}{99}
+
+\bibitem{bricken2023monosemanticity}
+Bricken, T., Templeton, A., et al. Towards Monosemanticity: Decomposing
+Language Models With Dictionary Learning. \emph{Anthropic Transformer
+Circuits Thread}, 2023.
+\url{https://transformer-circuits.pub/2023/monosemantic-features}
+
+\bibitem{templeton2024scaling}
+Templeton, A. et al. Scaling Monosemanticity: Extracting Interpretable
+Features from Claude 3 Sonnet. \emph{Anthropic Transformer Circuits
+Thread}, 2024.
+\url{https://transformer-circuits.pub/2024/scaling-monosemanticity}
+
+\bibitem{gao2024topk}
+Gao, L., Tour, T.D., Tillman, H., Goh, G., Troll, R., Radford, A.,
+Sutskever, I., Leike, J., Wu, J. Scaling and Evaluating Sparse
+Autoencoders. \emph{OpenAI}, 2024.
+\url{https://arxiv.org/abs/2406.04093}
+
+\bibitem{rajamanoharan2024gated}
+Rajamanoharan, S., Conmy, A., Smith, L., Lieberum, T., Varma, V.,
+Kram\'ar, J., Shah, R., Nanda, N. Improving Dictionary Learning with
+Gated Sparse Autoencoders. \emph{DeepMind}, 2024.
+\url{https://arxiv.org/abs/2404.16014}
+
+\bibitem{rajamanoharan2024jumprelu}
+Rajamanoharan, S., Lieberum, T., Sonnerat, N., Conmy, A., Varma, V.,
+Kram\'ar, J., Nanda, N. Jumping Ahead: Improving Reconstruction Fidelity
+with JumpReLU SAEs. \emph{DeepMind}, 2024.
+\url{https://arxiv.org/abs/2407.14435}
+
+\bibitem{lieberum2024gemma}
+Lieberum, T., Rajamanoharan, S., Conmy, A., et al. Gemma Scope: Open
+Sparse Autoencoders Everywhere All At Once on Gemma 2. \emph{DeepMind},
+2024.
+\url{https://arxiv.org/abs/2408.05147}
+
+\bibitem{bussmann2025matryoshka}
+Bussmann, B. et al. Learning Multi-Level Features with Matryoshka Sparse
+Autoencoders. 2025.
+
+\bibitem{biderman2023pythia}
+Biderman, S., Schoelkopf, H., Anthony, Q.G., et al. Pythia: A Suite for
+Analyzing Large Language Models Across Training and Scaling. \emph{ICML},
+2023. \url{https://arxiv.org/abs/2304.01373}
+
+\bibitem{conmy2024automated}
+Conmy, A., Mavor-Parker, A., Lynch, A., Heimersheim, S., Garriga-Alonso,
+A. Towards Automated Circuit Discovery for Mechanistic Interpretability.
+\emph{NeurIPS}, 2023. \url{https://arxiv.org/abs/2304.14997}
+
+\bibitem{marks2024feature}
+Marks, S., Rager, C., Michaud, E.J., Belinkov, Y., Bau, D., Mueller, A.
+Sparse Feature Circuits: Discovering and Editing Interpretable Causal
+Graphs in Language Models. \emph{ICLR}, 2025.
+\url{https://arxiv.org/abs/2403.19647}
+
+\end{thebibliography}
+
+\appendix
+
+\section{The L1 Shrinkage Failure Mode We Started With}
+\label{app:l1-shrinkage}
+
+Before switching to TopK, we trained a vanilla $L_1$ SAE on the same
+setup and swept $\lambda \in \{0.005, 0.02, 0.1\}$ at $N = 16{,}384$,
+$1500$ training steps each. Despite a $20\times$ increase in
+sparsity-penalty strength, the average $L_0$ remained between $1{,}048$
+and $1{,}333$ active features per token --- well above the target band
+of $30$-$100$.
+
+\begin{table}[h]
+\centering
+\caption{$L_1$ SAE sparsity sweep.}
+\label{tab:l1-sweep}
+\begin{tabular}{lccc}
+\toprule
+$\lambda$ & Final MSE & Var.\ explained & $L_0$ \\
+\midrule
+$0.005$ & $2.80$ & $0.998$ & $1333$ \\
+$0.02$  & $5.20$ & $0.997$ & $1302$ \\
+$0.1$   & $14.72$ & $0.991$ & $1048$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This is the documented ``$L_1$ shrinkage'' failure mode
+\cite{rajamanoharan2024gated}: minimising $\lambda \sum_i |f_i|$ is
+indifferent between ``one feature firing at strength $S$'' and ``$S$
+features firing at strength $1$''. Switching to TopK fixes this by hard
+construction; $L_0 = k$ becomes exact.
+
+\section{Selected Auto-Labeled Features}
+\label{app:features}
+
+The full $26$-feature catalog is in
+\texttt{data/feature\_catalog.json}. Representative monosemantic
+features:
+
+\begin{tabular}{rl}
+\toprule
+ID & Auto-interpretation \\
+\midrule
+f1989 & Decimal points in numerical contexts \\
+f5196 & Exponentiation notation in mathematical contexts \\
+f5747 & Tokens related to file paths and directory structures \\
+f7448 & Newline tokens inside code blocks \\
+f10045 & Subword BPE continuations of multi-piece words \\
+f12117 & BibTeX/LaTeX citation references \\
+f12697 & Logical operators and negation symbols \\
+\bottomrule
+\end{tabular}
+
+\textbf{Fully stable across cross-validation (cos $> 0.9$ in all 4
+comparisons):} f12117, f5747, f12697.
+
+\end{document}

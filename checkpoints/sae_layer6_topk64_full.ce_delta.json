@@ -1,0 +1,12 @@
+{
+  "clean_ce_per_token": 3.1072228743119057,
+  "sae_ce_per_token": 3.382949079138395,
+  "zero_ablation_ce_per_token": 9.122318384008867,
+  "ce_delta_nats": 0.27572620482648924,
+  "ce_delta_bits": 0.3977888283463109,
+  "zero_ablation_delta_nats": 6.015095509696962,
+  "loss_recovered_pct": 95.41609598082043,
+  "n_eval_tokens": 99187,
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "layer": 6
+}

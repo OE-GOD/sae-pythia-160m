@@ -1,0 +1,297 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "label_contains": "newline",
+  "alpha_mult": 1.0,
+  "pc1_variance_explained": 0.24388891316505548,
+  "per_feature": [
+    {
+      "feature_id": 15230,
+      "label": "Newline tokens in various contexts",
+      "pc1_projection_signed": -0.5266247391700745,
+      "pc1_projection_abs": 0.5266247391700745,
+      "alpha": 32.10621643066406,
+      "newline_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_nl": 0,
+          "steered_nl": 0,
+          "delta_nl": 0
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_nl": 0,
+          "steered_nl": 1,
+          "delta_nl": 1
+        }
+      ],
+      "whitespace_run_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_ws": 0,
+          "steered_ws": 3,
+          "delta_ws": 3
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_ws": 0,
+          "steered_ws": 5,
+          "delta_ws": 5
+        }
+      ],
+      "outputs": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is ond\t\t*\t\tSome\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is\nCPU\t**E**\t\t**E**\t\tLike\t**E**\t\t**E**\t\tPress\t\t\t\t"
+        }
+      ],
+      "mean_delta_nl": 0.5
+    },
+    {
+      "feature_id": 6767,
+      "label": "Newline tokens in various contexts",
+      "pc1_projection_signed": -0.5245699286460876,
+      "pc1_projection_abs": 0.5245699286460876,
+      "alpha": 33.51337432861328,
+      "newline_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_nl": 0,
+          "steered_nl": 0,
+          "delta_nl": 0
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_nl": 0,
+          "steered_nl": 0,
+          "delta_nl": 0
+        }
+      ],
+      "whitespace_run_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_ws": 0,
+          "steered_ws": 0,
+          "delta_ws": 0
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_ws": 0,
+          "steered_ws": 0,
+          "delta_ws": 0
+        }
+      ],
+      "outputs": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is actually not anything at all at even not\u2010to\u2010be\u2010Like\u2010at\u2010Not\u2010At\u2010Not\u2010At\u2010Not\u2010At\u2010Not"
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is actually not to be not be even at all at all at at I Don not at All at All at All at All at All at All at All"
+        }
+      ],
+      "mean_delta_nl": 0.0
+    },
+    {
+      "feature_id": 2255,
+      "label": "Newline tokens in various contexts",
+      "pc1_projection_signed": -0.5214768052101135,
+      "pc1_projection_abs": 0.5214768052101135,
+      "alpha": 44.43120574951172,
+      "newline_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_nl": 0,
+          "steered_nl": 19,
+          "delta_nl": 19
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_nl": 0,
+          "steered_nl": 19,
+          "delta_nl": 19
+        }
+      ],
+      "whitespace_run_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_ws": 0,
+          "steered_ws": 9,
+          "delta_ws": 9
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_ws": 0,
+          "steered_ws": 9,
+          "delta_ws": 9
+        }
+      ],
+      "outputs": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is\nhir.\n\nte per\n\nm\n\nm\n\nz\n\ne\n\ne\n\na\n\na\n\n"
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is\nhir.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n."
+        }
+      ],
+      "mean_delta_nl": 19.0
+    },
+    {
+      "feature_id": 15245,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "pc1_projection_signed": -0.47232693433761597,
+      "pc1_projection_abs": 0.47232693433761597,
+      "alpha": 18.780733108520508,
+      "newline_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_nl": 0,
+          "steered_nl": 0,
+          "delta_nl": 0
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_nl": 0,
+          "steered_nl": 0,
+          "delta_nl": 0
+        }
+      ],
+      "whitespace_run_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_ws": 0,
+          "steered_ws": 0,
+          "delta_ws": 0
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_ws": 0,
+          "steered_ws": 0,
+          "delta_ws": 0
+        }
+      ],
+      "outputs": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is as good as it is hot, but you are not as good as that, and you are not as good as as you are not as long as"
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is F-1-1-1-1-0-1-0-1-0-0-1-0-1-0-"
+        }
+      ],
+      "mean_delta_nl": 0.0
+    },
+    {
+      "feature_id": 2757,
+      "label": "Newline tokens in code and text formatting contexts",
+      "pc1_projection_signed": -0.46900784969329834,
+      "pc1_projection_abs": 0.46900784969329834,
+      "alpha": 14.918571472167969,
+      "newline_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_nl": 0,
+          "steered_nl": 1,
+          "delta_nl": 1
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_nl": 0,
+          "steered_nl": 3,
+          "delta_nl": 3
+        }
+      ],
+      "whitespace_run_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_ws": 0,
+          "steered_ws": 1,
+          "delta_ws": 1
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_ws": 0,
+          "steered_ws": 1,
+          "delta_ws": 1
+        }
+      ],
+      "outputs": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is on the Top:\n  * **P**om( **C**omps) **|** **A** **C**on( **"
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is on the right.\n\nAt the intersection of the\n99-To-E-C-T-T-T-7-Six-"
+        }
+      ],
+      "mean_delta_nl": 2.0
+    },
+    {
+      "feature_id": 14584,
+      "label": "Newline tokens inside code and markup blocks",
+      "pc1_projection_signed": -0.4619499742984772,
+      "pc1_projection_abs": 0.4619499742984772,
+      "alpha": 15.465927124023438,
+      "newline_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_nl": 0,
+          "steered_nl": 0,
+          "delta_nl": 0
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_nl": 0,
+          "steered_nl": 0,
+          "delta_nl": 0
+        }
+      ],
+      "whitespace_run_counts": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline_ws": 0,
+          "steered_ws": 0,
+          "delta_ws": 0
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline_ws": 0,
+          "steered_ws": 0,
+          "delta_ws": 0
+        }
+      ],
+      "outputs": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is the best. relatives, because it is the right one. It is one which can be an individual's wills and ensures the environment is one which"
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is the family's favorite, because it's the one where the other sexual roles has been left. the other races's has been left at their jobs."
+        }
+      ],
+      "mean_delta_nl": 0.0
+    }
+  ],
+  "correlation_pc1_vs_delta_newlines": 0.3767871288328305
+}

@@ -3,12 +3,15 @@
 __pycache__/
 *.pyc
 
-# Large regenerable artifacts
-checkpoints/                       # SAE weights, 200MB-800MB each
-data/acts_layer6.npy               # 1.5 GB activation cache
-data/token_stream.npy              # regenerable
-data/feature_examples.json         # 43.7 MB, regenerable
-data/feature_examples_*.json       # any variants
+# Large regenerable artifacts (200MB-800MB each)
+checkpoints/*.pt
+# Keep result JSONs in checkpoints/ — small and document the analysis
+
+# Large data files
+data/acts_layer6.npy
+data/token_stream.npy
+data/feature_examples.json
+data/feature_examples_*.json
 
 # OS / editor
 .DS_Store

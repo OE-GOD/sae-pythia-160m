@@ -1,0 +1,481 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "model": "pythia-160m",
+  "hook": "blocks.6.hook_resid_post",
+  "layer": 6,
+  "alpha_mults": [
+    1.0,
+    5.0,
+    15.0
+  ],
+  "max_new_tokens": 30,
+  "temperature": 0.7,
+  "seed": 42,
+  "n_features_tested": 4,
+  "results": [
+    {
+      "feature_id": 6630,
+      "label": "French street names and abbreviations",
+      "classification": "MONOSEMANTIC",
+      "confidence": "medium",
+      "peak_activation": 52.5883903503418,
+      "evidence_note": "Most snippets contain French words or abbreviations, with 'rue' and 'la' being common.",
+      "decoder_norm": 1.0,
+      "generations": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 1.0,
+          "alpha_value": 52.5883903503418,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is that Isoobsoobsosososososososososososososososososososososososo"
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 5.0,
+          "alpha_value": 262.941951751709,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake isreareareareareareareareareareareareasorearearearearearearearearearearearearearearearearea"
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 15.0,
+          "alpha_value": 788.825855255127,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 1.0,
+          "alpha_value": 52.5883903503418,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw the action of fear that something ofsoobsososososososososososososososososososososo"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 5.0,
+          "alpha_value": 262.941951751709,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and sawreareareareareareareareareareareareasorearearearearearearearearearearearearearearearearea"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 15.0,
+          "alpha_value": 788.825855255127,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 1.0,
+          "alpha_value": 52.5883903503418,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is the thatnobsoreanosososososososososososososososososososolysosotion"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 5.0,
+          "alpha_value": 262.941951751709,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color isreareareareareareareareareareareareasorearearearearearearearearearearearearearearearearea"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 15.0,
+          "alpha_value": 788.825855255127,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 1.0,
+          "alpha_value": 52.5883903503418,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is that Isoobsoobsosososososososososososososososososososososososo"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 5.0,
+          "alpha_value": 262.941951751709,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today isreareareareareareareareareareareareasorearearearearearearearearearearearearearearearearea"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 15.0,
+          "alpha_value": 788.825855255127,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 1.0,
+          "alpha_value": 52.5883903503418,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was the IsosososososososososososososososososososososoOsosowhatnost"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 5.0,
+          "alpha_value": 262.941951751709,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there wasreareareareareareareareareareareareasorearearearearearearearearearearearearearearearearea"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 15.0,
+          "alpha_value": 788.825855255127,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication dedication"
+        }
+      ]
+    },
+    {
+      "feature_id": 2255,
+      "label": "Newline tokens in various contexts",
+      "classification": "MONOSEMANTIC",
+      "confidence": "high",
+      "peak_activation": 44.43120574951172,
+      "evidence_note": "All snippets contain newline tokens, which are consistently activating this feature.",
+      "decoder_norm": 0.9999999403953552,
+      "generations": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 1.0,
+          "alpha_value": 44.43120574951172,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is\nhir.\n\nte per\n\nm\n\nm\n\nz\n\ne\n\ne\n\na\n\na\n\n"
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 5.0,
+          "alpha_value": 222.1560287475586,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs"
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 15.0,
+          "alpha_value": 666.4680862426758,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake iseter Ans outs outs outs outs outs outs outseter outs outs outs outsetereter outsetereteretereter outseter outs outseteretereteretereter"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 1.0,
+          "alpha_value": 44.43120574951172,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw\nhir.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n."
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 5.0,
+          "alpha_value": 222.1560287475586,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and sawus Ans outsus outsus outsus outsus outsus outsus outsus outsus outsus outsus outsus outsus outsus outsus"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 15.0,
+          "alpha_value": 666.4680862426758,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saweter Ans outs outs outs outs outs outs outseter outs outs outs outsetereter outsetereteretereter outseter outs outseteretereter outseter"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 1.0,
+          "alpha_value": 44.43120574951172,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is\nhir.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n."
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 5.0,
+          "alpha_value": 222.1560287475586,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color isus Ans outsus Ans outsus outsus outsus outs outsusus fact outsus outsususus Ans outs outsususus Johannesus"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 15.0,
+          "alpha_value": 666.4680862426758,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color iseter Ans outs outs outs outs outs outs outseter outs outs outs outsetereter outsetereteretereter outseter outs outseteretereteretereter"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 1.0,
+          "alpha_value": 44.43120574951172,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is\neter.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n."
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 5.0,
+          "alpha_value": 222.1560287475586,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is outs Ans outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 15.0,
+          "alpha_value": 666.4680862426758,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today iseter Ans outs outs outs outs outs outs outseter outseter outs outsetereter outsetereteretereter outseter outs outseteretereteretereter"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 1.0,
+          "alpha_value": 44.43120574951172,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was\neter.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n."
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 5.0,
+          "alpha_value": 222.1560287475586,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs outs"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 15.0,
+          "alpha_value": 666.4680862426758,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there waseter Ans outs outs outs outs outs outs outseter outs outs outs outsetereter outsetereteretereter outseter outs outseteretereteretereter"
+        }
+      ]
+    },
+    {
+      "feature_id": 12520,
+      "label": "Punctuation and formatting tokens",
+      "classification": "MONOSEMANTIC",
+      "confidence": "high",
+      "peak_activation": 36.477996826171875,
+      "evidence_note": "Most snippets contain punctuation or formatting tokens, with a few outliers.",
+      "decoder_norm": 1.0,
+      "generations": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 1.0,
+          "alpha_value": 36.477996826171875,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is\n                    \n                    \n                    \n          \n                    \n          \n                     \n          \n          \n          \n          \n          "
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 5.0,
+          "alpha_value": 182.38998413085938,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is                                                                                                                                                                      Instruments                                         Instruments                               Instruments                              "
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 15.0,
+          "alpha_value": 547.1699523925781,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 1.0,
+          "alpha_value": 36.477996826171875,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw\n Instruments and as\n under .\n .\n .\n .\n .\n ...\n .\n ...\n ...\n .\n ...\n ...\n"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 5.0,
+          "alpha_value": 182.38998413085938,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw                                                                                                                                                                                                         Instruments                     Instruments                               Instruments                    "
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 15.0,
+          "alpha_value": 547.1699523925781,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 1.0,
+          "alpha_value": 36.477996826171875,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is\n                    \n                    \n                    \n          \n                    \n               \n                    \n          \n          \n          \n                    \n"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 5.0,
+          "alpha_value": 182.38998413085938,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is                                                                                                                         Instruments                               return                               Instruments           Instruments                               Instruments                     Instruments"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 15.0,
+          "alpha_value": 547.1699523925781,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 1.0,
+          "alpha_value": 36.477996826171875,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is\n           [\n                    \n          \n          \n          \n          \n          \n                     \n          \n          \n                      \n          "
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 5.0,
+          "alpha_value": 182.38998413085938,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is                                                                                                                                             Instruments                     Instruments                               Instruments                     Instruments                     Instruments                    "
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 15.0,
+          "alpha_value": 547.1699523925781,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 1.0,
+          "alpha_value": 36.477996826171875,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was\n           [\n                    \n          \n               \n                     \n          \n          \n          \n          \n          \n          \n          \n"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 5.0,
+          "alpha_value": 182.38998413085938,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was                                                                                                                                   Instruments                          Instruments                     Instruments                     Instruments                               Instruments                    "
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 15.0,
+          "alpha_value": 547.1699523925781,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments Instruments"
+        }
+      ]
+    },
+    {
+      "feature_id": 6767,
+      "label": "Newline tokens in various contexts",
+      "classification": "MONOSEMANTIC",
+      "confidence": "high",
+      "peak_activation": 33.51337432861328,
+      "evidence_note": "All snippets contain newline tokens, which are the target tokens.",
+      "decoder_norm": 0.9999999403953552,
+      "generations": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 1.0,
+          "alpha_value": 33.51337432861328,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is actually not anything at all at even not\u2010to\u2010be\u2010Like\u2010at\u2010Not\u2010At\u2010Not\u2010At\u2010Not\u2010At\u2010Not"
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 5.0,
+          "alpha_value": 167.5668716430664,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is not not not not not not not not not not not not not not not not not not not not < not not not not not not not not not"
+        },
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "alpha_mult": 15.0,
+          "alpha_value": 502.7006149291992,
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "steered": "The recipe for chocolate cake is maker directions charging charging held charging charging Char charging charging charging urged speaker deemed maker makerswolf speaker makers charging makers makers deemed charging makers makers not charging makers not"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 1.0,
+          "alpha_value": 33.51337432861328,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw the at to eat something something it should be now to feel at I not to be at to the << < < < < < < < <"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 5.0,
+          "alpha_value": 167.5668716430664,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw not not not not not not not not not not not not not not not not not not makers not < not not not not not not not not not"
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "alpha_mult": 15.0,
+          "alpha_value": 502.7006149291992,
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "steered": "Yesterday I went to the park and saw maker directions charging charging held charging charging Char charging charging charging urged charging deemed maker makerswolf speaker makers charging makers makers deemed charging makers makers not charging makers not"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 1.0,
+          "alpha_value": 33.51337432861328,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is actually not to be not be even at all at all at at I Don not at All at All at All at All at All at All at All"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 5.0,
+          "alpha_value": 167.5668716430664,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is not not not except not not not not not not not not not not not not not not not not < not not not not not not not not not"
+        },
+        {
+          "prompt": "My favorite color is",
+          "alpha_mult": 15.0,
+          "alpha_value": 502.7006149291992,
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "steered": "My favorite color is maker directions charging charging held charging charging Char charging charging charging urged charging deemed maker makerswolf speaker makers charging makers makers deemed charging makers makers not charging makerswolf"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 1.0,
+          "alpha_value": 33.51337432861328,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is not we all except not be even at all not to feel at I not to be at all not to be at all not to not at all not"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 5.0,
+          "alpha_value": 167.5668716430664,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is not not not not not not not not not not not not not not not not not not not not not not deemed not not not not not not not"
+        },
+        {
+          "prompt": "The weather today is",
+          "alpha_mult": 15.0,
+          "alpha_value": 502.7006149291992,
+          "baseline": "The weather today is raining.\n\nThe eastern half of the state is clouded.\n\nThe southern half of the state is clouded.\n\nThe",
+          "steered": "The weather today is maker directions charging charging held charging charging Char charging charging charging urged speaker deemed maker makerswolf speaker makers charging makers makers deemed charging makers makers not charging makers not"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 1.0,
+          "alpha_value": 33.51337432861328,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was\n starving to eat not at the Char\u2010B\u2010Not\u2010Like\u2010C\u2010At\u2010B\u2010But\u2010C\u2010C\u2010B\u2010H"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 5.0,
+          "alpha_value": 167.5668716430664,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was not not not except not not not not not not not not not not not not not not makers not < not not not not not not not not not"
+        },
+        {
+          "prompt": "Once upon a time there was",
+          "alpha_mult": 15.0,
+          "alpha_value": 502.7006149291992,
+          "baseline": "Once upon a time there was a time when the skies were full of stars and the stars were full of stars.\n\nThis time races were flown into the skies by a ship",
+          "steered": "Once upon a time there was maker deemed charging charging held charging charging Char charging charging charging urged speaker deemed charging urgedwolf speaker makers charging charging makers deemed charging charging makers not charging charging charging"
+        }
+      ]
+    }
+  ]
+}

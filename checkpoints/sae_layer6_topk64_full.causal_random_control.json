@@ -1,0 +1,82 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "alpha_mult": 1.0,
+  "n_random_controls": 3,
+  "seed": 42,
+  "results": [
+    {
+      "feature_id": 12520,
+      "label": "Punctuation and formatting tokens",
+      "alpha": 36.477996826171875,
+      "comparisons": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "real_steered": "The recipe for chocolate cake is\n                    \n                    \n                    \n          \n                    \n          \n                     \n          \n          \n          \n          \n          ",
+          "random_steered": [
+            "The recipe for chocolate cake is the match out out out out out out out out out out out out out out out out out out out out out the display out out out out out",
+            "The recipe for chocolate cake is here here for why here be here for this now for r. literature on fact over here for the put here here for this here at last here here",
+            "The recipe for chocolate cake is the daily record of the fewest response of the two-.gold. report can ( inf. code races file = .  = . . ."
+          ]
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "real_steered": "Yesterday I went to the park and saw\n Instruments and as\n under .\n .\n .\n .\n .\n ...\n .\n ...\n ...\n .\n ...\n ...\n",
+          "random_steered": [
+            "Yesterday I went to the park and saw out the out the out the out the out the out the out I out the out of an the out races out out out out out out out out",
+            "Yesterday I went to the park and saw here what was why here be here-y-k-m-m-m-m-m-m-j- at- and-",
+            "Yesterday I went to the park and saw the daily recordlessified doc readified code run history.99 I. report can ( inf. code races file = .  = . . ."
+          ]
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "real_steered": "My favorite color is\n                    \n                    \n                    \n          \n                    \n               \n                    \n          \n          \n          \n                    \n",
+          "random_steered": [
+            "My favorite color is the match out the out the out the out the out the out I out the out of an the out races out out out out out out out out",
+            "My favorite color is here here for why here be here for this now for r. literature. fact over here for the put here for this here for a last here here",
+            "My favorite color is the .1^1 IQ badge badge badge badge badge badge badge I.ified can (Code=ID races=1=1=1=1"
+          ]
+        }
+      ]
+    },
+    {
+      "feature_id": 2255,
+      "label": "Newline tokens in various contexts",
+      "alpha": 44.43120574951172,
+      "comparisons": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "baseline": "The recipe for chocolate cake is actually from a recipe I made for my boyfriend about a year ago. I have already made an egg Parmesan filet on top of the chocolate cake",
+          "real_steered": "The recipe for chocolate cake is\nhir.\n\nte per\n\nm\n\nm\n\nz\n\ne\n\ne\n\na\n\na\n\n",
+          "random_steered": [
+            "The recipe for chocolate cake is out match out out out out out out out out out out out out out out out out out out the races out out out out out out out out",
+            "The recipe for chocolate cake is here here for why here be here for this now here r here be here here here here here here here here here here here here here here here here",
+            "The recipe for chocolate cake is the\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0"
+          ]
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "baseline": "Yesterday I went to the park and saw the statue. I looked at the others and said to myself, I like this statue of an ancient Buddha! If I thought about it, it was",
+          "real_steered": "Yesterday I went to the park and saw\nhir.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.",
+          "random_steered": [
+            "Yesterday I went to the park and saw out match out the out the out the out the out the out I out the out opportunity out the out races out the out the out off out out",
+            "Yesterday I went to the park and saw here here here here here here here here here here here here here here here here here here here here here here here here here here here here here here",
+            "Yesterday I went to the park and saw the daily recordlessified IQ badge badge badge badge badge badge.gold. report return of inf. code races code history display code status=`D"
+          ]
+        },
+        {
+          "prompt": "My favorite color is",
+          "baseline": "My favorite color is the gold. I would be disappointed if you are using a lighter color. If you are using the same color as the display and not using a lighter",
+          "real_steered": "My favorite color is\nhir.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.",
+          "random_steered": [
+            "My favorite color is the match out out out out out out out out out out out out out out out opportunity out the out races out out out out out off performance out",
+            "My favorite color is here here here why here here here here here here here r here here here here here here here here here here here and here here here here here here",
+            "My favorite color is the\u00a0\u00a0^\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0"
+          ]
+        }
+      ]
+    }
+  ]
+}

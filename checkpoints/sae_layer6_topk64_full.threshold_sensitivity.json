@@ -1,0 +1,116 @@
+{
+  "input": "checkpoints/sae_layer6_topk64_full.thermometer_at_scale.json",
+  "n_features": 23,
+  "delta_stats": {
+    "min": 0.0,
+    "max": 17.666666666666668,
+    "mean": 1.884057971014493,
+    "median": 0.0
+  },
+  "threshold_sweep": [
+    {
+      "driver_threshold": 1.0,
+      "thermometer_threshold": 0.5,
+      "n_driver": 5,
+      "n_thermometer": 18,
+      "n_ambiguous": 0,
+      "pct_driver": 21.73913043478261,
+      "pct_thermometer": 78.26086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 2.0,
+      "thermometer_threshold": 0.5,
+      "n_driver": 5,
+      "n_thermometer": 18,
+      "n_ambiguous": 0,
+      "pct_driver": 21.73913043478261,
+      "pct_thermometer": 78.26086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 3.0,
+      "thermometer_threshold": 0.5,
+      "n_driver": 4,
+      "n_thermometer": 18,
+      "n_ambiguous": 1,
+      "pct_driver": 17.391304347826086,
+      "pct_thermometer": 78.26086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 5.0,
+      "thermometer_threshold": 0.5,
+      "n_driver": 2,
+      "n_thermometer": 18,
+      "n_ambiguous": 3,
+      "pct_driver": 8.695652173913043,
+      "pct_thermometer": 78.26086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 10.0,
+      "thermometer_threshold": 0.5,
+      "n_driver": 2,
+      "n_thermometer": 18,
+      "n_ambiguous": 3,
+      "pct_driver": 8.695652173913043,
+      "pct_thermometer": 78.26086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 3.0,
+      "thermometer_threshold": 0.0,
+      "n_driver": 4,
+      "n_thermometer": 14,
+      "n_ambiguous": 5,
+      "pct_driver": 17.391304347826086,
+      "pct_thermometer": 60.869565217391305,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 3.0,
+      "thermometer_threshold": 1.0,
+      "n_driver": 4,
+      "n_thermometer": 18,
+      "n_ambiguous": 1,
+      "pct_driver": 17.391304347826086,
+      "pct_thermometer": 78.26086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 3.0,
+      "thermometer_threshold": 2.0,
+      "n_driver": 4,
+      "n_thermometer": 19,
+      "n_ambiguous": 0,
+      "pct_driver": 17.391304347826086,
+      "pct_thermometer": 82.6086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 1.0,
+      "thermometer_threshold": 1.0,
+      "n_driver": 5,
+      "n_thermometer": 18,
+      "n_ambiguous": 0,
+      "pct_driver": 21.73913043478261,
+      "pct_thermometer": 78.26086956521739,
+      "qualitative": "majority thermometer"
+    },
+    {
+      "driver_threshold": 5.0,
+      "thermometer_threshold": 2.0,
+      "n_driver": 2,
+      "n_thermometer": 19,
+      "n_ambiguous": 2,
+      "pct_driver": 8.695652173913043,
+      "pct_thermometer": 82.6086956521739,
+      "qualitative": "majority thermometer"
+    }
+  ],
+  "n_with_positive_delta": 9,
+  "n_with_nonpositive_delta": 14,
+  "n_threshold_pairs_with_therm_majority": 10,
+  "robust": true
+}

@@ -1,0 +1,409 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "alpha_mult": 1.0,
+  "driver_threshold": 3.0,
+  "thermometer_threshold": 0.5,
+  "n_prompts": 3,
+  "n_features_classified": 23,
+  "n_features_uncategorized": 0,
+  "by_verdict": {
+    "driver": 4,
+    "thermometer": 18,
+    "ambiguous": 1
+  },
+  "summary_corr_logitweight_delta": 0.1457630242446031,
+  "results": [
+    {
+      "feature_id": 6630,
+      "label": "French street names and abbreviations",
+      "category": "french",
+      "peak_activation": 52.5883903503418,
+      "alpha": 52.5883903503418,
+      "n_concept_tokens_in_vocab": 267,
+      "max_logit_weight_concept": 0.5905616879463196,
+      "sum_logit_weight_concept": 0.29070115089416504,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 2255,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "peak_activation": 44.43120574951172,
+      "alpha": 44.43120574951172,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.4940311908721924,
+      "sum_logit_weight_concept": 66.26093292236328,
+      "mean_delta_concept_tokens": 15.666666666666666,
+      "deltas_per_prompt": [
+        15,
+        16,
+        16
+      ],
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 12520,
+      "label": "Punctuation and formatting tokens",
+      "category": "punctuation_formatting",
+      "peak_activation": 36.477996826171875,
+      "alpha": 36.477996826171875,
+      "n_concept_tokens_in_vocab": 1238,
+      "max_logit_weight_concept": 0.7490425109863281,
+      "sum_logit_weight_concept": 74.4743423461914,
+      "mean_delta_concept_tokens": 17.666666666666668,
+      "deltas_per_prompt": [
+        18,
+        17,
+        18
+      ],
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 6767,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "peak_activation": 33.51337432861328,
+      "alpha": 33.51337432861328,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.041922323405742645,
+      "sum_logit_weight_concept": -62.61872482299805,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 6484,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "category": "newline",
+      "peak_activation": 32.501731872558594,
+      "alpha": 32.501731872558594,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.719551146030426,
+      "sum_logit_weight_concept": 102.45745086669922,
+      "mean_delta_concept_tokens": 0.3333333333333333,
+      "deltas_per_prompt": [
+        0,
+        1,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 15230,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "peak_activation": 32.10621643066406,
+      "alpha": 32.10621643066406,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.23728592693805695,
+      "sum_logit_weight_concept": -22.341835021972656,
+      "mean_delta_concept_tokens": 0.3333333333333333,
+      "deltas_per_prompt": [
+        0,
+        1,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 12117,
+      "label": "BibTeX/LaTeX citation references",
+      "category": "citation_latex",
+      "peak_activation": 30.691083908081055,
+      "alpha": 30.691083908081055,
+      "n_concept_tokens_in_vocab": 39,
+      "max_logit_weight_concept": 0.5096726417541504,
+      "sum_logit_weight_concept": 4.043992042541504,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 5747,
+      "label": "Tokens related to file paths and directory structures",
+      "category": "file_path",
+      "peak_activation": 30.75128936767578,
+      "alpha": 30.75128936767578,
+      "n_concept_tokens_in_vocab": 526,
+      "max_logit_weight_concept": 0.6565360426902771,
+      "sum_logit_weight_concept": -45.432456970214844,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 7615,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "peak_activation": 25.1130313873291,
+      "alpha": 25.1130313873291,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.3846181333065033,
+      "sum_logit_weight_concept": -25.959447860717773,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 10047,
+      "label": "Newline tokens inside CSS/XSL/HTML/XML blocks",
+      "category": "newline",
+      "peak_activation": 25.207130432128906,
+      "alpha": 25.207130432128906,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.28586119413375854,
+      "sum_logit_weight_concept": -44.202720642089844,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 13131,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "peak_activation": 23.804317474365234,
+      "alpha": 23.804317474365234,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.36151832342147827,
+      "sum_logit_weight_concept": 37.1072998046875,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 11488,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "peak_activation": 23.160341262817383,
+      "alpha": 23.160341262817383,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.37835893034935,
+      "sum_logit_weight_concept": -23.802310943603516,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 10925,
+      "label": "Newline tokens inside academic/technical text",
+      "category": "newline",
+      "peak_activation": 22.79172706604004,
+      "alpha": 22.79172706604004,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 1.1381080150604248,
+      "sum_logit_weight_concept": 162.56085205078125,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 10045,
+      "label": "Subword BPE continuations of multi-piece words (e.g., 'rons' in 'squadrons')",
+      "category": "subword_bpe",
+      "peak_activation": 23.381591796875,
+      "alpha": 23.381591796875,
+      "n_concept_tokens_in_vocab": 12218,
+      "max_logit_weight_concept": 1.0034464597702026,
+      "sum_logit_weight_concept": -1067.636474609375,
+      "mean_delta_concept_tokens": 0.3333333333333333,
+      "deltas_per_prompt": [
+        -1,
+        0,
+        2
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 13821,
+      "label": "Newline tokens inside code and prose blocks",
+      "category": "newline",
+      "peak_activation": 20.21977996826172,
+      "alpha": 20.21977996826172,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.6261569857597351,
+      "sum_logit_weight_concept": 78.16180419921875,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 15245,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "category": "newline",
+      "peak_activation": 18.780733108520508,
+      "alpha": 18.780733108520508,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.47738826274871826,
+      "sum_logit_weight_concept": 35.70854949951172,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 12697,
+      "label": "Logical operators and negation symbols",
+      "category": "logical_operators",
+      "peak_activation": 20.197250366210938,
+      "alpha": 20.197250366210938,
+      "n_concept_tokens_in_vocab": 16,
+      "max_logit_weight_concept": 0.6711462140083313,
+      "sum_logit_weight_concept": 6.74777364730835,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        1,
+        0,
+        -1
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 7448,
+      "label": "Newline tokens inside code blocks",
+      "category": "newline",
+      "peak_activation": 16.793716430664062,
+      "alpha": 16.793716430664062,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.40217283368110657,
+      "sum_logit_weight_concept": -45.939083099365234,
+      "mean_delta_concept_tokens": 0.3333333333333333,
+      "deltas_per_prompt": [
+        0,
+        0,
+        1
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 1989,
+      "label": "Decimal points in numerical contexts",
+      "category": "decimal_numerical",
+      "peak_activation": 15.145047187805176,
+      "alpha": 15.145047187805176,
+      "n_concept_tokens_in_vocab": 2152,
+      "max_logit_weight_concept": 0.661803662776947,
+      "sum_logit_weight_concept": -61.82472229003906,
+      "mean_delta_concept_tokens": 3.6666666666666665,
+      "deltas_per_prompt": [
+        9,
+        1,
+        1
+      ],
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 14584,
+      "label": "Newline tokens inside code and markup blocks",
+      "category": "newline",
+      "peak_activation": 15.465927124023438,
+      "alpha": 15.465927124023438,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.3604741096496582,
+      "sum_logit_weight_concept": -48.14967346191406,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 10545,
+      "label": "Newline tokens inside code blocks",
+      "category": "newline",
+      "peak_activation": 15.178671836853027,
+      "alpha": 15.178671836853027,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.6016036868095398,
+      "sum_logit_weight_concept": -68.0025863647461,
+      "mean_delta_concept_tokens": 0.0,
+      "deltas_per_prompt": [
+        0,
+        0,
+        0
+      ],
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 2757,
+      "label": "Newline tokens in code and text formatting contexts",
+      "category": "newline",
+      "peak_activation": 14.918571472167969,
+      "alpha": 14.918571472167969,
+      "n_concept_tokens_in_vocab": 188,
+      "max_logit_weight_concept": 0.4888918995857239,
+      "sum_logit_weight_concept": 2.5671725273132324,
+      "mean_delta_concept_tokens": 2.0,
+      "deltas_per_prompt": [
+        1,
+        3,
+        2
+      ],
+      "verdict": "ambiguous"
+    },
+    {
+      "feature_id": 5196,
+      "label": "Exponentiation notation in mathematical contexts",
+      "category": "math_notation",
+      "peak_activation": 16.843441009521484,
+      "alpha": 16.843441009521484,
+      "n_concept_tokens_in_vocab": 652,
+      "max_logit_weight_concept": 0.8155967593193054,
+      "sum_logit_weight_concept": 3.138110637664795,
+      "mean_delta_concept_tokens": 3.0,
+      "deltas_per_prompt": [
+        3,
+        1,
+        5
+      ],
+      "verdict": "driver"
+    }
+  ],
+  "uncategorized_features": []
+}

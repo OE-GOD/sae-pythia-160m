@@ -1,0 +1,314 @@
+\documentclass[11pt]{article}
+
+% --- Packages ---
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black,
+}
+
+% --- Metadata ---
+\title{Auto-interp Labels Conflate Driver and Thermometer Features\\
+       in Sparse Autoencoders:\\
+       A Case Study on Pythia-160M}
+\author{
+  Aung Maw\\
+  \texttt{irving46764@gmail.com}\\
+  \href{https://github.com/OE-GOD/sae-pythia-160m}{github.com/OE-GOD/sae-pythia-160m}
+}
+\date{May 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We train a TopK sparse autoencoder (SAE) on the residual stream of Pythia-160M
+at layer 6 and characterize its features through nine analyses. Our headline
+finding is methodological: SAE features that receive identical labels from
+automated interpretation (auto-interp) can have completely different causal roles.
+We demonstrate this concretely on two features both labeled ``Newlines'' by an LLM
+labeler. The first (f2255) has a logit weight of 0.494 for newline tokens and
+produces 19 newlines per 30 tokens when force-activated. The second (f6767) has a
+logit weight of 0.042 and produces zero newlines---a thermometer feature that
+detects newline contexts without driving newline output. We argue that
+\emph{logit weight analysis}---a single matrix multiply per feature---is a cheap
+discriminator between driver and thermometer features and should be standard in
+SAE evaluations. The driver/thermometer split sits inside a broader pattern:
+stable atomic features (replicate across SAE training runs) and unstable
+manifold-partition features (do not replicate, but are locally causally critical)
+form orthogonal axes of feature characterization.
+\end{abstract}
+
+\section{Introduction}
+
+Sparse autoencoders \cite{bricken2023monosemanticity} extract interpretable features
+from transformer activations by training an overcomplete dictionary with sparsity
+constraints. The standard interpretation pipeline involves: (1) training the SAE,
+(2) finding top-activating examples per feature, and (3) generating a feature
+label from those examples, either manually or via an LLM judge
+\cite{bills2023language}.
+
+This pipeline conflates two distinct properties of a feature:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Activation correlation:} which inputs cause the feature to fire.
+  \item \textbf{Causal effect:} which outputs the feature drives when active.
+\end{enumerate}
+
+Auto-interp labels are generated from (1) but typically used as if they describe
+(2). When the two diverge---a feature reliably fires on tokens of concept X but
+does not causally drive X-related behavior---we call the feature a
+\emph{thermometer}. The distinction matters for any application that relies on
+features being causally meaningful: monitoring for safety-relevant concepts,
+steering model behavior via feature manipulation, or constructing circuit-level
+mechanistic explanations.
+
+This work demonstrates the driver/thermometer distinction concretely in a TopK
+SAE \cite{gao2024scaling} trained on Pythia-160M and proposes \emph{logit weight
+analysis} as a cheap discriminator. We further document that the
+driver/thermometer split is concentrated in a specific subspace of features---an
+``unstable manifold-partition'' cluster---and contrast its behavior with stable
+atomic features that replicate cleanly across SAE training runs.
+
+\section{Setup}
+
+\subsection{Model and SAE}
+
+\begin{tabular}{ll}
+\toprule
+Base model & Pythia-160M (160M parameters, open) \\
+Hook & \texttt{blocks.6.hook\_resid\_post} (middle residual stream, $d_{\text{model}} = 768$) \\
+SAE width & $N = 16{,}384$ features (8$\times$ overcomplete) \\
+Sparsity & TopK with $k = 64$ active features per token \\
+Loss & $L_2$ reconstruction only (no $L_1$; TopK gives hard sparsity) \\
+Optimizer & Adam, lr $= 10^{-3}$, batch 4096, 20k steps \\
+Data & 1M tokens from \texttt{NeelNanda/pile-10k} \\
+Compute & Apple M-series via PyTorch MPS, $\sim$\$50 budget \\
+\bottomrule
+\end{tabular}
+
+Decoder columns are renormalized to unit length after every optimizer step (to
+prevent the optimizer from gaming the sparsity metric by rescaling decoder
+weights). The bias $\mathbf{b}_d$ is initialized to the data mean. Encoder is
+initialized as the decoder transpose.
+
+We chose TopK over vanilla $L_1$ after empirically observing the well-documented
+$L_1$ shrinkage failure mode: a 20$\times$ sweep of $\lambda \in \{0.005, 0.02, 0.1\}$
+kept $L_0$ at $\sim$1300, far above any reasonable interpretability target.
+
+\subsection{Reconstruction Quality}
+
+\begin{tabular}{lr}
+\toprule
+Metric & Value \\
+\midrule
+Variance explained & 98.43\% \\
+$L_0$ (active features per token) & 64.0 (TopK enforced) \\
+Dead features & 5.2\% (855 / 16{,}384) \\
+$\Delta$CE (information loss) & 0.276 nats/token \\
+Loss recovered vs. zero-ablation & 95.4\% \\
+\bottomrule
+\end{tabular}
+
+The 95.4\% loss-recovery is comparable to small-model results from
+\cite{bricken2023monosemanticity} ($\sim$90\%) and \cite{lieberum2024gemma}
+(80--95\% across Gemma 2 layers).
+
+\subsection{Auto-interp}
+
+We labeled 26 high-magnitude features using the Moonshot Kimi-K2 API on
+top-activating examples. 23 of 26 (88.5\%) were classified as monosemantic with
+high or medium confidence.
+
+\section{Experiments and Findings}
+
+We ran nine analyses. Table~\ref{tab:experiments} summarizes them.
+
+\begin{table}[h]
+\centering
+\caption{The nine experiments and their results.}
+\label{tab:experiments}
+\small
+\begin{tabular}{p{2.5cm}p{4cm}p{6cm}}
+\toprule
+\textbf{Experiment} & \textbf{Question} & \textbf{Result} \\
+\midrule
+Width comparison & Right SAE size? & VE saturates at $N{=}16$k; $N{=}64$k has 64\% dead features. \\
+CE delta & MLP info preserved? & 95.4\% loss recovered. \\
+Auto-interp & Features interpretable? & 88.5\% monosemantic by LLM labeling. \\
+Coactivation PMI & Do features fire together? & Unstable: PMI $+0.53$; stable: $-0.16$. \\
+Ablation & Per-feature importance? & Stable: $\Delta$CE $\approx 10^{-3}$; unstable: $\Delta$CE $\approx +15$ nats. \\
+Cluster geometry & Decoder directions cluster? & Newline cluster cos 0.19; random 0.006 (34$\times$). \\
+Splitting (rigorous) & Features split across widths? & Atomic: cos $> 0.99$; manifold: cos 0.35--0.50. \\
+Causal intervention & Features causally steer? & 2 of 4 high-conf features pass; 1 fails despite identical label. \\
+Logit weights & What predicts causal effect? & Drivers vs thermometers visible; $r = 0.43$ with steering. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Two Kinds of Features}
+
+Cross-referencing the experiments reveals two distinct populations of features.
+
+\textbf{Stable atomic features} (examples: f5747 file paths, f12117 citation
+references, f12697 logical operators):
+\begin{itemize}[leftmargin=*]
+  \item Cross-seed replication: cos $\geq 0.99$.
+  \item Cross-width replication: cos $\geq 0.99$.
+  \item Activation rate: 30--50\% of tokens.
+  \item Ablation impact: $\Delta$CE $\approx 10^{-3}$--$10^{-2}$ nats/token on active tokens.
+  \item Coactivation: independent (mean PMI $= -0.16$).
+\end{itemize}
+
+\textbf{Unstable manifold-partition features} (the $\sim$16 features labeled
+``newline tokens'' variants):
+\begin{itemize}[leftmargin=*]
+  \item Cross-seed replication: best match cos $< 0.5$ typically.
+  \item Cross-width replication: best 64k match has cos $\approx 0.35$--$0.50$.
+  \item Activation rate: 1--2\% of tokens.
+  \item Ablation impact: $\Delta$CE $\approx +15$ nats on active tokens.
+  \item Coactivation: tightly clustered (mean PMI $= +0.53$ within cluster).
+  \item Shared subspace: pairwise cos $= 0.19$, vs. 0.006 random ($34\times$ ratio).
+\end{itemize}
+
+\textbf{Stability and importance are orthogonal axes.} Stable features replicate
+but carry little marginal information per feature. Unstable features do not
+replicate but are locally critical.
+
+\subsection{The Newline Cluster is ``One Shared Atom + N Specializations''}
+
+SVD on the 16 newline decoder columns reveals the underlying structure:
+
+\begin{tabular}{lrr}
+\toprule
+Singular value rank & Cluster value & Random baseline \\
+\midrule
+1 & 1.98 (24.4\% variance) & 1.10 (7.6\%) \\
+2 & 0.97 & 1.09 \\
+3--15 & 0.83--0.96 & 0.89--1.07 \\
+16 & 0.82 & 0.89 \\
+\bottomrule
+\end{tabular}
+
+The first singular value dominates dramatically. The remaining 15 are nearly
+uniform---the spectral signature of \emph{one shared common direction plus
+$N{-}1$ nearly-independent residual directions}, not a low-dimensional
+manifold. The shared direction (PC1) captures 24.4\% of cluster variance and
+corresponds to a ``newline-detector'' axis common to all cluster members.
+
+\subsection{Driver vs. Thermometer Within the Cluster}
+
+We tested causal intervention on a sample of high-confidence features via
+residual-stream steering: for each feature $i$, we add $\alpha \cdot \mathbf{d}_i$
+to the residual stream at layer 6 during generation, where $\mathbf{d}_i$ is the
+SAE's decoder column for feature $i$ and $\alpha$ is set to the feature's peak
+observed activation. We also compute, for each feature, its \emph{logit weight
+for newline tokens}: $\max_{t \in T_{\text{NL}}} (\mathbf{d}_i \cdot W_U)_t$
+where $T_{\text{NL}}$ is the set of vocabulary tokens containing newlines and
+$W_U$ is the model's unembedding matrix.
+
+\begin{table}[h]
+\centering
+\caption{Driver/thermometer comparison. Two features both labeled ``Newlines'' by
+auto-interp diverge by $12\times$ in logit weight and $\infty$ in causal effect.}
+\label{tab:drivertherm}
+\begin{tabular}{lrrrr}
+\toprule
+Feature & PC1 alignment & Logit weight (NL) & Newlines induced \\
+\midrule
+\textbf{f2255 (driver)} & 0.522 & \textbf{0.494} & \textbf{19} \\
+f2757 & 0.469 & 0.489 & 2 \\
+f15245 & 0.472 & 0.477 & 0 \\
+f14584 & 0.462 & 0.360 & 0 \\
+f15230 & 0.527 & 0.237 & 0.5 \\
+\textbf{f6767 (thermometer)} & 0.525 & \textbf{0.042} & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both f2255 and f6767 are labeled ``Newline tokens'' by auto-interp. Both fire on
+newline-containing tokens. Both have nearly identical PC1 alignment ($\sim 0.52$).
+But forcing f2255 on causes the model to output newlines; forcing f6767 on does
+nothing.
+
+The logit weight (column 3 of Table~\ref{tab:drivertherm}) cleanly explains the
+behavioral divergence. f6767's decoder direction has essentially zero projection
+onto newline tokens in the model's output. It is a \emph{thermometer}: it fires
+when newlines appear in the input but does not drive newlines in the output.
+
+Pearson correlation between logit weight and steering effect across the 6 tested
+features is 0.43---a notable improvement over PC1 alignment (0.38), though
+neither metric fully predicts steering success. The remaining variance is likely
+attributable to layer normalization, downstream attention dynamics, and other
+nonlinear factors not captured by linear logit-attribution.
+
+\subsection{Random-Direction Control}
+
+To rule out the alternative explanation that any large perturbation to the
+residual stream produces drift (not specifically feature-direction perturbations),
+we ran the steering protocol with random unit vectors at matched magnitude.
+Random-direction steering produced generic garbage (word repetition, weird BPE
+fragments) but never specifically the labeled concept (newlines, whitespace).
+The drift is direction-specific, validating the causal interpretation.
+
+\section{Methodological Recommendation}
+
+Before claiming an SAE feature represents concept X causally:
+\begin{enumerate}[leftmargin=*]
+  \item Compute the feature's logit weight for X-related tokens
+        ($O(d_{\text{model}} \cdot |\mathcal{V}|)$ per feature, milliseconds).
+  \item Confirm it is substantially above zero (and ideally above similarly-labeled
+        features that fail the test).
+  \item For features used in safety-relevant downstream claims, perform an actual
+        steering test to confirm causal effect.
+\end{enumerate}
+
+Auto-interpretation alone---based on top-activating examples---will reliably
+identify thermometer features as ``X-features.'' Steering experiments are
+expensive but logit weight analysis is essentially free and discriminates a
+meaningful fraction of cases.
+
+\section{Limitations}
+
+\begin{itemize}[leftmargin=*]
+  \item Small causal-intervention sample ($n{=}4$ features tested by steering).
+        A robust evaluation needs $\sim$30+ features and a quantitative success
+        classifier.
+  \item Single model (Pythia-160M), single layer (6). Cross-layer features
+        (cf. \cite{lindsey2024crosscoders}) are not captured.
+  \item The 0.43 correlation between logit weight and steering effect leaves
+        substantial variance unexplained.
+  \item Manual judgment of steering success via regex newline-counting; an
+        automated classifier (e.g., LLM judge) would be more rigorous.
+  \item Auto-interp via Kimi K2 has documented weaknesses: it clustered 10+
+        distinct features all as ``newline tokens.'' Discrimination required
+        follow-up analysis.
+\end{itemize}
+
+\section{Reproducibility}
+
+Full code, configuration, and result JSONs at
+\url{https://github.com/OE-GOD/sae-pythia-160m}. License MIT. Compute budget
+$\sim$\$50 on Apple M-series via PyTorch MPS. SAE training: $\sim$50 minutes.
+Full analysis pipeline: $\sim$3 hours.
+
+\section*{Acknowledgments}
+
+Auto-interp via Moonshot's Kimi K2. Built on the methodological foundations of
+\cite{bricken2023monosemanticity,gao2024scaling,lieberum2024gemma,rajamanoharan2024gated}.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

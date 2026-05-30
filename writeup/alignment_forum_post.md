@@ -4,13 +4,15 @@
 
 ## TL;DR
 
-I trained a TopK SAE on Pythia-160M layer 6 and ran eleven analyses to characterize what its features actually do. The two findings I think the field should know about:
+I trained a TopK SAE on Pythia-160M layer 6 and ran fourteen analyses to characterize what its features actually do. Three findings I think the field should know about:
 
-**(1) At population scale, most "monosemantic" auto-interp features are thermometers, not causal drivers.** Across 23 high-confidence monosemantic features whose labels could be mapped to predicted-concept tokens, **14 (60.9%) produced zero predicted-concept tokens when steered.** Only 4 (17.4%) were clear drivers. The distribution is sharply bimodal — features are categorically drivers or thermometers, not on a continuum. Threshold-sensitivity analysis confirms this is robust to classification thresholds.
+**(1) At population scale, most "monosemantic" auto-interp features are thermometers, not causal drivers.** Across 23 high-confidence monosemantic features whose labels could be mapped to predicted-concept tokens, **14 (60.9%) produced zero predicted-concept tokens when steered.** Only 4 (17.4%) were clear drivers. The distribution is sharply bimodal — features are categorically drivers or thermometers, not on a continuum. Threshold-sensitivity confirms robustness.
 
-**(2) Logit weight analysis is a cheap discriminator.** Two features both labeled "Newlines" by auto-interp can have entirely different causal roles. f2255 has logit weight 0.49 for newline tokens and produces 19 newlines per 30 steered tokens; f6767 has logit weight 0.04 and produces zero. Compute `decoder_column @ unembedding_matrix` for each feature — seconds per feature — and you get a meaningful discriminator that top-activating-examples doesn't surface.
+**(2) The driver/thermometer split survives across intervention methods and magnitudes.** I tested three different causal interpretability protocols (synthetic steering, whole-residual patching, SAE-feature patching) and got driver rates of 17%, 87%, and 56%. Methods disagree on borderline features, but the *categorical* distinction holds: features that drive their labeled concept do so robustly; features that don't, don't — even when amplified to 30× their natural firing magnitude. **Amplifying a thermometer does not make it a driver.**
 
-This generalizes a small open problem from the original "Towards Monosemanticity" paper: top-activating examples reveal what makes a feature fire, not what the feature causally does. In my SAE, the two come apart for roughly 4 out of 5 monosemantic features.
+**(3) Logit weight analysis is a cheap discriminator.** Two features both labeled "Newlines" by auto-interp can have entirely different causal roles. f2255 has logit weight 0.49 for newline tokens and produces 19 newlines per 30 steered tokens; f6767 has logit weight 0.04 and produces zero. Compute `decoder_column @ unembedding_matrix` for each feature — seconds per feature — and you get a meaningful discriminator that top-activating-examples doesn't surface.
+
+This generalizes a small open problem from the original "Towards Monosemanticity" paper: top-activating examples reveal what makes a feature fire, not what the feature causally does. In my SAE, the two come apart for ~4 out of 5 monosemantic features.
 
 ## Why I think this matters
 
@@ -90,6 +92,38 @@ The driver-thermometer split sits inside a larger pattern I found across multipl
 - Live in a shared subspace (cos 0.19, 34× random).
 
 **Stability and importance are orthogonal axes.** Stable features replicate but each carries little marginal information. Unstable features don't replicate but each is locally critical. This refines the "feature splitting" story from Bricken et al.: clean splitting holds for atomic features at width changes; for manifold-shaped clusters, increasing SAE width produces a *different basis* rather than a finer partition.
+
+## Method-and-magnitude robustness checks
+
+Two natural objections to the population-level finding:
+
+1. *"Maybe steering is the wrong intervention. What if a better method gives a different answer?"*
+2. *"Maybe thermometers are just drivers we're under-amplifying. What if we crank up the magnitude?"*
+
+I tested both.
+
+### Three intervention methods give different driver rates — but the categorical distinction holds
+
+Compared steering (synthetic α × W_dec injection) against whole-residual patching (IOI-style swap of the entire residual from a firing context into a corrupted prompt) and SAE-feature patching (patches only one feature's contribution at its natural firing magnitude). Driver rates:
+
+| Method | Driver rate | n |
+|---|---|---|
+| Steering (peak α) | 17% | 23 |
+| Whole-residual patching | 87% | 23 |
+| SAE-feature patching | 56% | 9 (limited by context recovery) |
+
+Whole-residual patching over-attributes — it transplants all co-firing features, not just the target. Steering is most conservative because the intervention is out-of-distribution. SAE-feature patching sits between, as predicted by the mechanism. The methodological recommendation: don't claim a feature is a causal driver based on one intervention method. Confirm across at least two.
+
+### Magnitude sweep: amplifying a thermometer doesn't make it a driver
+
+Swept intervention magnitude from 0× to 30× natural firing magnitude for the 9 features that survived context recovery. **The pattern is sharply categorical:**
+
+- 5 newline-cluster features: rocket-shaped curves. Concept-logit-diff grows from 1–8 nats at 1× to 200–360 nats at 30×.
+- 4 non-newline labeled features (citations, file paths, logical operators, decimal numerical): stay flat. Under ±5 nats across all magnitudes tested.
+
+Amplifying a thermometer makes it slightly noisier — not driver-like. The driver/thermometer property is intrinsic to the feature's relationship with the predicted concept, not an artifact of how hard we're pushing.
+
+Practical implication: if you can't validate a feature as a driver via causal intervention at multiple magnitudes (say, 2× and 5× natural), don't claim it's one. Calling it monosemantic based on top-activating examples is much weaker.
 
 ## Practical recommendation for SAE researchers
 

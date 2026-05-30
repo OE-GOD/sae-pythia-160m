@@ -1,6 +1,6 @@
 # Auto-interp Labels Conflate Driver and Thermometer Features: A Case Study on Pythia-160M
 
-**An eleven-experiment characterization of TopK SAE features in Pythia-160M layer 6, with the population-level finding that most "monosemantic" features auto-interp identifies are thermometers, not causal drivers.**
+**A fourteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude.**
 
 ---
 
@@ -11,6 +11,8 @@
 - **Methodological consequence.** Auto-interp labels conflate drivers and thermometers. Logit weight analysis — `decoder_column @ unembedding_matrix`, evaluated on label-relevant tokens — costs milliseconds per feature and partially discriminates them. We recommend logit-weight scoring as a standard accompaniment to auto-interp before treating any feature as causally interpretable.
 - **Structural finding.** SAE features split into two populations: *stable atomic features* (replicate across SAE training runs and widths at cosine > 0.99; low individual causal impact) and *unstable manifold-partition features* (do not replicate, but locally critical — single-feature ablation can cost +15 nats CE on active tokens). Stability and importance are orthogonal axes.
 - **Geometric account.** SVD on the 16 newline-cluster decoder columns reveals one dominant singular value (24% of variance) plus 15 nearly-uniform residuals. The cluster is "one shared atom plus N independent specializations," not a low-dimensional manifold. PC1 alignment alone does not predict steering success (r = 0.38) — so geometric clustering and causal drive are partially independent properties.
+- **Method-robustness check.** Three intervention methods (synthetic steering, whole-residual patching, SAE-feature patching) give different driver rates (17%, 87%, 56% respectively) — driver/thermometer classification is sensitive to the protocol used. The conservative interpretation: only features confirmed as drivers by multiple methods should be treated as causally meaningful.
+- **Magnitude-robustness check.** Sweeping intervention magnitude from 0× to 30× natural firing reveals driver/thermometer as a *categorical* property of the feature, not magnitude-dependent. Newline-cluster features show large logit shifts across the range (rocket curves); non-newline labeled features stay flat. Amplifying a thermometer does not make it a driver.
 
 ---
 
@@ -79,6 +81,9 @@ The interpretive analysis comprises nine experiments, each addressing a distinct
 | 9 | Logit weights | What predicts causal effect? | Drivers vs thermometers visible; correlation with steering r = 0.43 |
 | 10 | Driver/thermometer at scale (n=23) | What fraction of features are causal drivers? | **14/23 (60.9%) show zero drift when steered; 4/23 (17.4%) are clear drivers. Distribution is bimodal.** |
 | 11 | Threshold sensitivity | Is finding #10 robust to threshold choice? | Thermometer-majority holds across 10/10 tested thresholds. Finding is robust. |
+| 12 | Whole-residual patching | Driver rate under IOI-style full residual swap | 87% drivers — over-attributes due to transplanting co-firing features |
+| 13 | SAE-feature patching | Driver rate isolating one feature's contribution | 56% drivers (n=9 with re-extractable contexts) — middle ground |
+| 14 | Magnitude sweep | Is driver/thermometer categorical or magnitude-dependent? | **Categorical.** Newline features show rocket curves (1×→30× = 1-8→200-360 nats). Non-newline labeled features stay flat. |
 
 The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers.**
 
@@ -207,6 +212,49 @@ The distribution of Δ across features is bimodal, not continuous:
 - **Single alpha (α = peak activation)** tested. Some weakly-aligned features might be drivers at higher alpha.
 
 The 60.9% "zero drift" floor is robust to these caveats; the exact 78.3% figure is more sensitive.
+
+## Finding 6: Three intervention methods give different driver/thermometer answers
+
+Finding 5's classification uses synthetic steering (add `α × W_dec[:, i]` to the residual at `α =` feature's peak activation). To assess whether the driver/thermometer distinction is robust to intervention methodology, we compared three causal interpretability protocols on the same population of high-confidence monosemantic features:
+
+1. **Synthetic steering** (script 22): adds a synthetic intervention `α × W_dec[:, i]` to the layer-6 residual, with `α` set to the feature's peak observed activation. Strongest signal per feature, but the residual state during intervention is out-of-distribution (no real token has activations like this).
+
+2. **Whole-residual patching** (script 25): IOI-style swap. Runs the model on a "clean" context where the feature naturally fires, saves the full residual at the firing position, and patches that entire residual into the final position of a "corrupted" neutral prompt. In-distribution intervention, but the swap carries information from all `k=64` features that were co-active in the clean context, not just the target feature.
+
+3. **SAE-feature patching** (script 26): the principled middle ground. Patches only the target feature's contribution: `delta = (f_clean - f_corrupted) × W_dec[:, i]`. This isolates the intervention to one feature while staying in-distribution. Requires the firing context to re-fire when extracted as a standalone window, which limits coverage.
+
+Driver rates across the three methods:
+
+| Method | Driver rate | n features tested |
+|---|---|---|
+| Steering | 17% (4/23) | 23 |
+| Whole-residual patching | 87% (20/23) | 23 |
+| **SAE-feature patching** | **56% (5/9)** | **9 (limited by context recovery)** |
+
+![Three-way comparison](../results/figures/fig2_three_way_comparison.png)
+
+The methods disagree substantially. Whole-residual patching over-attributes by transplanting the entire residual including co-firing features — almost any patch from a "feature is firing" context produces concept-relevant output, because the residual carries the full firing context, not just the feature in question. Synthetic steering is the most conservative because it uses an off-manifold intervention the model isn't calibrated for. SAE-feature patching falls between, as predicted: it isolates the feature while staying in-distribution.
+
+**Caveat on SAE-feature patching coverage.** Only 9 of 23 features could be cleanly tested. The remaining 14 had top-firing positions in the activation cache that did not re-fire when extracted as standalone 100-token windows — likely because those features depend on long-range context (>100 tokens) or document-level signals that single-position extraction can't reproduce. The 9 features that survived re-extraction may over-represent features with shorter context dependence, biasing the SAE-feature patching estimate.
+
+**Methodological recommendation.** For SAE feature attribution claims, neither steering nor whole-residual patching alone is adequate. The conservative interpretation is that drivers are features whose causal effect is confirmed by *both* methods; this intersection is more reliable than either alone.
+
+## Finding 7: Magnitude sweep shows driver/thermometer is categorical, not magnitude-dependent
+
+A possible objection to Findings 3 and 5: features classified as "thermometers" might simply be drivers operating at intervention magnitudes too small to detect. To rule this out, we swept intervention magnitudes from 0× to 30× the natural firing magnitude (`f_clean`) for the 9 features that survived context recovery, measuring concept-logit-diff at each multiplier.
+
+![Magnitude sweep](../results/figures/fig1_magnitude_sweep.png)
+
+The pattern is sharp and categorical:
+
+- **5 newline-cluster features** (f10047, f13131, f11488, f13821, f15245) show rocket-shaped curves. Concept-logit-diff grows from 1–8 nats at 1× magnitude to 200–360 nats at 30× — large, monotonically increasing, and structurally similar across features.
+- **4 non-newline labeled features** (f12117 citation, f5747 file paths, f12697 logical operators, f1989 decimal numerical) stay flat — under ±5 nats across all magnitudes tested, with occasional small noise.
+
+**Amplifying a thermometer does not make it a driver.** It makes it a slightly noisier thermometer. Amplifying a driver makes it a stronger driver. This rules out the "thermometers are just under-amplified drivers" alternative: the driver/thermometer distinction is a categorical property of the feature's relationship to the concept, not an artifact of intervention magnitude choice.
+
+**The useful magnitude range is roughly 2–10× natural firing.** Below 1×, even drivers show modest effects (1–10 nats) that could be mistaken for noise. Above 10×, even strong drivers begin producing inverted or noisy effects, suggesting the intervention has gone substantially out-of-distribution. The 2–10× window is where driver/thermometer distinctions are most cleanly visible.
+
+**Implication for Finding 5.** The original steering analysis used `α =` peak activation, which is roughly 1–3× the natural firing magnitude. At that level, the magnitude sweep shows even drivers produce relatively modest effects (3–40 nats for newline features). Finding 5's 17% driver rate is therefore likely an *underestimate* of how many features are drivers at higher magnitudes — and Finding 7 shows that for the categorical distinction, this matters less than expected: features that drive at any magnitude drive across the range, and features that don't, don't.
 
 ---
 

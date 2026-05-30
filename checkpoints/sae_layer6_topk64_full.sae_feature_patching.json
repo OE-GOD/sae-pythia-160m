@@ -1,0 +1,347 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "method": "sae_feature_patching",
+  "driver_threshold": 0.5,
+  "thermometer_threshold": 0.05,
+  "n_features": 9,
+  "by_verdict": {
+    "driver": 5,
+    "thermometer": 2,
+    "ambiguous": 2
+  },
+  "results": [
+    {
+      "feature_id": 12117,
+      "label": "BibTeX/LaTeX citation references",
+      "category": "citation_latex",
+      "f_clean": 28.856042861938477,
+      "top_firing_activation": 29.082595825195312,
+      "n_concept_tokens": 39,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 28.856042861938477,
+          "corrupted_mean_concept_logit": 12.938714981079102,
+          "patched_mean_concept_logit": 12.958871841430664,
+          "logit_diff": 0.0201568603515625
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.6541076898574829,
+          "delta_magnitude": 28.201935172080994,
+          "corrupted_mean_concept_logit": 13.45629596710205,
+          "patched_mean_concept_logit": 13.427441596984863,
+          "logit_diff": -0.0288543701171875
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 28.856042861938477,
+          "corrupted_mean_concept_logit": 12.960493087768555,
+          "patched_mean_concept_logit": 13.158808708190918,
+          "logit_diff": 0.19831562042236328
+        }
+      ],
+      "mean_delta": 28.638006965319317,
+      "mean_logit_diff": 0.06320603688557942,
+      "verdict": "ambiguous"
+    },
+    {
+      "feature_id": 5747,
+      "label": "Tokens related to file paths and directory structures",
+      "category": "file_path",
+      "f_clean": 27.75090789794922,
+      "top_firing_activation": 30.437252044677734,
+      "n_concept_tokens": 526,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 27.75090789794922,
+          "corrupted_mean_concept_logit": 5.287703990936279,
+          "patched_mean_concept_logit": 5.386143684387207,
+          "logit_diff": 0.09843969345092773
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 27.75090789794922,
+          "corrupted_mean_concept_logit": 5.9989519119262695,
+          "patched_mean_concept_logit": 5.700899124145508,
+          "logit_diff": -0.2980527877807617
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 1.7907993793487549,
+          "delta_magnitude": 25.960108518600464,
+          "corrupted_mean_concept_logit": 5.384387969970703,
+          "patched_mean_concept_logit": 5.3840789794921875,
+          "logit_diff": -0.000308990478515625
+        }
+      ],
+      "mean_delta": 27.153974771499634,
+      "mean_logit_diff": -0.06664069493611653,
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 10047,
+      "label": "Newline tokens inside CSS/XSL/HTML/XML blocks",
+      "category": "newline",
+      "f_clean": 24.45676612854004,
+      "top_firing_activation": 24.35491371154785,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 24.45676612854004,
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -558.0517578125,
+          "logit_diff": 8.85247802734375
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 24.45676612854004,
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -561.4119873046875,
+          "logit_diff": 6.260986328125
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 24.45676612854004,
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -563.3495483398438,
+          "logit_diff": 5.264404296875
+        }
+      ],
+      "mean_delta": 24.45676612854004,
+      "mean_logit_diff": 6.792622884114583,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 13131,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "f_clean": 23.1911678314209,
+      "top_firing_activation": 23.232179641723633,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 23.1911678314209,
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -564.1641845703125,
+          "logit_diff": 2.74005126953125
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 23.1911678314209,
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -562.7671508789062,
+          "logit_diff": 4.90582275390625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 23.1911678314209,
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -565.1280517578125,
+          "logit_diff": 3.48590087890625
+        }
+      ],
+      "mean_delta": 23.1911678314209,
+      "mean_logit_diff": 3.7105916341145835,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 11488,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "f_clean": 22.611074447631836,
+      "top_firing_activation": 22.589641571044922,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 22.611074447631836,
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -554.2991333007812,
+          "logit_diff": 12.6051025390625
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 22.611074447631836,
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -559.7262573242188,
+          "logit_diff": 7.94671630859375
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 22.611074447631836,
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -564.9740600585938,
+          "logit_diff": 3.639892578125
+        }
+      ],
+      "mean_delta": 22.611074447631836,
+      "mean_logit_diff": 8.06390380859375,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 13821,
+      "label": "Newline tokens inside code and prose blocks",
+      "category": "newline",
+      "f_clean": 19.605215072631836,
+      "top_firing_activation": 19.567537307739258,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 19.605215072631836,
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -565.2373046875,
+          "logit_diff": 1.66693115234375
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 19.605215072631836,
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -567.0702514648438,
+          "logit_diff": 0.60272216796875
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 19.605215072631836,
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -567.4336547851562,
+          "logit_diff": 1.1802978515625
+        }
+      ],
+      "mean_delta": 19.605215072631836,
+      "mean_logit_diff": 1.1499837239583333,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 15245,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "category": "newline",
+      "f_clean": 18.374361038208008,
+      "top_firing_activation": 18.43036460876465,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 18.374361038208008,
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -563.8004760742188,
+          "logit_diff": 3.103759765625
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 18.374361038208008,
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -565.0479736328125,
+          "logit_diff": 2.625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 18.374361038208008,
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -567.1353149414062,
+          "logit_diff": 1.4786376953125
+        }
+      ],
+      "mean_delta": 18.374361038208008,
+      "mean_logit_diff": 2.4024658203125,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 12697,
+      "label": "Logical operators and negation symbols",
+      "category": "logical_operators",
+      "f_clean": 18.765565872192383,
+      "top_firing_activation": 20.197065353393555,
+      "n_concept_tokens": 16,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 18.765565872192383,
+          "corrupted_mean_concept_logit": 17.194902420043945,
+          "patched_mean_concept_logit": 17.3606014251709,
+          "logit_diff": 0.16569900512695312
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 18.765565872192383,
+          "corrupted_mean_concept_logit": 17.646957397460938,
+          "patched_mean_concept_logit": 17.790328979492188,
+          "logit_diff": 0.14337158203125
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 18.765565872192383,
+          "corrupted_mean_concept_logit": 17.33721160888672,
+          "patched_mean_concept_logit": 17.394432067871094,
+          "logit_diff": 0.057220458984375
+        }
+      ],
+      "mean_delta": 18.765565872192383,
+      "mean_logit_diff": 0.12209701538085938,
+      "verdict": "ambiguous"
+    },
+    {
+      "feature_id": 1989,
+      "label": "Decimal points in numerical contexts",
+      "category": "decimal_numerical",
+      "f_clean": 14.941827774047852,
+      "top_firing_activation": 14.887003898620605,
+      "n_concept_tokens": 2152,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 14.941827774047852,
+          "corrupted_mean_concept_logit": 10.344500541687012,
+          "patched_mean_concept_logit": 10.396207809448242,
+          "logit_diff": 0.05170726776123047
+        },
+        {
+          "prompt": "My favorite color is",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 14.941827774047852,
+          "corrupted_mean_concept_logit": 10.796085357666016,
+          "patched_mean_concept_logit": 10.6173095703125,
+          "logit_diff": -0.17877578735351562
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "f_corrupted": 0.0,
+          "delta_magnitude": 14.941827774047852,
+          "corrupted_mean_concept_logit": 10.68223762512207,
+          "patched_mean_concept_logit": 10.45775318145752,
+          "logit_diff": -0.22448444366455078
+        }
+      ],
+      "mean_delta": 14.941827774047852,
+      "mean_logit_diff": -0.11718432108561198,
+      "verdict": "thermometer"
+    }
+  ]
+}

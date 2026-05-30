@@ -1,0 +1,416 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "magnitude_multipliers": [
+    0.0,
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    10.0,
+    30.0
+  ],
+  "n_features_tested": 9,
+  "curve_shape_counts": {
+    "weak / borderline": 1,
+    "linear ramp (graded driver)": 6,
+    "sharp threshold (binary driver)": 2
+  },
+  "results": [
+    {
+      "feature_id": 12117,
+      "label": "BibTeX/LaTeX citation references",
+      "category": "citation_latex",
+      "f_clean": 28.856042861938477,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 14.428021430969238,
+          "mean_concept_logit_diff": 0.059215545654296875
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 28.856042861938477,
+          "mean_concept_logit_diff": 0.0641021728515625
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 57.71208572387695,
+          "mean_concept_logit_diff": 0.19697157541910806
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 144.28021430969238,
+          "mean_concept_logit_diff": -0.22636858622233072
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 288.56042861938477,
+          "mean_concept_logit_diff": -3.4507064819335938
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 865.6812858581543,
+          "mean_concept_logit_diff": -5.47589111328125
+        }
+      ],
+      "curve_shape": "weak / borderline"
+    },
+    {
+      "feature_id": 5747,
+      "label": "Tokens related to file paths and directory structures",
+      "category": "file_path",
+      "f_clean": 27.75090789794922,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 13.87545394897461,
+          "mean_concept_logit_diff": -0.03852526346842448
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 27.75090789794922,
+          "mean_concept_logit_diff": -0.0625462532043457
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 55.50181579589844,
+          "mean_concept_logit_diff": 0.5184731483459473
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 138.7545394897461,
+          "mean_concept_logit_diff": 1.3345025380452473
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 277.5090789794922,
+          "mean_concept_logit_diff": -0.8065729141235352
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 832.5272369384766,
+          "mean_concept_logit_diff": -4.014716386795044
+        }
+      ],
+      "curve_shape": "linear ramp (graded driver)"
+    },
+    {
+      "feature_id": 10047,
+      "label": "Newline tokens inside CSS/XSL/HTML/XML blocks",
+      "category": "newline",
+      "f_clean": 24.45676612854004,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 12.22838306427002,
+          "mean_concept_logit_diff": 1.032470703125
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 24.45676612854004,
+          "mean_concept_logit_diff": 6.792622884114583
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 48.91353225708008,
+          "mean_concept_logit_diff": 39.147257486979164
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 122.2838306427002,
+          "mean_concept_logit_diff": 185.39899698893228
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 244.5676612854004,
+          "mean_concept_logit_diff": 293.26294962565106
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 733.7029838562012,
+          "mean_concept_logit_diff": 360.3289845784505
+        }
+      ],
+      "curve_shape": "linear ramp (graded driver)"
+    },
+    {
+      "feature_id": 13131,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "f_clean": 23.1911678314209,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 11.59558391571045,
+          "mean_concept_logit_diff": 0.2732950846354167
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 23.1911678314209,
+          "mean_concept_logit_diff": 3.7105916341145835
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 46.3823356628418,
+          "mean_concept_logit_diff": 15.628804524739584
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 115.95583915710449,
+          "mean_concept_logit_diff": 87.35782877604167
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 231.91167831420898,
+          "mean_concept_logit_diff": 202.49808756510416
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 695.735034942627,
+          "mean_concept_logit_diff": 340.5342254638672
+        }
+      ],
+      "curve_shape": "linear ramp (graded driver)"
+    },
+    {
+      "feature_id": 11488,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "f_clean": 22.611074447631836,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 11.305537223815918,
+          "mean_concept_logit_diff": 0.6664021809895834
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 22.611074447631836,
+          "mean_concept_logit_diff": 8.06390380859375
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 45.22214889526367,
+          "mean_concept_logit_diff": 28.89349365234375
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 113.05537223815918,
+          "mean_concept_logit_diff": 104.13460286458333
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 226.11074447631836,
+          "mean_concept_logit_diff": 209.95548502604166
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 678.3322334289551,
+          "mean_concept_logit_diff": 331.56068929036456
+        }
+      ],
+      "curve_shape": "linear ramp (graded driver)"
+    },
+    {
+      "feature_id": 13821,
+      "label": "Newline tokens inside code and prose blocks",
+      "category": "newline",
+      "f_clean": 19.605215072631836,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 9.802607536315918,
+          "mean_concept_logit_diff": 0.06363932291666667
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 19.605215072631836,
+          "mean_concept_logit_diff": 1.1499837239583333
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 39.21043014526367,
+          "mean_concept_logit_diff": 6.6497802734375
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 98.02607536315918,
+          "mean_concept_logit_diff": 44.0167236328125
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 196.05215072631836,
+          "mean_concept_logit_diff": 132.62228393554688
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 588.1564521789551,
+          "mean_concept_logit_diff": 305.4317118326823
+        }
+      ],
+      "curve_shape": "sharp threshold (binary driver)"
+    },
+    {
+      "feature_id": 15245,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "category": "newline",
+      "f_clean": 18.374361038208008,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 9.187180519104004,
+          "mean_concept_logit_diff": 0.22991943359375
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 18.374361038208008,
+          "mean_concept_logit_diff": 2.4024658203125
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 36.748722076416016,
+          "mean_concept_logit_diff": 12.924051920572916
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 91.87180519104004,
+          "mean_concept_logit_diff": 82.80269368489583
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 183.74361038208008,
+          "mean_concept_logit_diff": 209.6183878580729
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 551.2308311462402,
+          "mean_concept_logit_diff": 344.76100158691406
+        }
+      ],
+      "curve_shape": "linear ramp (graded driver)"
+    },
+    {
+      "feature_id": 12697,
+      "label": "Logical operators and negation symbols",
+      "category": "logical_operators",
+      "f_clean": 18.765565872192383,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 9.382782936096191,
+          "mean_concept_logit_diff": 0.0436865488688151
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 18.765565872192383,
+          "mean_concept_logit_diff": 0.12209701538085938
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 37.531131744384766,
+          "mean_concept_logit_diff": 0.5227324167887369
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 93.82782936096191,
+          "mean_concept_logit_diff": 3.3956985473632812
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 187.65565872192383,
+          "mean_concept_logit_diff": 6.995395024617513
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 562.9669761657715,
+          "mean_concept_logit_diff": 3.317416508992513
+        }
+      ],
+      "curve_shape": "sharp threshold (binary driver)"
+    },
+    {
+      "feature_id": 1989,
+      "label": "Decimal points in numerical contexts",
+      "category": "decimal_numerical",
+      "f_clean": 14.941827774047852,
+      "magnitude_sweep": [
+        {
+          "multiplier": 0.0,
+          "absolute_magnitude": 0.0,
+          "mean_concept_logit_diff": 0.0
+        },
+        {
+          "multiplier": 0.5,
+          "absolute_magnitude": 7.470913887023926,
+          "mean_concept_logit_diff": -0.10383065541585286
+        },
+        {
+          "multiplier": 1.0,
+          "absolute_magnitude": 14.941827774047852,
+          "mean_concept_logit_diff": -0.11718432108561198
+        },
+        {
+          "multiplier": 2.0,
+          "absolute_magnitude": 29.883655548095703,
+          "mean_concept_logit_diff": 0.3809502919514974
+        },
+        {
+          "multiplier": 5.0,
+          "absolute_magnitude": 74.70913887023926,
+          "mean_concept_logit_diff": 1.3961906433105469
+        },
+        {
+          "multiplier": 10.0,
+          "absolute_magnitude": 149.41827774047852,
+          "mean_concept_logit_diff": 0.12605508168538412
+        },
+        {
+          "multiplier": 30.0,
+          "absolute_magnitude": 448.25483322143555,
+          "mean_concept_logit_diff": -4.408493995666504
+        }
+      ],
+      "curve_shape": "linear ramp (graded driver)"
+    }
+  ]
+}

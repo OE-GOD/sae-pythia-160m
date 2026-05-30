@@ -1,0 +1,704 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "context_window": 30,
+  "driver_threshold": 0.5,
+  "thermometer_threshold": 0.05,
+  "n_features": 23,
+  "by_verdict": {
+    "driver": 20,
+    "thermometer": 3,
+    "ambiguous": 0
+  },
+  "results": [
+    {
+      "feature_id": 6630,
+      "label": "French street names and abbreviations",
+      "category": "french",
+      "top_firing_position": 559104,
+      "top_firing_activation": 49.65021896362305,
+      "n_concept_tokens": 267,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": 1.6066077947616577,
+          "patched_mean_concept_logit": 4.935657501220703,
+          "logit_diff": 3.3290497064590454
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": 1.6660503149032593,
+          "patched_mean_concept_logit": 4.3655853271484375,
+          "logit_diff": 2.6995350122451782
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": 1.4790866374969482,
+          "patched_mean_concept_logit": 4.752645492553711,
+          "logit_diff": 3.2735588550567627
+        }
+      ],
+      "mean_logit_diff": 3.1007145245869956,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 2255,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "top_firing_position": 261121,
+      "top_firing_activation": 44.43513870239258,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -567.2514038085938,
+          "logit_diff": -0.34716796875
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -566.5093383789062,
+          "logit_diff": 1.16363525390625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -565.97119140625,
+          "logit_diff": 2.64276123046875
+        }
+      ],
+      "mean_logit_diff": 1.153076171875,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 12520,
+      "label": "Punctuation and formatting tokens",
+      "category": "punctuation_formatting",
+      "top_firing_position": 81152,
+      "top_firing_activation": 35.56318283081055,
+      "n_concept_tokens": 1238,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -129.9380645751953,
+          "patched_mean_concept_logit": -128.1133575439453,
+          "logit_diff": 1.82470703125
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -129.63726806640625,
+          "patched_mean_concept_logit": -128.05764770507812,
+          "logit_diff": 1.579620361328125
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -130.45346069335938,
+          "patched_mean_concept_logit": -128.32679748535156,
+          "logit_diff": 2.1266632080078125
+        }
+      ],
+      "mean_logit_diff": 1.8436635335286458,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 6767,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "top_firing_position": 579207,
+      "top_firing_activation": 32.63720703125,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -539.8379516601562,
+          "logit_diff": 27.0662841796875
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -537.899658203125,
+          "logit_diff": 29.7733154296875
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -537.995849609375,
+          "logit_diff": 30.61810302734375
+        }
+      ],
+      "mean_logit_diff": 29.152567545572918,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 6484,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "category": "newline",
+      "top_firing_position": 144768,
+      "top_firing_activation": 32.48648452758789,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -556.6996459960938,
+          "logit_diff": 10.20458984375
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -556.9143676757812,
+          "logit_diff": 10.75860595703125
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -556.8878173828125,
+          "logit_diff": 11.72613525390625
+        }
+      ],
+      "mean_logit_diff": 10.896443684895834,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 15230,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "top_firing_position": 749954,
+      "top_firing_activation": 31.52456283569336,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -564.2256469726562,
+          "logit_diff": 2.6785888671875
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -565.4754638671875,
+          "logit_diff": 2.197509765625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -561.9597778320312,
+          "logit_diff": 6.6541748046875
+        }
+      ],
+      "mean_logit_diff": 3.8434244791666665,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 12117,
+      "label": "BibTeX/LaTeX citation references",
+      "category": "citation_latex",
+      "top_firing_position": 62811,
+      "top_firing_activation": 29.082595825195312,
+      "n_concept_tokens": 39,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": 12.938714981079102,
+          "patched_mean_concept_logit": 12.659892082214355,
+          "logit_diff": -0.2788228988647461
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": 13.45629596710205,
+          "patched_mean_concept_logit": 13.089570045471191,
+          "logit_diff": -0.3667259216308594
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": 12.960493087768555,
+          "patched_mean_concept_logit": 13.159626007080078,
+          "logit_diff": 0.19913291931152344
+        }
+      ],
+      "mean_logit_diff": -0.148805300394694,
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 5747,
+      "label": "Tokens related to file paths and directory structures",
+      "category": "file_path",
+      "top_firing_position": 384077,
+      "top_firing_activation": 30.437252044677734,
+      "n_concept_tokens": 526,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": 5.287703990936279,
+          "patched_mean_concept_logit": 5.057503700256348,
+          "logit_diff": -0.23020029067993164
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": 5.9989519119262695,
+          "patched_mean_concept_logit": 5.328808784484863,
+          "logit_diff": -0.6701431274414062
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": 5.384387969970703,
+          "patched_mean_concept_logit": 5.180413722991943,
+          "logit_diff": -0.20397424697875977
+        }
+      ],
+      "mean_logit_diff": -0.3681058883666992,
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 7615,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "top_firing_position": 924160,
+      "top_firing_activation": 24.833295822143555,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -559.4867553710938,
+          "logit_diff": 7.41748046875
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -559.3687133789062,
+          "logit_diff": 8.30426025390625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -559.781005859375,
+          "logit_diff": 8.83294677734375
+        }
+      ],
+      "mean_logit_diff": 8.184895833333334,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 10047,
+      "label": "Newline tokens inside CSS/XSL/HTML/XML blocks",
+      "category": "newline",
+      "top_firing_position": 346763,
+      "top_firing_activation": 24.390459060668945,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -556.7308959960938,
+          "logit_diff": 10.17333984375
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -557.4852294921875,
+          "logit_diff": 10.187744140625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -556.7286987304688,
+          "logit_diff": 11.88525390625
+        }
+      ],
+      "mean_logit_diff": 10.748779296875,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 13131,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "top_firing_position": 164365,
+      "top_firing_activation": 23.628509521484375,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -562.1094360351562,
+          "logit_diff": 4.7947998046875
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -562.5485229492188,
+          "logit_diff": 5.12445068359375
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -561.068115234375,
+          "logit_diff": 7.54583740234375
+        }
+      ],
+      "mean_logit_diff": 5.821695963541667,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 11488,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "top_firing_position": 237058,
+      "top_firing_activation": 23.130970001220703,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -567.2394409179688,
+          "logit_diff": -0.335205078125
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -567.1806030273438,
+          "logit_diff": 0.49237060546875
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -566.7868041992188,
+          "logit_diff": 1.8271484375
+        }
+      ],
+      "mean_logit_diff": 0.66143798828125,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 10925,
+      "label": "Newline tokens inside academic/technical text",
+      "category": "newline",
+      "top_firing_position": 468101,
+      "top_firing_activation": 22.530927658081055,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -564.567626953125,
+          "logit_diff": 2.33660888671875
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -565.2117309570312,
+          "logit_diff": 2.46124267578125
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -562.3562622070312,
+          "logit_diff": 6.2576904296875
+        }
+      ],
+      "mean_logit_diff": 3.6851806640625,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 10045,
+      "label": "Subword BPE continuations of multi-piece words (e.g., 'rons' in 'squadrons')",
+      "category": "subword_bpe",
+      "top_firing_position": 738432,
+      "top_firing_activation": 23.37864875793457,
+      "n_concept_tokens": 12218,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": 0.04653290659189224,
+          "patched_mean_concept_logit": 6.502449035644531,
+          "logit_diff": 6.455916129052639
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": 0.36760377883911133,
+          "patched_mean_concept_logit": 6.446715354919434,
+          "logit_diff": 6.079111576080322
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": 0.1309068351984024,
+          "patched_mean_concept_logit": 6.5113205909729,
+          "logit_diff": 6.380413755774498
+        }
+      ],
+      "mean_logit_diff": 6.3051471536358195,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 13821,
+      "label": "Newline tokens inside code and prose blocks",
+      "category": "newline",
+      "top_firing_position": 422802,
+      "top_firing_activation": 19.71944236755371,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -561.4505615234375,
+          "logit_diff": 5.45367431640625
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -561.6172485351562,
+          "logit_diff": 6.05572509765625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -560.4771728515625,
+          "logit_diff": 8.13677978515625
+        }
+      ],
+      "mean_logit_diff": 6.548726399739583,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 15245,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "category": "newline",
+      "top_firing_position": 144515,
+      "top_firing_activation": 18.431793212890625,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -553.9344482421875,
+          "logit_diff": 12.96978759765625
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -554.4593505859375,
+          "logit_diff": 13.213623046875
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -553.72998046875,
+          "logit_diff": 14.88397216796875
+        }
+      ],
+      "mean_logit_diff": 13.689127604166666,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 12697,
+      "label": "Logical operators and negation symbols",
+      "category": "logical_operators",
+      "top_firing_position": 49222,
+      "top_firing_activation": 17.95384407043457,
+      "n_concept_tokens": 16,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": 17.194902420043945,
+          "patched_mean_concept_logit": 16.797664642333984,
+          "logit_diff": -0.39723777770996094
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": 17.646957397460938,
+          "patched_mean_concept_logit": 16.41162109375,
+          "logit_diff": -1.2353363037109375
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": 17.33721160888672,
+          "patched_mean_concept_logit": 15.696586608886719,
+          "logit_diff": -1.640625
+        }
+      ],
+      "mean_logit_diff": -1.0910663604736328,
+      "verdict": "thermometer"
+    },
+    {
+      "feature_id": 7448,
+      "label": "Newline tokens inside code blocks",
+      "category": "newline",
+      "top_firing_position": 696199,
+      "top_firing_activation": 16.45939064025879,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -565.8120727539062,
+          "logit_diff": 1.0921630859375
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -566.682373046875,
+          "logit_diff": 0.9906005859375
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -566.2345581054688,
+          "logit_diff": 2.37939453125
+        }
+      ],
+      "mean_logit_diff": 1.4873860677083333,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 1989,
+      "label": "Decimal points in numerical contexts",
+      "category": "decimal_numerical",
+      "top_firing_position": 406537,
+      "top_firing_activation": 15.124603271484375,
+      "n_concept_tokens": 2152,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": 10.344500541687012,
+          "patched_mean_concept_logit": 16.4973201751709,
+          "logit_diff": 6.152819633483887
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": 10.796085357666016,
+          "patched_mean_concept_logit": 16.346967697143555,
+          "logit_diff": 5.550882339477539
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": 10.68223762512207,
+          "patched_mean_concept_logit": 16.26594352722168,
+          "logit_diff": 5.583705902099609
+        }
+      ],
+      "mean_logit_diff": 5.762469291687012,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 14584,
+      "label": "Newline tokens inside code and markup blocks",
+      "category": "newline",
+      "top_firing_position": 842496,
+      "top_firing_activation": 14.89190673828125,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -564.3949584960938,
+          "logit_diff": 2.50927734375
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -565.0234375,
+          "logit_diff": 2.6495361328125
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -564.4517211914062,
+          "logit_diff": 4.1622314453125
+        }
+      ],
+      "mean_logit_diff": 3.1070149739583335,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 10545,
+      "label": "Newline tokens inside code blocks",
+      "category": "newline",
+      "top_firing_position": 908050,
+      "top_firing_activation": 14.790690422058105,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -551.5093994140625,
+          "logit_diff": 15.39483642578125
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -551.86279296875,
+          "logit_diff": 15.8101806640625
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -551.1593017578125,
+          "logit_diff": 17.45465087890625
+        }
+      ],
+      "mean_logit_diff": 16.219889322916668,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 2757,
+      "label": "Newline tokens in code and text formatting contexts",
+      "category": "newline",
+      "top_firing_position": 923016,
+      "top_firing_activation": 14.776453971862793,
+      "n_concept_tokens": 188,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": -566.9042358398438,
+          "patched_mean_concept_logit": -559.1047973632812,
+          "logit_diff": 7.7994384765625
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": -567.6729736328125,
+          "patched_mean_concept_logit": -559.8916015625,
+          "logit_diff": 7.7813720703125
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": -568.6139526367188,
+          "patched_mean_concept_logit": -558.968505859375,
+          "logit_diff": 9.64544677734375
+        }
+      ],
+      "mean_logit_diff": 8.40875244140625,
+      "verdict": "driver"
+    },
+    {
+      "feature_id": 5196,
+      "label": "Exponentiation notation in mathematical contexts",
+      "category": "math_notation",
+      "top_firing_position": 433289,
+      "top_firing_activation": 0.6089963912963867,
+      "n_concept_tokens": 652,
+      "per_prompt_results": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "corrupted_mean_concept_logit": 3.835660457611084,
+          "patched_mean_concept_logit": 10.557846069335938,
+          "logit_diff": 6.7221856117248535
+        },
+        {
+          "prompt": "My favorite color is",
+          "corrupted_mean_concept_logit": 4.583948612213135,
+          "patched_mean_concept_logit": 10.810895919799805,
+          "logit_diff": 6.22694730758667
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "corrupted_mean_concept_logit": 3.827953577041626,
+          "patched_mean_concept_logit": 10.815149307250977,
+          "logit_diff": 6.987195730209351
+        }
+      ],
+      "mean_logit_diff": 6.645442883173625,
+      "verdict": "driver"
+    }
+  ]
+}

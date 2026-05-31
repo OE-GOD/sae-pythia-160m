@@ -2,6 +2,7 @@
 
 % --- Packages ---
 \usepackage[margin=1in]{geometry}
+\usepackage[round,authoryear]{natbib}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -53,12 +54,12 @@ form orthogonal axes of feature characterization.
 
 \section{Introduction}
 
-Sparse autoencoders \cite{bricken2023monosemanticity} extract interpretable features
+Sparse autoencoders \citep{bricken2023monosemanticity} extract interpretable features
 from transformer activations by training an overcomplete dictionary with sparsity
 constraints. The standard interpretation pipeline involves: (1) training the SAE,
 (2) finding top-activating examples per feature, and (3) generating a feature
 label from those examples, either manually or via an LLM judge
-\cite{bills2023language}.
+\citep{bills2023language}.
 
 This pipeline conflates two distinct properties of a feature:
 \begin{enumerate}[leftmargin=*]
@@ -75,7 +76,7 @@ steering model behavior via feature manipulation, or constructing circuit-level
 mechanistic explanations.
 
 This work demonstrates the driver/thermometer distinction concretely in a TopK
-SAE \cite{gao2024scaling} trained on Pythia-160M and proposes \emph{logit weight
+SAE \citep{gao2024scaling} trained on Pythia-160M and proposes \emph{logit weight
 analysis} as a cheap discriminator. We further document that the
 driver/thermometer split is concentrated in a specific subspace of features---an
 ``unstable manifold-partition'' cluster---and contrast its behavior with stable
@@ -122,7 +123,7 @@ Loss recovered vs. zero-ablation & 95.4\% \\
 \end{tabular}
 
 The 95.4\% loss-recovery is comparable to small-model results from
-\cite{bricken2023monosemanticity} ($\sim$90\%) and \cite{lieberum2024gemma}
+\citep{bricken2023monosemanticity} ($\sim$90\%) and \citep{lieberum2024gemma}
 (80--95\% across Gemma 2 layers).
 
 \subsection{Auto-interp}
@@ -286,7 +287,7 @@ meaningful fraction of cases.
         A robust evaluation needs $\sim$30+ features and a quantitative success
         classifier.
   \item Single model (Pythia-160M), single layer (6). Cross-layer features
-        (cf. \cite{lindsey2024crosscoders}) are not captured.
+        (cf. \citep{lindsey2024crosscoders}) are not captured.
   \item The 0.43 correlation between logit weight and steering effect leaves
         substantial variance unexplained.
   \item Manual judgment of steering success via regex newline-counting; an
@@ -306,7 +307,7 @@ Full analysis pipeline: $\sim$3 hours.
 \section*{Acknowledgments}
 
 Auto-interp via Moonshot's Kimi K2. Built on the methodological foundations of
-\cite{bricken2023monosemanticity,gao2024scaling,lieberum2024gemma,rajamanoharan2024gated}.
+\citep{bricken2023monosemanticity,gao2024scaling,lieberum2024gemma,rajamanoharan2024gated}.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

@@ -1,0 +1,794 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "method": "steering_plus_mediator_ablation_logit",
+  "alpha_mult": 3.0,
+  "peak_activation": 20.0,
+  "n_random_controls": 15,
+  "neutral_prompts": [
+    "The recipe for chocolate cake is",
+    "My favorite color is",
+    "Yesterday I went to the park and saw"
+  ],
+  "results": [
+    {
+      "feature_id": 10047,
+      "target_layer": 8,
+      "target_head": 10,
+      "expected_direction": "positive",
+      "alpha": 60.0,
+      "n_random_controls": 15,
+      "control_heads": [
+        {
+          "layer": 9,
+          "head": 5
+        },
+        {
+          "layer": 11,
+          "head": 7
+        },
+        {
+          "layer": 8,
+          "head": 6
+        },
+        {
+          "layer": 9,
+          "head": 1
+        },
+        {
+          "layer": 7,
+          "head": 7
+        },
+        {
+          "layer": 8,
+          "head": 5
+        },
+        {
+          "layer": 9,
+          "head": 4
+        },
+        {
+          "layer": 11,
+          "head": 2
+        },
+        {
+          "layer": 11,
+          "head": 11
+        },
+        {
+          "layer": 10,
+          "head": 4
+        },
+        {
+          "layer": 11,
+          "head": 3
+        },
+        {
+          "layer": 7,
+          "head": 5
+        },
+        {
+          "layer": 11,
+          "head": 9
+        },
+        {
+          "layer": 9,
+          "head": 2
+        },
+        {
+          "layer": 9,
+          "head": 6
+        }
+      ],
+      "per_prompt": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "lp_baseline": -6.506727695465088,
+          "lp_steered": -9.372319221496582,
+          "lp_steered_mediator_ablated": -9.489151000976562,
+          "lp_steered_random_ablated_mean": -9.38245054880778,
+          "lp_steered_random_ablated_std": 0.05657174501344464,
+          "random_ablated_per_head": [
+            -9.272408485412598,
+            -9.354930877685547,
+            -9.401326179504395,
+            -9.401839256286621,
+            -9.38696575164795,
+            -9.390873908996582,
+            -9.407299995422363,
+            -9.413202285766602,
+            -9.424052238464355,
+            -9.442203521728516,
+            -9.501690864562988,
+            -9.31332015991211,
+            -9.301419258117676,
+            -9.339154243469238,
+            -9.38607120513916
+          ]
+        },
+        {
+          "prompt": "My favorite color is",
+          "lp_baseline": -5.566789150238037,
+          "lp_steered": -9.917104721069336,
+          "lp_steered_mediator_ablated": -9.968646049499512,
+          "lp_steered_random_ablated_mean": -9.924546941121418,
+          "lp_steered_random_ablated_std": 0.0459791769567506,
+          "random_ablated_per_head": [
+            -9.813008308410645,
+            -9.914153099060059,
+            -9.955245018005371,
+            -9.906394958496094,
+            -9.944193840026855,
+            -9.919114112854004,
+            -9.947953224182129,
+            -9.968602180480957,
+            -9.988734245300293,
+            -9.992839813232422,
+            -9.951068878173828,
+            -9.889899253845215,
+            -9.877406120300293,
+            -9.879168510437012,
+            -9.920422554016113
+          ]
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "lp_baseline": -6.416763782501221,
+          "lp_steered": -10.323801040649414,
+          "lp_steered_mediator_ablated": -10.479690551757812,
+          "lp_steered_random_ablated_mean": -10.315604972839356,
+          "lp_steered_random_ablated_std": 0.05891491417254798,
+          "random_ablated_per_head": [
+            -10.23044490814209,
+            -10.268827438354492,
+            -10.33800220489502,
+            -10.31656551361084,
+            -10.327184677124023,
+            -10.380267143249512,
+            -10.367257118225098,
+            -10.39205551147461,
+            -10.323836326599121,
+            -10.400623321533203,
+            -10.346305847167969,
+            -10.258862495422363,
+            -10.219287872314453,
+            -10.225987434387207,
+            -10.338566780090332
+          ]
+        }
+      ],
+      "lp_baseline": -6.163426876068115,
+      "lp_steered": -9.871074994405111,
+      "lp_steered_mediator_ablated": -9.979162534077963,
+      "lp_steered_random_ablated": -9.874200820922852,
+      "steering_effect": -3.707648118336996,
+      "mediator_contribution": 0.10808753967285156,
+      "random_contribution": 0.0031258265177402933,
+      "selectivity": 0.10496171315511127,
+      "verdict": "POS\u2713\u2713"
+    },
+    {
+      "feature_id": 10047,
+      "target_layer": 8,
+      "target_head": 9,
+      "expected_direction": "negative",
+      "alpha": 60.0,
+      "n_random_controls": 15,
+      "control_heads": [
+        {
+          "layer": 7,
+          "head": 11
+        },
+        {
+          "layer": 7,
+          "head": 2
+        },
+        {
+          "layer": 8,
+          "head": 3
+        },
+        {
+          "layer": 8,
+          "head": 5
+        },
+        {
+          "layer": 8,
+          "head": 4
+        },
+        {
+          "layer": 7,
+          "head": 4
+        },
+        {
+          "layer": 7,
+          "head": 3
+        },
+        {
+          "layer": 11,
+          "head": 1
+        },
+        {
+          "layer": 10,
+          "head": 11
+        },
+        {
+          "layer": 7,
+          "head": 0
+        },
+        {
+          "layer": 10,
+          "head": 2
+        },
+        {
+          "layer": 10,
+          "head": 8
+        },
+        {
+          "layer": 9,
+          "head": 7
+        },
+        {
+          "layer": 11,
+          "head": 11
+        },
+        {
+          "layer": 8,
+          "head": 8
+        }
+      ],
+      "per_prompt": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "lp_baseline": -6.506727695465088,
+          "lp_steered": -9.372319221496582,
+          "lp_steered_mediator_ablated": -9.354499816894531,
+          "lp_steered_random_ablated_mean": -9.362208493550618,
+          "lp_steered_random_ablated_std": 0.12236276598253167,
+          "random_ablated_per_head": [
+            -9.640166282653809,
+            -9.343062400817871,
+            -9.276005744934082,
+            -9.390873908996582,
+            -9.212908744812012,
+            -9.254907608032227,
+            -9.457418441772461,
+            -9.517624855041504,
+            -9.372623443603516,
+            -9.116649627685547,
+            -9.325149536132812,
+            -9.400038719177246,
+            -9.39767837524414,
+            -9.424052238464355,
+            -9.303967475891113
+          ]
+        },
+        {
+          "prompt": "My favorite color is",
+          "lp_baseline": -5.566789150238037,
+          "lp_steered": -9.917104721069336,
+          "lp_steered_mediator_ablated": -9.922142028808594,
+          "lp_steered_random_ablated_mean": -9.918941561381022,
+          "lp_steered_random_ablated_std": 0.11058177890577305,
+          "random_ablated_per_head": [
+            -10.122271537780762,
+            -9.933456420898438,
+            -9.787458419799805,
+            -9.919114112854004,
+            -9.92049503326416,
+            -9.829263687133789,
+            -10.001982688903809,
+            -10.076783180236816,
+            -9.92127513885498,
+            -9.644549369812012,
+            -9.869536399841309,
+            -9.941824913024902,
+            -9.94145393371582,
+            -9.988734245300293,
+            -9.885924339294434
+          ]
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "lp_baseline": -6.416763782501221,
+          "lp_steered": -10.323801040649414,
+          "lp_steered_mediator_ablated": -10.373075485229492,
+          "lp_steered_random_ablated_mean": -10.302032279968262,
+          "lp_steered_random_ablated_std": 0.11679616745330434,
+          "random_ablated_per_head": [
+            -10.388980865478516,
+            -10.347601890563965,
+            -10.173591613769531,
+            -10.380267143249512,
+            -10.230353355407715,
+            -10.163850784301758,
+            -10.404393196105957,
+            -10.479351997375488,
+            -10.328712463378906,
+            -9.986349105834961,
+            -10.32800006866455,
+            -10.339242935180664,
+            -10.359325408935547,
+            -10.323836326599121,
+            -10.296627044677734
+          ]
+        }
+      ],
+      "lp_baseline": -6.163426876068115,
+      "lp_steered": -9.871074994405111,
+      "lp_steered_mediator_ablated": -9.883239110310873,
+      "lp_steered_random_ablated": -9.861060778299967,
+      "steering_effect": -3.707648118336996,
+      "mediator_contribution": 0.012164115905761719,
+      "random_contribution": -0.010014216105144413,
+      "selectivity": 0.022178332010906132,
+      "verdict": "NEG\u00d7"
+    },
+    {
+      "feature_id": 13131,
+      "target_layer": 8,
+      "target_head": 10,
+      "expected_direction": "positive",
+      "alpha": 60.0,
+      "n_random_controls": 15,
+      "control_heads": [
+        {
+          "layer": 9,
+          "head": 2
+        },
+        {
+          "layer": 8,
+          "head": 3
+        },
+        {
+          "layer": 10,
+          "head": 10
+        },
+        {
+          "layer": 11,
+          "head": 7
+        },
+        {
+          "layer": 7,
+          "head": 6
+        },
+        {
+          "layer": 10,
+          "head": 1
+        },
+        {
+          "layer": 9,
+          "head": 0
+        },
+        {
+          "layer": 11,
+          "head": 4
+        },
+        {
+          "layer": 9,
+          "head": 8
+        },
+        {
+          "layer": 11,
+          "head": 0
+        },
+        {
+          "layer": 9,
+          "head": 7
+        },
+        {
+          "layer": 11,
+          "head": 1
+        },
+        {
+          "layer": 10,
+          "head": 5
+        },
+        {
+          "layer": 11,
+          "head": 2
+        },
+        {
+          "layer": 10,
+          "head": 8
+        }
+      ],
+      "per_prompt": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "lp_baseline": -6.506727695465088,
+          "lp_steered": -5.8043107986450195,
+          "lp_steered_mediator_ablated": -6.046444892883301,
+          "lp_steered_random_ablated_mean": -5.808564535776774,
+          "lp_steered_random_ablated_std": 0.042717093796717606,
+          "random_ablated_per_head": [
+            -5.788093090057373,
+            -5.77897834777832,
+            -5.804703235626221,
+            -5.792144298553467,
+            -5.928576469421387,
+            -5.778979778289795,
+            -5.800448894500732,
+            -5.803436756134033,
+            -5.807633876800537,
+            -5.834990978240967,
+            -5.822124004364014,
+            -5.843194961547852,
+            -5.718039512634277,
+            -5.820451736450195,
+            -5.806672096252441
+          ]
+        },
+        {
+          "prompt": "My favorite color is",
+          "lp_baseline": -5.566789150238037,
+          "lp_steered": -6.326972961425781,
+          "lp_steered_mediator_ablated": -6.525590419769287,
+          "lp_steered_random_ablated_mean": -6.3357696533203125,
+          "lp_steered_random_ablated_std": 0.038669459102863096,
+          "random_ablated_per_head": [
+            -6.311269760131836,
+            -6.277609825134277,
+            -6.324685096740723,
+            -6.311202526092529,
+            -6.45090389251709,
+            -6.2947468757629395,
+            -6.323903560638428,
+            -6.327757835388184,
+            -6.327580451965332,
+            -6.359732151031494,
+            -6.355236053466797,
+            -6.374423980712891,
+            -6.329700946807861,
+            -6.3369550704956055,
+            -6.330836772918701
+          ]
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "lp_baseline": -6.416763782501221,
+          "lp_steered": -6.692109107971191,
+          "lp_steered_mediator_ablated": -6.968515396118164,
+          "lp_steered_random_ablated_mean": -6.701544189453125,
+          "lp_steered_random_ablated_std": 0.03686640160230649,
+          "random_ablated_per_head": [
+            -6.675018787384033,
+            -6.636122226715088,
+            -6.6874918937683105,
+            -6.685103416442871,
+            -6.7909674644470215,
+            -6.6630730628967285,
+            -6.678652286529541,
+            -6.701267242431641,
+            -6.6951189041137695,
+            -6.731356620788574,
+            -6.707514762878418,
+            -6.763127326965332,
+            -6.705440044403076,
+            -6.7104411125183105,
+            -6.69246768951416
+          ]
+        }
+      ],
+      "lp_baseline": -6.163426876068115,
+      "lp_steered": -6.274464289347331,
+      "lp_steered_mediator_ablated": -6.513516902923584,
+      "lp_steered_random_ablated": -6.281959459516737,
+      "steering_effect": -0.11103741327921579,
+      "mediator_contribution": 0.23905261357625296,
+      "random_contribution": 0.007495170169406151,
+      "selectivity": 0.2315574434068468,
+      "verdict": "POS\u2713\u2713"
+    },
+    {
+      "feature_id": 15245,
+      "target_layer": 8,
+      "target_head": 9,
+      "expected_direction": "positive",
+      "alpha": 60.0,
+      "n_random_controls": 15,
+      "control_heads": [
+        {
+          "layer": 9,
+          "head": 2
+        },
+        {
+          "layer": 9,
+          "head": 7
+        },
+        {
+          "layer": 11,
+          "head": 2
+        },
+        {
+          "layer": 11,
+          "head": 7
+        },
+        {
+          "layer": 7,
+          "head": 4
+        },
+        {
+          "layer": 11,
+          "head": 10
+        },
+        {
+          "layer": 11,
+          "head": 3
+        },
+        {
+          "layer": 7,
+          "head": 3
+        },
+        {
+          "layer": 10,
+          "head": 6
+        },
+        {
+          "layer": 7,
+          "head": 10
+        },
+        {
+          "layer": 10,
+          "head": 3
+        },
+        {
+          "layer": 8,
+          "head": 6
+        },
+        {
+          "layer": 11,
+          "head": 1
+        },
+        {
+          "layer": 10,
+          "head": 11
+        },
+        {
+          "layer": 8,
+          "head": 7
+        }
+      ],
+      "per_prompt": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "lp_baseline": -6.506727695465088,
+          "lp_steered": -10.572471618652344,
+          "lp_steered_mediator_ablated": -10.83571720123291,
+          "lp_steered_random_ablated_mean": -10.577561505635579,
+          "lp_steered_random_ablated_std": 0.1356340943304413,
+          "random_ablated_per_head": [
+            -10.568246841430664,
+            -10.594945907592773,
+            -10.607763290405273,
+            -10.63380241394043,
+            -10.537711143493652,
+            -10.606023788452148,
+            -10.560797691345215,
+            -10.182209968566895,
+            -10.551154136657715,
+            -10.685697555541992,
+            -10.573895454406738,
+            -10.425558090209961,
+            -10.773924827575684,
+            -10.588379859924316,
+            -10.773311614990234
+          ]
+        },
+        {
+          "prompt": "My favorite color is",
+          "lp_baseline": -5.566789150238037,
+          "lp_steered": -11.419864654541016,
+          "lp_steered_mediator_ablated": -11.921621322631836,
+          "lp_steered_random_ablated_mean": -11.436473147074382,
+          "lp_steered_random_ablated_std": 0.12955932607578025,
+          "random_ablated_per_head": [
+            -11.434979438781738,
+            -11.451775550842285,
+            -11.449617385864258,
+            -11.497453689575195,
+            -11.417539596557617,
+            -11.454439163208008,
+            -11.40036678314209,
+            -11.091672897338867,
+            -11.410993576049805,
+            -11.53989028930664,
+            -11.435561180114746,
+            -11.250568389892578,
+            -11.664750099182129,
+            -11.44147777557373,
+            -11.606011390686035
+          ]
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "lp_baseline": -6.416763782501221,
+          "lp_steered": -12.073452949523926,
+          "lp_steered_mediator_ablated": -12.538548469543457,
+          "lp_steered_random_ablated_mean": -12.07975959777832,
+          "lp_steered_random_ablated_std": 0.14448520496158918,
+          "random_ablated_per_head": [
+            -12.068782806396484,
+            -12.10928726196289,
+            -12.102654457092285,
+            -12.161640167236328,
+            -12.019965171813965,
+            -12.106484413146973,
+            -12.055289268493652,
+            -11.64492416381836,
+            -12.07878589630127,
+            -12.200429916381836,
+            -12.066652297973633,
+            -11.94675350189209,
+            -12.31662654876709,
+            -12.088912963867188,
+            -12.229205131530762
+          ]
+        }
+      ],
+      "lp_baseline": -6.163426876068115,
+      "lp_steered": -11.355263074239096,
+      "lp_steered_mediator_ablated": -11.7652956644694,
+      "lp_steered_random_ablated": -11.364598083496093,
+      "steering_effect": -5.19183619817098,
+      "mediator_contribution": 0.4100325902303048,
+      "random_contribution": 0.00933500925699704,
+      "selectivity": 0.40069758097330777,
+      "verdict": "POS\u2713\u2713"
+    },
+    {
+      "feature_id": 15245,
+      "target_layer": 8,
+      "target_head": 10,
+      "expected_direction": "negative",
+      "alpha": 60.0,
+      "n_random_controls": 15,
+      "control_heads": [
+        {
+          "layer": 7,
+          "head": 11
+        },
+        {
+          "layer": 10,
+          "head": 11
+        },
+        {
+          "layer": 7,
+          "head": 8
+        },
+        {
+          "layer": 10,
+          "head": 9
+        },
+        {
+          "layer": 9,
+          "head": 3
+        },
+        {
+          "layer": 8,
+          "head": 1
+        },
+        {
+          "layer": 11,
+          "head": 0
+        },
+        {
+          "layer": 8,
+          "head": 5
+        },
+        {
+          "layer": 8,
+          "head": 11
+        },
+        {
+          "layer": 10,
+          "head": 2
+        },
+        {
+          "layer": 8,
+          "head": 4
+        },
+        {
+          "layer": 11,
+          "head": 5
+        },
+        {
+          "layer": 8,
+          "head": 7
+        },
+        {
+          "layer": 9,
+          "head": 10
+        },
+        {
+          "layer": 7,
+          "head": 1
+        }
+      ],
+      "per_prompt": [
+        {
+          "prompt": "The recipe for chocolate cake is",
+          "lp_baseline": -6.506727695465088,
+          "lp_steered": -10.572471618652344,
+          "lp_steered_mediator_ablated": -10.825292587280273,
+          "lp_steered_random_ablated_mean": -10.625868034362792,
+          "lp_steered_random_ablated_std": 0.1520027309136826,
+          "random_ablated_per_head": [
+            -10.407670021057129,
+            -10.588379859924316,
+            -10.965730667114258,
+            -10.626702308654785,
+            -10.646923065185547,
+            -10.57751178741455,
+            -10.63742446899414,
+            -10.48843002319336,
+            -10.749207496643066,
+            -10.33863639831543,
+            -10.655256271362305,
+            -10.760045051574707,
+            -10.773311614990234,
+            -10.683368682861328,
+            -10.489422798156738
+          ]
+        },
+        {
+          "prompt": "My favorite color is",
+          "lp_baseline": -5.566789150238037,
+          "lp_steered": -11.419864654541016,
+          "lp_steered_mediator_ablated": -11.679441452026367,
+          "lp_steered_random_ablated_mean": -11.498735936482747,
+          "lp_steered_random_ablated_std": 0.17771584981734123,
+          "random_ablated_per_head": [
+            -11.303871154785156,
+            -11.44147777557373,
+            -11.902774810791016,
+            -11.476076126098633,
+            -11.521967887878418,
+            -11.443854331970215,
+            -11.52051067352295,
+            -11.342358589172363,
+            -11.595571517944336,
+            -11.132634162902832,
+            -11.50409984588623,
+            -11.637381553649902,
+            -11.606011390686035,
+            -11.705910682678223,
+            -11.346538543701172
+          ]
+        },
+        {
+          "prompt": "Yesterday I went to the park and saw",
+          "lp_baseline": -6.416763782501221,
+          "lp_steered": -12.073452949523926,
+          "lp_steered_mediator_ablated": -12.335261344909668,
+          "lp_steered_random_ablated_mean": -12.127321815490722,
+          "lp_steered_random_ablated_std": 0.15441288697866085,
+          "random_ablated_per_head": [
+            -11.799938201904297,
+            -12.088912963867188,
+            -12.412336349487305,
+            -12.10693073272705,
+            -12.172980308532715,
+            -12.109464645385742,
+            -12.15347671508789,
+            -12.01519775390625,
+            -12.37502670288086,
+            -11.952342987060547,
+            -12.157157897949219,
+            -12.2677001953125,
+            -12.229205131530762,
+            -12.110511779785156,
+            -11.95864486694336
+          ]
+        }
+      ],
+      "lp_baseline": -6.163426876068115,
+      "lp_steered": -11.355263074239096,
+      "lp_steered_mediator_ablated": -11.61333179473877,
+      "lp_steered_random_ablated": -11.417308595445421,
+      "steering_effect": -5.19183619817098,
+      "mediator_contribution": 0.2580687204996739,
+      "random_contribution": 0.06204552120632556,
+      "selectivity": 0.19602319929334833,
+      "verdict": "NEG\u00d7"
+    }
+  ]
+}

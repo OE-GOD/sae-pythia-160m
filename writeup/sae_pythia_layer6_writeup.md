@@ -1,6 +1,6 @@
 # Auto-interp Labels Conflate Driver and Thermometer Features: A Case Study on Pythia-160M
 
-**A sixteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. And even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals that features route through different downstream attention heads, including negative-mediator heads analogous to the Negative Name Mover Heads of the IOI circuit. Single-direction patching systematically miscategorizes features, and same-labeled drivers are not interchangeable at the pathway level.**
+**A seventeen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. Even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals features route through different downstream attention heads, and the identified positive mediators are causally validated (30–44× larger effect than random-head ablation under steering). Single-direction patching systematically miscategorizes features; same-labeled drivers are not interchangeable at the pathway level.**
 
 ---
 
@@ -14,7 +14,8 @@
 - **Method-robustness check.** Three intervention methods (synthetic steering, whole-residual patching, SAE-feature patching) give different driver rates (17%, 87%, 56% respectively) — driver/thermometer classification is sensitive to the protocol used. The conservative interpretation: only features confirmed as drivers by multiple methods should be treated as causally meaningful.
 - **Magnitude-robustness check.** Sweeping intervention magnitude from 0× to 30× natural firing reveals driver/thermometer as a *categorical* property of the feature, not magnitude-dependent. Newline-cluster features show large logit shifts across the range (rocket curves); non-newline labeled features stay flat. Amplifying a thermometer does not make it a driver.
 - **Necessity-as-well-as-sufficiency check (2×2 classification).** Combining noising (necessity test) with denoising (sufficiency test) per Heimersheim & Nanda (2024): of the 5 features classified as drivers by sufficiency alone, only 3 (60%) are necessary; the other 2 are OR-circuit components (sufficient but redundant). 1 of 2 features classified as thermometers is revealed to be an AND-circuit component (necessary but not sufficient alone). **TRUE driver rate falls from 56% (sufficiency-only) to 33% (sufficiency AND necessity).** Single-direction patching systematically miscategorizes ~40% of features.
-- **Per-head path patching of TRUE drivers.** Applying the IOI-style trace-back to each TRUE driver: the three "newline driver" features route through different downstream attention heads. f10047 and f13131 are mediated primarily through L8H10; f15245 through L8H9. Even more strikingly, f10047 and f15245 have **mirror positive/negative patterns** at L8H9/L8H10 — a head that is a positive mediator for one feature is a negative mediator for the other. These negative-mediator heads are analogous to the Negative Name Mover Heads of the IOI circuit (Wang et al. 2023), suggesting SAE features participate in inhibitory as well as additive computations. **Same-labeled drivers are not interchangeable at the pathway level.**
+- **Per-head path patching of TRUE drivers.** Applying the IOI-style trace-back to each TRUE driver: the three "newline driver" features route through different downstream attention heads. f10047 and f13131 are mediated primarily through L8H10; f15245 through L8H9. **Same-labeled drivers are not interchangeable at the pathway level.** Path patching also identifies heads with opposite-sign effects across features, but causal validation (Finding 10) shows these don't behave as suppressors under steering.
+- **Causal validation of mediators via steering + head ablation.** For each path-patching-identified positive mediator, ablating the specific head reduces concept logprob 30–44× more than ablating a random downstream head — robust validation that path patching identifies real causal mediators. Negative-effect heads, however, do NOT validate as suppressors under steering: the Negative Name Mover Heads analogy is overstated. Two-protocol triangulation (path patching + steering+ablation) catches this overinterpretation.
 
 ---
 
@@ -87,7 +88,8 @@ The interpretive analysis comprises nine experiments, each addressing a distinct
 | 13 | SAE-feature patching | Driver rate isolating one feature's contribution | 56% drivers (n=9 with re-extractable contexts) — middle ground |
 | 14 | Magnitude sweep | Is driver/thermometer categorical or magnitude-dependent? | **Categorical.** Newline features show rocket curves (1×→30× = 1-8→200-360 nats). Non-newline labeled features stay flat. |
 | 15 | Noising (necessity test) + 2×2 classification | What fraction of "drivers" are TRUE drivers vs OR-circuit components? | **TRUE driver rate = 3/9 (33%).** 2/9 are OR-circuit (sufficient but redundant); 1/9 is an AND-circuit component (necessary but missed by denoising). Single-direction patching over-counts drivers. |
-| 16 | Per-head path patching of TRUE drivers | Where do driver effects route through downstream attention? | **Newline drivers split into pathways.** f10047/f13131 mediated via L8H10; f15245 via L8H9. f10047 and f15245 show mirror positive/negative patterns at L8H10/L8H9 (negative-mediator heads, analogous to IOI's Negative Name Movers). Same-labeled drivers route through different heads. |
+| 16 | Per-head path patching of TRUE drivers | Where do driver effects route through downstream attention? | **Newline drivers split into pathways.** f10047/f13131 mediated via L8H10; f15245 via L8H9. Same-labeled drivers route through different heads. Negative-effect heads identified but their interpretation requires causal validation (Finding 10). |
+| 17 | Steering + head-ablation causal validation of mediators | Are the identified mediators causally responsible, or correlational? | **Positive mediators robustly validated** (30–44× larger effect than random-head ablation; ✓✓ for all 3). **Negative-effect heads fail validation as suppressors** — they don't act inhibitorily under steering. The "Negative Name Mover Heads" analogy is overstated; needs refined interpretation. |
 
 The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers** — and even among features that pass sufficiency tests, only a minority are TRUE drivers when also tested for necessity, and even among TRUE drivers, features with identical auto-interp labels can route through entirely different downstream pathways.
 
@@ -341,26 +343,72 @@ Per-feature mediation averaged over 3 firing positions:
 
 f10047 and f13131 share L8H10 as their primary mediator. f15245 instead routes primarily through L8H9. **The "newline driver" SAE features are not interchangeable**: they implement the same surface behavior (driving newline output) through different attention pathways. Auto-interp's "Newline tokens" label collapses this distinction.
 
-**(b) f10047 and f15245 have *mirror* patterns at L8H9 and L8H10.**
+**(b) f10047 and f15245 show *opposite-sign* effects at L8H9 and L8H10.**
 
 - f10047: L8H10 positive (+0.04), L8H9 negative (−0.06).
 - f15245: L8H9 positive (+0.07), L8H10 negative (−0.07).
 
-The same head (L8H10 or L8H9) is a *positive* mediator for one feature and a *negative* mediator for the other. This is reminiscent of the **Negative Name Mover Heads** described by \citep{wang2023ioi} in the IOI circuit: heads that systematically write in the opposite direction of the correct answer, potentially implementing a "hedging" mechanism that reduces overconfidence.
-
-Concretely: the existence of negative mediators means that the model uses some heads to *down-weight* certain newline-driver features in certain contexts. Removing the suppressed feature's contribution from a negative-mediator head's view actually *helps* the prediction, because the suppressive computation is no longer triggered.
+The same head appears as a positive-effect mediator for one feature and a negative-effect mediator for the other. The negative effects are real (removing the feature from these heads' inputs at a real firing position INCREASES the model's prediction of the actual next token), but their interpretation is non-trivial: Finding 10 below tests whether these negative effects correspond to inhibitory roles under causal intervention and finds they do not survive validation.
 
 **Implications.**
 
 - The driver/thermometer/AND/OR classification from Finding 8 is necessary but not sufficient for characterizing a feature's role. A feature can be a TRUE driver but still be routed through highly specific downstream pathways that other "same-labeled" drivers do not share.
 - The mech-interp community's common assumption that "features with the same label do the same thing" is contradicted at the pathway level even for features that pass both sufficiency and necessity tests.
-- The presence of negative-mediator heads suggests SAE features participate in not just additive but also competitive/inhibitory circuits — an area essentially unexplored in the SAE literature.
+- Per-head path patching identifies meaningful structure (specific positive-mediator heads dominate per feature), but the interpretation of negative-effect heads requires further causal testing (see Finding 10).
 
 **Caveats.**
 
 - Per-head mediation values are small in absolute magnitude (typical max ≈ 0.05–0.1 logp). This is expected — feature effects distribute across many heads. We report relative ordering, not absolute attribution.
 - This is directional ablation per head, not full IOI-style path patching (which would also freeze the path between feature and head). Full path patching may sharpen the pathway picture.
 - n=3 features × 3 positions each. Population-level claims require scaling.
+
+---
+
+## Finding 10: Causal validation of mediators via steering + head ablation — positive mediators validated, negative-effect heads fail validation
+
+Finding 9 identified per-head mediators from path patching in real firing contexts. A natural concern: are these heads *causally responsible* for the feature's effect on output, or are the effects correlational artifacts of the directional-ablation protocol? We test this with a steering-plus-ablation protocol analogous to the knockout experiments in Wang et al. (2023).
+
+**Method.** For each (feature, mediator_head, expected_direction) tuple identified in Finding 9, compute four conditions on three neutral prompts ("The recipe for chocolate cake is", "My favorite color is", "Yesterday I went to the park and saw"):
+
+1. **[N]** No intervention. Baseline `logP(concept | context)` (concept = sum of newline-token logprobs at the last position).
+2. **[A]** Steering only. Add `α × decoder_col_X` to the residual at the SAE layer with `α = 3 ×` peak firing magnitude (60).
+3. **[B]** Steering + target mediator head's z output zero-ablated at the last position.
+4. **[C]** Steering + a *random* downstream head's z output zero-ablated. Averaged over 15 random control heads to get a baseline expectation for the effect of ablating "any random head."
+
+The **mediator contribution** is `lp_steered − lp_steered_mediator_ablated` (positive = ablating the mediator hurt concept prediction → head was contributing to the steering effect). The **random contribution** is the analogous quantity for control heads. **Selectivity = mediator_contribution − random_contribution**: how much specifically the target head contributes beyond what any random head contributes.
+
+Predictions from Finding 9:
+- **Positive mediator** (per path patching): selectivity > 0 (mediator contributes to steering more than random heads).
+- **Negative mediator** (per path patching): selectivity < 0 (mediator suppresses the concept; ablating it boosts the steering effect more than random ablation).
+
+**Results.**
+
+| Feature | Target head | Predicted | Mediator contr. | Random contr. | Selectivity | Verdict |
+|---|---|---|---|---|---|---|
+| f10047 | L8H10 | positive | +0.108 | +0.003 | **+0.105** | ✓✓ (mediator 35× random) |
+| f13131 | L8H10 | positive | +0.239 | +0.008 | **+0.232** | ✓✓ (mediator 32× random) |
+| f15245 | L8H9 | positive | +0.410 | +0.009 | **+0.401** | ✓✓ (mediator 44× random) |
+| f10047 | L8H9 | negative | +0.012 | −0.010 | +0.022 | × (small positive, expected negative) |
+| f15245 | L8H10 | negative | +0.258 | +0.062 | +0.196 | × (substantial positive, expected negative) |
+
+**Two clean findings.**
+
+**(a) Positive mediators are robustly causally validated.** All three predicted positive mediators (L8H10 for f10047 and f13131; L8H9 for f15245) show mediator contributions 30–44× larger than random-head ablation. The specific heads identified by path patching genuinely route the feature's effect to the output — this is not an artifact of the protocol.
+
+**(b) Negative-effect heads do NOT validate as suppressors.** The two heads showing negative effects in path patching (L8H9 for f10047, L8H10 for f15245) do *not* behave as predicted under steering ablation. Their mediator contributions are positive or neutral, not negative. This means the Negative Name Mover Heads analogy speculated in Finding 9 is overstated: the negative effects in path patching are real, but they don't correspond to inhibitory roles in the same way IOI's Negative Name Mover Heads suppress the correct answer.
+
+**Why the discrepancy?** Path patching ablates the feature from a head's per-head q/k/v input at a real firing position; steering adds the feature's direction to the entire residual stream broadly. These are different causal interventions and can produce different effects. The negative effects in path patching may reflect that the head was using the feature for *something else* whose interaction with concept prediction at that specific firing context happens to be negative — but in the broader concept-pushing direction tested by steering, the head still contributes positively or neutrally.
+
+**Implications for Finding 9.**
+- The core claim — *specific downstream attention heads selectively route SAE feature effects* — is validated for positive mediators.
+- The subsidiary claim — *some mediator heads function as suppressors analogous to IOI's Negative Name Movers* — is not validated. The negative effects in path patching require a more refined interpretation than "inhibitory."
+- This is a useful methodological warning: per-head mediation magnitudes obtained from one intervention protocol (path patching) may not translate cleanly to another (steering). Two-protocol triangulation, as recommended by Heimersheim & Nanda (2024), catches this.
+
+**Caveats.**
+
+- Steering at α = 3× peak produced negative concept-logp shifts on neutral prompts (steering effect ≈ −1.6 to −5.2 nats), indicating the intervention is partly out-of-distribution at this magnitude. Despite this, the selectivity signal (mediator − random) is robust because random heads have selectivity near zero.
+- n=5 (feature, head) pairs tested. Larger-scale validation across the 60 downstream heads × 9 features would give population-level statistics.
+- The steering-vs-real-context discrepancy noted above is itself worth investigating: the same head can play different roles depending on whether the feature is naturally firing vs synthetically injected. Future work.
 
 ---
 

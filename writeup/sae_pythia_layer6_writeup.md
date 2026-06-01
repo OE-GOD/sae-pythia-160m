@@ -1,6 +1,6 @@
 # Auto-interp Labels Conflate Driver and Thermometer Features: A Case Study on Pythia-160M
 
-**A fifteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity — single-direction patching systematically over-counts drivers (by mistaking OR-circuit components for drivers) and under-counts (by missing AND-circuit components classified as thermometers).**
+**A sixteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. And even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals that features route through different downstream attention heads, including negative-mediator heads analogous to the Negative Name Mover Heads of the IOI circuit. Single-direction patching systematically miscategorizes features, and same-labeled drivers are not interchangeable at the pathway level.**
 
 ---
 
@@ -14,6 +14,7 @@
 - **Method-robustness check.** Three intervention methods (synthetic steering, whole-residual patching, SAE-feature patching) give different driver rates (17%, 87%, 56% respectively) — driver/thermometer classification is sensitive to the protocol used. The conservative interpretation: only features confirmed as drivers by multiple methods should be treated as causally meaningful.
 - **Magnitude-robustness check.** Sweeping intervention magnitude from 0× to 30× natural firing reveals driver/thermometer as a *categorical* property of the feature, not magnitude-dependent. Newline-cluster features show large logit shifts across the range (rocket curves); non-newline labeled features stay flat. Amplifying a thermometer does not make it a driver.
 - **Necessity-as-well-as-sufficiency check (2×2 classification).** Combining noising (necessity test) with denoising (sufficiency test) per Heimersheim & Nanda (2024): of the 5 features classified as drivers by sufficiency alone, only 3 (60%) are necessary; the other 2 are OR-circuit components (sufficient but redundant). 1 of 2 features classified as thermometers is revealed to be an AND-circuit component (necessary but not sufficient alone). **TRUE driver rate falls from 56% (sufficiency-only) to 33% (sufficiency AND necessity).** Single-direction patching systematically miscategorizes ~40% of features.
+- **Per-head path patching of TRUE drivers.** Applying the IOI-style trace-back to each TRUE driver: the three "newline driver" features route through different downstream attention heads. f10047 and f13131 are mediated primarily through L8H10; f15245 through L8H9. Even more strikingly, f10047 and f15245 have **mirror positive/negative patterns** at L8H9/L8H10 — a head that is a positive mediator for one feature is a negative mediator for the other. These negative-mediator heads are analogous to the Negative Name Mover Heads of the IOI circuit (Wang et al. 2023), suggesting SAE features participate in inhibitory as well as additive computations. **Same-labeled drivers are not interchangeable at the pathway level.**
 
 ---
 
@@ -86,8 +87,9 @@ The interpretive analysis comprises nine experiments, each addressing a distinct
 | 13 | SAE-feature patching | Driver rate isolating one feature's contribution | 56% drivers (n=9 with re-extractable contexts) — middle ground |
 | 14 | Magnitude sweep | Is driver/thermometer categorical or magnitude-dependent? | **Categorical.** Newline features show rocket curves (1×→30× = 1-8→200-360 nats). Non-newline labeled features stay flat. |
 | 15 | Noising (necessity test) + 2×2 classification | What fraction of "drivers" are TRUE drivers vs OR-circuit components? | **TRUE driver rate = 3/9 (33%).** 2/9 are OR-circuit (sufficient but redundant); 1/9 is an AND-circuit component (necessary but missed by denoising). Single-direction patching over-counts drivers. |
+| 16 | Per-head path patching of TRUE drivers | Where do driver effects route through downstream attention? | **Newline drivers split into pathways.** f10047/f13131 mediated via L8H10; f15245 via L8H9. f10047 and f15245 show mirror positive/negative patterns at L8H10/L8H9 (negative-mediator heads, analogous to IOI's Negative Name Movers). Same-labeled drivers route through different heads. |
 
-The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers** — and even among features that pass sufficiency tests, only a minority are TRUE drivers when also tested for necessity.
+The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers** — and even among features that pass sufficiency tests, only a minority are TRUE drivers when also tested for necessity, and even among TRUE drivers, features with identical auto-interp labels can route through entirely different downstream pathways.
 
 ---
 
@@ -309,6 +311,56 @@ Result on the 9 features:
 - n=9 is small; the population breakdown is illustrative, not population-level.
 - The actual-next-token metric is sharper than concept-token-set averaging but conflates "necessary for the labeled concept" with "necessary for prediction at firing contexts." Future work should disentangle these.
 - Ablation by direct subtraction may push the residual stream out of distribution even at moderate `f_clean` values (18–26 here). Replacement with a paired corrupt-prompt value (true noising) rather than zero-ablation would be more principled.
+
+---
+
+## Finding 9: Per-head path-patching reveals that "newline driver" features split into distinct downstream pathways, including features mediated by negative-effect heads
+
+Finding 8 established TRUE drivers via 2×2 sufficiency × necessity. The natural next question: **where in the downstream computation does each driver's effect propagate?** Borrowing path-patching methodology from \citep{wang2023ioi}, we test, for each (downstream layer L, head h), how much the model's prediction depends on that specific head consuming the SAE feature's contribution.
+
+**Method.** For each TRUE driver feature X (f10047, f13131, f15245) and each downstream head (L, h) with L > 6:
+
+1. Find a clean firing position where X re-fires (f_X ≥ 0.5). Record baseline `log P(actual_next_token)`.
+2. Run a forward pass with hooks on `blocks.{L}.hook_{q,k,v}_input` for head h only: subtract `f_X^clean * decoder_col_X` from this head's per-head input. All other heads see the unperturbed residual.
+3. Measure patched `log P(actual_next_token)`.
+4. `mediation(L, h) = baseline_logp - patched_logp`. Positive ⇒ removing X from this head's view hurt the prediction → this head uses X. Negative ⇒ removing X from this head INCREASES the prediction → this head was using X in a suppressive direction.
+
+Per-feature mediation averaged over 3 firing positions:
+
+![Per-head path patching](../results/figures/fig5_path_patching_heatmaps.png)
+
+**Two findings emerge.**
+
+**(a) The three TRUE newline drivers split into distinct downstream pathways.**
+
+| Feature | Primary positive mediator | Primary negative mediator |
+|---|---|---|
+| f10047 (CSS/HTML newline) | L8H10 (+0.04) | L8H9 (−0.06), L7H11 (−0.04) |
+| f13131 (general newline) | L8H10 (+0.04) | (no strong negative) |
+| f15245 (XML/HTML newline) | L8H9 (+0.07) | L8H10 (−0.07), L11H2/L11H8 (−0.06) |
+
+f10047 and f13131 share L8H10 as their primary mediator. f15245 instead routes primarily through L8H9. **The "newline driver" SAE features are not interchangeable**: they implement the same surface behavior (driving newline output) through different attention pathways. Auto-interp's "Newline tokens" label collapses this distinction.
+
+**(b) f10047 and f15245 have *mirror* patterns at L8H9 and L8H10.**
+
+- f10047: L8H10 positive (+0.04), L8H9 negative (−0.06).
+- f15245: L8H9 positive (+0.07), L8H10 negative (−0.07).
+
+The same head (L8H10 or L8H9) is a *positive* mediator for one feature and a *negative* mediator for the other. This is reminiscent of the **Negative Name Mover Heads** described by \citep{wang2023ioi} in the IOI circuit: heads that systematically write in the opposite direction of the correct answer, potentially implementing a "hedging" mechanism that reduces overconfidence.
+
+Concretely: the existence of negative mediators means that the model uses some heads to *down-weight* certain newline-driver features in certain contexts. Removing the suppressed feature's contribution from a negative-mediator head's view actually *helps* the prediction, because the suppressive computation is no longer triggered.
+
+**Implications.**
+
+- The driver/thermometer/AND/OR classification from Finding 8 is necessary but not sufficient for characterizing a feature's role. A feature can be a TRUE driver but still be routed through highly specific downstream pathways that other "same-labeled" drivers do not share.
+- The mech-interp community's common assumption that "features with the same label do the same thing" is contradicted at the pathway level even for features that pass both sufficiency and necessity tests.
+- The presence of negative-mediator heads suggests SAE features participate in not just additive but also competitive/inhibitory circuits — an area essentially unexplored in the SAE literature.
+
+**Caveats.**
+
+- Per-head mediation values are small in absolute magnitude (typical max ≈ 0.05–0.1 logp). This is expected — feature effects distribute across many heads. We report relative ordering, not absolute attribution.
+- This is directional ablation per head, not full IOI-style path patching (which would also freeze the path between feature and head). Full path patching may sharpen the pathway picture.
+- n=3 features × 3 positions each. Population-level claims require scaling.
 
 ---
 

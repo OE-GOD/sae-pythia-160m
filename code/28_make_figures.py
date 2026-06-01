@@ -306,6 +306,55 @@ def plot_two_by_two_classification(noising_data, out_path):
     print(f"  saved {out_path}")
 
 
+def plot_path_patching_heatmaps(path_patch_data, out_path):
+    """Heatmap per TRUE driver feature: rows = downstream layers, cols = heads."""
+    feature_results = path_patch_data["feature_results"]
+    feature_ids = list(feature_results.keys())
+    n_features = len(feature_ids)
+
+    fig, axes = plt.subplots(1, n_features, figsize=(5 * n_features, 4.5))
+    if n_features == 1:
+        axes = [axes]
+
+    # Find shared color scale across features
+    all_data = [np.array(feature_results[fid]["mean_mediation"]) for fid in feature_ids]
+    vmax = max(np.abs(d).max() for d in all_data)
+
+    for ax, fid, mediation in zip(axes, feature_ids, all_data):
+        downstream_layers = feature_results[fid]["downstream_layers"]
+        n_heads = feature_results[fid]["n_heads"]
+
+        im = ax.imshow(mediation, aspect="auto", cmap="RdBu_r",
+                       vmin=-vmax, vmax=vmax, origin="lower")
+
+        ax.set_xticks(range(n_heads))
+        ax.set_xticklabels(range(n_heads), fontsize=8)
+        ax.set_yticks(range(len(downstream_layers)))
+        ax.set_yticklabels([f"L{l}" for l in downstream_layers], fontsize=9)
+        ax.set_xlabel("Head", fontsize=10)
+        ax.set_ylabel("Layer", fontsize=10)
+
+        # Annotate cells with values >= 0.5 * vmax
+        threshold = 0.5 * vmax
+        for i in range(len(downstream_layers)):
+            for j in range(n_heads):
+                if abs(mediation[i, j]) >= threshold:
+                    color = "white" if abs(mediation[i, j]) > 0.7 * vmax else "black"
+                    ax.text(j, i, f"{mediation[i, j]:.2f}", ha="center", va="center",
+                            fontsize=7, color=color, fontweight="bold")
+
+        ax.set_title(f"f{fid}", fontsize=12)
+
+    fig.colorbar(im, ax=axes, location="right", shrink=0.8,
+                 label="Mediation strength (logp_drop)")
+    fig.suptitle("Per-head mediation of TRUE driver features (path patching)",
+                 fontsize=13, y=1.02)
+    plt.savefig(out_path, dpi=150, bbox_inches="tight")
+    plt.savefig(out_path.replace(".png", ".pdf"), bbox_inches="tight")
+    plt.close()
+    print(f"  saved {out_path}")
+
+
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--ckpt-prefix", type=str, default="checkpoints/sae_layer6_topk64_full")
@@ -336,6 +385,11 @@ def main():
     if noising_data:
         plot_two_by_two_classification(noising_data,
                                         str(out_dir / "fig4_two_by_two_classification.png"))
+
+    path_patch_data = load_json(f"{args.ckpt_prefix}.sae_feature_path_patching.json")
+    if path_patch_data:
+        plot_path_patching_heatmaps(path_patch_data,
+                                     str(out_dir / "fig5_path_patching_heatmaps.png"))
 
     print(f"\nfigures in {out_dir}")
 

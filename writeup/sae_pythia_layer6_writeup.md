@@ -471,6 +471,8 @@ Auto-interp via Moonshot's Kimi K2 (chosen for its 32k-context efficiency at low
 
 ---
 
+**Blog post version:** [oe-god.github.io](https://oe-god.github.io/2026/06/01/sae-pythia-160m/) — more accessible writeup, same content + a "what I learned" section.
+
 ## Contact
 
 irving46764@gmail.com / [github.com/OE-GOD](https://github.com/OE-GOD)

@@ -1,6 +1,6 @@
 # Auto-interp Labels Conflate Driver and Thermometer Features: A Case Study on Pythia-160M
 
-**A fourteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude.**
+**A fifteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity — single-direction patching systematically over-counts drivers (by mistaking OR-circuit components for drivers) and under-counts (by missing AND-circuit components classified as thermometers).**
 
 ---
 
@@ -13,6 +13,7 @@
 - **Geometric account.** SVD on the 16 newline-cluster decoder columns reveals one dominant singular value (24% of variance) plus 15 nearly-uniform residuals. The cluster is "one shared atom plus N independent specializations," not a low-dimensional manifold. PC1 alignment alone does not predict steering success (r = 0.38) — so geometric clustering and causal drive are partially independent properties.
 - **Method-robustness check.** Three intervention methods (synthetic steering, whole-residual patching, SAE-feature patching) give different driver rates (17%, 87%, 56% respectively) — driver/thermometer classification is sensitive to the protocol used. The conservative interpretation: only features confirmed as drivers by multiple methods should be treated as causally meaningful.
 - **Magnitude-robustness check.** Sweeping intervention magnitude from 0× to 30× natural firing reveals driver/thermometer as a *categorical* property of the feature, not magnitude-dependent. Newline-cluster features show large logit shifts across the range (rocket curves); non-newline labeled features stay flat. Amplifying a thermometer does not make it a driver.
+- **Necessity-as-well-as-sufficiency check (2×2 classification).** Combining noising (necessity test) with denoising (sufficiency test) per Heimersheim & Nanda (2024): of the 5 features classified as drivers by sufficiency alone, only 3 (60%) are necessary; the other 2 are OR-circuit components (sufficient but redundant). 1 of 2 features classified as thermometers is revealed to be an AND-circuit component (necessary but not sufficient alone). **TRUE driver rate falls from 56% (sufficiency-only) to 33% (sufficiency AND necessity).** Single-direction patching systematically miscategorizes ~40% of features.
 
 ---
 
@@ -84,8 +85,9 @@ The interpretive analysis comprises nine experiments, each addressing a distinct
 | 12 | Whole-residual patching | Driver rate under IOI-style full residual swap | 87% drivers — over-attributes due to transplanting co-firing features |
 | 13 | SAE-feature patching | Driver rate isolating one feature's contribution | 56% drivers (n=9 with re-extractable contexts) — middle ground |
 | 14 | Magnitude sweep | Is driver/thermometer categorical or magnitude-dependent? | **Categorical.** Newline features show rocket curves (1×→30× = 1-8→200-360 nats). Non-newline labeled features stay flat. |
+| 15 | Noising (necessity test) + 2×2 classification | What fraction of "drivers" are TRUE drivers vs OR-circuit components? | **TRUE driver rate = 3/9 (33%).** 2/9 are OR-circuit (sufficient but redundant); 1/9 is an AND-circuit component (necessary but missed by denoising). Single-direction patching over-counts drivers. |
 
-The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers.**
+The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers** — and even among features that pass sufficiency tests, only a minority are TRUE drivers when also tested for necessity.
 
 ---
 
@@ -255,6 +257,58 @@ The pattern is sharp and categorical:
 **The useful magnitude range is roughly 2–10× natural firing.** Below 1×, even drivers show modest effects (1–10 nats) that could be mistaken for noise. Above 10×, even strong drivers begin producing inverted or noisy effects, suggesting the intervention has gone substantially out-of-distribution. The 2–10× window is where driver/thermometer distinctions are most cleanly visible.
 
 **Implication for Finding 5.** The original steering analysis used `α =` peak activation, which is roughly 1–3× the natural firing magnitude. At that level, the magnitude sweep shows even drivers produce relatively modest effects (3–40 nats for newline features). Finding 5's 17% driver rate is therefore likely an *underestimate* of how many features are drivers at higher magnitudes — and Finding 7 shows that for the categorical distinction, this matters less than expected: features that drive at any magnitude drive across the range, and features that don't, don't.
+
+---
+
+## Finding 8: 2×2 necessity × sufficiency classification reveals OR-circuit and AND-circuit components hidden by single-direction patching
+
+Findings 5–7 all tested **sufficiency** (denoising — `clean → corrupt` patching). Heimersheim & Nanda (2024) note that denoising and noising can give very different answers about the same circuit. For an AND-circuit (multiple components required), denoising misses components individually because the other necessary teammates remain corrupt. For an OR-circuit (redundant components), denoising over-counts because any single sufficient component scores as a driver even if the model has backups.
+
+To test both directions, we ran **noising** (`corrupt → clean` direction) on the same 9 features that survived context recovery in Finding 6. Per-position protocol:
+
+1. Find a clean firing position where the feature re-fires (`f_X ≥ 0.5`).
+2. Run the model on the clean context; record `baseline_logp = log P(actual_next_token)` at the firing position.
+3. Hook the residual stream at the firing position and subtract `f_X * decoder_col_X` (ablating the feature's contribution to the SAE reconstruction).
+4. Re-run; record `patched_logp`.
+5. `logp_drop = baseline_logp - patched_logp`. Positive ⇒ ablation hurt the model's prediction ⇒ feature was necessary.
+
+Averaged over 5 firing positions per feature. Verdict: necessary if mean `logp_drop ≥ 0.5`; not necessary if `≤ 0.05`; ambiguous otherwise.
+
+**Metric choice matters.** An initial attempt used `mean(logit) over concept tokens` as the dependent variable — the same metric used in Findings 6 and 7 (in their denoising direction). This produced uninterpretable negative drops (i.e., ablation appeared to INCREASE concept-logit). Diagnosis: when an ablation pushes the residual stream out of distribution, the model's output becomes near-uniform, which raises the *mean logit* across many low-frequency concept tokens without actually improving concept prediction — the "breaking the model" false positive Heimersheim & Nanda warn about. Switching to `logprob(actual next token)` resolved the issue: a normalized probability cannot be inflated by uniform collapse.
+
+Combining noising and denoising verdicts produces a 2×2:
+
+|  | **Sufficient (denoising = driver)** | **Not sufficient (denoising = thermometer)** |
+|---|---|---|
+| **Necessary** (noising = necessary) | **TRUE DRIVER** | **AND-circuit component** (necessary alongside teammates) |
+| **Not necessary** (noising = not necessary) | **OR-circuit component** (sufficient but redundant) | **THERMOMETER** (no causal role) |
+
+Result on the 9 features:
+
+![2x2 classification](../results/figures/fig4_two_by_two_classification.png)
+
+| Feature | Label | Denoising | Noising | **Combined** |
+|---|---|---|---|---|
+| f10047 | Newline (CSS/HTML) | driver | necessary | **TRUE DRIVER** |
+| f13131 | Newline (general) | driver | necessary | **TRUE DRIVER** |
+| f15245 | Newline (XML/HTML) | driver | necessary | **TRUE DRIVER** |
+| f11488 | Newline (general) | driver | not necessary | **OR-CIRCUIT** |
+| f13821 | Newline (code) | driver | not necessary | **OR-CIRCUIT** |
+| f1989 | Decimal numerical | thermometer | necessary | **AND-CIRCUIT** |
+| f5747 | File paths | thermometer | not necessary | **THERMOMETER** |
+| f12117 | BibTeX/LaTeX | ambiguous | not necessary | ambiguous |
+| f12697 | Logical operators | ambiguous | not necessary | ambiguous |
+
+**Headline.** Of the 5 features classified as drivers by sufficiency alone (Finding 6's 56% driver rate), only 3 (60%) survive the necessity test. The other 2 are OR-circuit components: sufficient when patched in alone, but the model has redundant pathways such that ablating them in their normal context doesn't break newline prediction. Conversely, 1 of the 2 features classified as thermometers (f1989, decimal numerical) is revealed to be an AND-circuit component: necessary in its firing context but not sufficient when patched alone into a corrupted context.
+
+**The TRUE DRIVER rate is 3/9 (33.3%) — substantially lower than the 56% from denoising alone.** Single-direction patching systematically over-counts drivers (by including OR-circuit redundant components) and under-counts true causal components (by missing AND-circuit teammates).
+
+**Methodological consequence.** Claims that an SAE feature "represents X causally" should be supported by both noising and denoising. The combined 2×2 framework distinguishes four functionally different roles (true driver, OR-component, AND-component, thermometer) that single-direction patching collapses into a binary classification. This is the recommended best practice from Heimersheim & Nanda (2024) applied to SAE features — to our knowledge, the first such application in published SAE work.
+
+**Caveats.**
+- n=9 is small; the population breakdown is illustrative, not population-level.
+- The actual-next-token metric is sharper than concept-token-set averaging but conflates "necessary for the labeled concept" with "necessary for prediction at firing contexts." Future work should disentangle these.
+- Ablation by direct subtraction may push the residual stream out of distribution even at moderate `f_clean` values (18–26 here). Replacement with a paired corrupt-prompt value (true noising) rather than zero-ablation would be more principled.
 
 ---
 

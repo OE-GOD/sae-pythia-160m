@@ -4,13 +4,15 @@
 
 ## TL;DR
 
-I trained a TopK SAE on Pythia-160M layer 6 and ran fourteen analyses to characterize what its features actually do. Three findings I think the field should know about:
+I trained a TopK SAE on Pythia-160M layer 6 and ran fifteen analyses to characterize what its features actually do. Four findings I think the field should know about:
 
 **(1) At population scale, most "monosemantic" auto-interp features are thermometers, not causal drivers.** Across 23 high-confidence monosemantic features whose labels could be mapped to predicted-concept tokens, **14 (60.9%) produced zero predicted-concept tokens when steered.** Only 4 (17.4%) were clear drivers. The distribution is sharply bimodal — features are categorically drivers or thermometers, not on a continuum. Threshold-sensitivity confirms robustness.
 
 **(2) The driver/thermometer split survives across intervention methods and magnitudes.** I tested three different causal interpretability protocols (synthetic steering, whole-residual patching, SAE-feature patching) and got driver rates of 17%, 87%, and 56%. Methods disagree on borderline features, but the *categorical* distinction holds: features that drive their labeled concept do so robustly; features that don't, don't — even when amplified to 30× their natural firing magnitude. **Amplifying a thermometer does not make it a driver.**
 
 **(3) Logit weight analysis is a cheap discriminator.** Two features both labeled "Newlines" by auto-interp can have entirely different causal roles. f2255 has logit weight 0.49 for newline tokens and produces 19 newlines per 30 steered tokens; f6767 has logit weight 0.04 and produces zero. Compute `decoder_column @ unembedding_matrix` for each feature — seconds per feature — and you get a meaningful discriminator that top-activating-examples doesn't surface.
+
+**(4) Necessity-and-sufficiency 2×2 reveals OR-circuit and AND-circuit components hidden by single-direction patching.** Combining noising (necessity) with denoising (sufficiency) per Heimersheim & Nanda (2024): only 3 of 9 features (33%) are TRUE drivers (necessary AND sufficient). Two are OR-circuit components (sufficient but redundant — model has backups). One is an AND-circuit component (necessary but missed by sufficiency testing alone). **Single-direction patching miscategorizes ~40% of features.** Methodological recommendation: run both directions.
 
 This generalizes a small open problem from the original "Towards Monosemanticity" paper: top-activating examples reveal what makes a feature fire, not what the feature causally does. In my SAE, the two come apart for ~4 out of 5 monosemantic features.
 
@@ -124,6 +126,23 @@ Swept intervention magnitude from 0× to 30× natural firing magnitude for the 9
 Amplifying a thermometer makes it slightly noisier — not driver-like. The driver/thermometer property is intrinsic to the feature's relationship with the predicted concept, not an artifact of how hard we're pushing.
 
 Practical implication: if you can't validate a feature as a driver via causal intervention at multiple magnitudes (say, 2× and 5× natural), don't claim it's one. Calling it monosemantic based on top-activating examples is much weaker.
+
+### Noising + denoising: even fewer features are TRUE drivers
+
+The three driver-rate numbers above (17%, 87%, 56%) all come from **denoising** — patching from a clean context into a corrupted one. That tests *sufficiency*. Heimersheim & Nanda (2024) point out that the other direction — **noising** (corrupted → clean, testing *necessity*) — can give very different answers about the same circuit, and that both should be run together.
+
+I added noising to the same 9 features tested with SAE-feature patching. The 2×2 result:
+
+|  | Sufficient (denoising = driver) | Not sufficient (denoising = thermometer) |
+|---|---|---|
+| **Necessary** (noising) | **TRUE DRIVER: 3** | **AND-circuit component: 1** |
+| **Not necessary** (noising) | OR-circuit component: 2 | Thermometer: 1 |
+
+Plus 2 ambiguous. **TRUE driver rate drops from 56% (sufficiency-only) to 33% (sufficiency AND necessity).** Two features previously counted as drivers turn out to be OR-circuit components — sufficient when patched in alone, but their ablation doesn't break newline prediction because other features compensate. One feature counted as a thermometer turns out to be an AND-circuit component — necessary, but only when its teammates are also firing.
+
+Single-direction patching miscategorizes ~40% of features. Methodological takeaway: don't claim a feature is a causal driver based on denoising (or noising) alone. Run both, classify in 2×2.
+
+A subtle methodology gotcha I hit: the noising metric matters a lot. Using `mean(logit)` over the concept-token set — the metric used for denoising in this paper — produced negative drops (i.e., ablation appeared to INCREASE concept-logit). Cause: ablating the feature pushes the residual stream out of distribution, the model's output collapses toward uniform, and the mean across many low-frequency concept tokens *rises*. The fix: measure `logprob(actual next token in corpus)`, a normalized probability of a specific token. This is precisely the "breaking the model" false positive Heimersheim & Nanda warn about, and it's easy to walk into.
 
 ## Practical recommendation for SAE researchers
 

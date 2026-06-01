@@ -36,20 +36,29 @@
 
 \begin{abstract}
 We train a TopK sparse autoencoder (SAE) on the residual stream of Pythia-160M
-at layer 6 and characterize its features through nine analyses. Our headline
+at layer 6 and characterize its features through fifteen analyses. Our headline
 finding is methodological: SAE features that receive identical labels from
 automated interpretation (auto-interp) can have completely different causal roles.
 We demonstrate this concretely on two features both labeled ``Newlines'' by an LLM
 labeler. The first (f2255) has a logit weight of 0.494 for newline tokens and
 produces 19 newlines per 30 tokens when force-activated. The second (f6767) has a
 logit weight of 0.042 and produces zero newlines---a thermometer feature that
-detects newline contexts without driving newline output. We argue that
-\emph{logit weight analysis}---a single matrix multiply per feature---is a cheap
-discriminator between driver and thermometer features and should be standard in
-SAE evaluations. The driver/thermometer split sits inside a broader pattern:
-stable atomic features (replicate across SAE training runs) and unstable
-manifold-partition features (do not replicate, but are locally causally critical)
-form orthogonal axes of feature characterization.
+detects newline contexts without driving newline output. Across $n{=}23$
+high-confidence monosemantic features, $14$ (60.9\%) produce zero predicted-concept
+tokens when steered---the driver/thermometer distribution is sharply bimodal and
+robust to threshold choice. Applying the $2 \times 2$ necessity-by-sufficiency
+classification of \citep{heimersheim2024howto}---running both noising and
+denoising on the same feature---reveals that only $3$ of $9$ features ($33\%$)
+are TRUE drivers (necessary AND sufficient); $2$ are OR-circuit components
+(sufficient but redundant) and $1$ is an AND-circuit component (necessary but
+missed by sufficiency testing alone). Single-direction patching systematically
+miscategorizes $\sim 40\%$ of features. We argue that \emph{logit weight analysis}
+---a single matrix multiply per feature---is a cheap discriminator between
+driver and thermometer features, and that both noising and denoising should be
+standard in SAE causal evaluation. The driver/thermometer split sits inside a
+broader pattern: stable atomic features (replicate across SAE training runs) and
+unstable manifold-partition features (do not replicate, but are locally causally
+critical) form orthogonal axes of feature characterization.
 \end{abstract}
 
 \section{Introduction}
@@ -263,6 +272,94 @@ Random-direction steering produced generic garbage (word repetition, weird BPE
 fragments) but never specifically the labeled concept (newlines, whitespace).
 The drift is direction-specific, validating the causal interpretation.
 
+\subsection{$2 \times 2$ Necessity-by-Sufficiency Classification}
+\label{sec:twobytwo}
+
+The driver/thermometer analysis above tests \emph{sufficiency}: does activating
+feature $X$ in a context where it normally doesn't fire produce the labeled
+concept in the output? \citep{heimersheim2024howto} note that sufficiency
+(``denoising,'' \texttt{clean$\to$corrupt} patching) and necessity (``noising,''
+\texttt{corrupt$\to$clean} patching) can give very different answers about the
+same circuit: an AND-circuit requires multiple components, so denoising misses
+components individually because remaining teammates are corrupt; an OR-circuit
+has redundant components, so denoising over-counts because any single sufficient
+component scores as a driver even when the model has backups.
+
+We complement the SAE-feature patching experiment with its noising counterpart
+on the same $n{=}9$ features. For each feature, at $k{=}5$ clean firing
+positions, we subtract $f^{\text{clean}}_X \cdot \mathbf{d}_X$ from the residual
+stream at the firing position and measure
+$\text{logp\_drop} = \log P(t_{\text{next}}|\text{clean}) -
+\log P(t_{\text{next}}|\text{ablated})$, where $t_{\text{next}}$ is the actual
+next token in the corpus. A feature is \emph{necessary} if the mean drop exceeds
+$0.5$, \emph{not necessary} below $0.05$.
+
+\paragraph{Metric choice.} An initial attempt used $\text{mean}(\text{logit})$ over
+the predicted-concept-token set---the same metric used in the sufficiency experiment
+above. This produced spurious negative drops: when the ablation pushes the
+residual stream out of distribution, the model's output collapses toward
+uniform, which raises the \emph{mean logit} across many low-frequency concept
+tokens without actually improving concept prediction. This is precisely the
+``breaking the model'' false positive \citep{heimersheim2024howto} warn about.
+Switching to $\log P(\text{actual next token})$---a normalized probability of a
+specific token---eliminated the artifact.
+
+Combining noising and denoising verdicts yields a $2 \times 2$ classification:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{TRUE DRIVER}: necessary AND sufficient.
+  \item \textbf{OR-circuit component}: sufficient but not necessary (redundant).
+  \item \textbf{AND-circuit component}: necessary but not sufficient alone
+        (requires teammates).
+  \item \textbf{THERMOMETER}: neither necessary nor sufficient.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{../../results/figures/fig4_two_by_two_classification.pdf}
+\caption{$2 \times 2$ classification of $n{=}9$ SAE features by necessity
+(noising, vertical axis) and sufficiency (denoising, horizontal axis). The TRUE
+driver rate of $3/9$ ($33\%$) is substantially below the $5/9$ ($56\%$) driver
+rate from sufficiency-alone testing. Two features classified as drivers by
+denoising are revealed to be OR-circuit components (sufficient but redundant);
+one feature classified as a thermometer is revealed to be an AND-circuit
+component (necessary but not sufficient alone).}
+\label{fig:twobytwo}
+\end{figure}
+
+Results (Figure~\ref{fig:twobytwo}): \textbf{$3/9$ ($33\%$) of features are TRUE
+drivers}---substantially fewer than the $5/9$ ($56\%$) classified as drivers by
+sufficiency alone. Two features (f11488, f13821, both labeled ``Newline tokens''
+by auto-interp) are OR-circuit components: they pass sufficiency testing but
+their ablation does not break newline prediction because other newline-driving
+features compensate. Conversely, one feature classified as a thermometer by
+sufficiency testing (f1989, ``Decimal points in numerical contexts'') is
+revealed to be an AND-circuit component: its ablation does hurt the model's
+prediction, but patching it alone into a corrupted context does not restore
+behavior. \textbf{Single-direction patching miscategorizes $\sim 40\%$ of
+features tested.}
+
+Per-feature breakdown:
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lllll}
+\toprule
+Feature & Label & Denoising & Noising & Combined \\
+\midrule
+f10047 & Newline (CSS/HTML)      & driver      & necessary     & \textbf{TRUE DRIVER} \\
+f13131 & Newline (general)       & driver      & necessary     & \textbf{TRUE DRIVER} \\
+f15245 & Newline (XML/HTML)      & driver      & necessary     & \textbf{TRUE DRIVER} \\
+f11488 & Newline (general)       & driver      & not necessary & OR-circuit \\
+f13821 & Newline (code)          & driver      & not necessary & OR-circuit \\
+f1989  & Decimal numerical       & thermometer & necessary     & AND-circuit \\
+f5747  & File paths              & thermometer & not necessary & thermometer \\
+f12117 & BibTeX/LaTeX            & ambiguous   & not necessary & ambiguous \\
+f12697 & Logical operators       & ambiguous   & not necessary & ambiguous \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Methodological Recommendation}
 
 Before claiming an SAE feature represents concept X causally:
@@ -271,8 +368,11 @@ Before claiming an SAE feature represents concept X causally:
         ($O(d_{\text{model}} \cdot |\mathcal{V}|)$ per feature, milliseconds).
   \item Confirm it is substantially above zero (and ideally above similarly-labeled
         features that fail the test).
-  \item For features used in safety-relevant downstream claims, perform an actual
-        steering test to confirm causal effect.
+  \item For features used in safety-relevant downstream claims, perform an
+        actual steering test (denoising) and an ablation test (noising) and combine
+        the two into the $2\times 2$ classification of Section~\ref{sec:twobytwo}.
+        Single-direction patching systematically miscategorizes OR-circuit and
+        AND-circuit components.
 \end{enumerate}
 
 Auto-interpretation alone---based on top-activating examples---will reliably

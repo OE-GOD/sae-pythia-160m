@@ -1,0 +1,537 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "method": "sae_feature_noising",
+  "necessary_threshold": 0.5,
+  "not_necessary_threshold": 0.05,
+  "n_features": 9,
+  "combined_counts": {
+    "true_driver": 3,
+    "or_circuit": 2,
+    "and_circuit": 1,
+    "thermometer": 1,
+    "ambiguous": 2
+  },
+  "combined_feature_ids": {
+    "true_driver": [
+      10047,
+      13131,
+      15245
+    ],
+    "or_circuit": [
+      11488,
+      13821
+    ],
+    "and_circuit": [
+      1989
+    ],
+    "thermometer": [
+      5747
+    ],
+    "ambiguous": [
+      12117,
+      12697
+    ]
+  },
+  "results": [
+    {
+      "feature_id": 12117,
+      "label": "BibTeX/LaTeX citation references",
+      "category": "citation_latex",
+      "n_positions": 5,
+      "n_concept_next_positions": 0,
+      "per_position_results": [
+        {
+          "position": 931962,
+          "original_activation": 29.697425842285156,
+          "f_clean_reencoded": 13.413716316223145,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": false,
+          "baseline_logp": -0.03174405172467232,
+          "patched_logp": -0.03737960755825043,
+          "logp_drop": 0.00563555583357811
+        },
+        {
+          "position": 497825,
+          "original_activation": 27.61576271057129,
+          "f_clean_reencoded": 26.992345809936523,
+          "actual_next_token": 281,
+          "actual_next_str": " to",
+          "is_concept_next": false,
+          "baseline_logp": -0.009077115915715694,
+          "patched_logp": -0.011263004504144192,
+          "logp_drop": 0.0021858885884284973
+        },
+        {
+          "position": 123878,
+          "original_activation": 27.39694595336914,
+          "f_clean_reencoded": 10.034744262695312,
+          "actual_next_token": 11743,
+          "actual_next_str": " caption",
+          "is_concept_next": false,
+          "baseline_logp": -0.02512385882437229,
+          "patched_logp": -0.02173590287566185,
+          "logp_drop": -0.0033879559487104416
+        },
+        {
+          "position": 424932,
+          "original_activation": 27.093015670776367,
+          "f_clean_reencoded": 21.67864418029785,
+          "actual_next_token": 13,
+          "actual_next_str": ",",
+          "is_concept_next": false,
+          "baseline_logp": -0.6950865983963013,
+          "patched_logp": -0.637759268283844,
+          "logp_drop": -0.057327330112457275
+        },
+        {
+          "position": 638954,
+          "original_activation": 26.26709747314453,
+          "f_clean_reencoded": 23.120033264160156,
+          "actual_next_token": 273,
+          "actual_next_str": " of",
+          "is_concept_next": false,
+          "baseline_logp": -0.014293549582362175,
+          "patched_logp": -0.013402369804680347,
+          "logp_drop": -0.0008911797776818275
+        }
+      ],
+      "mean_logp_drop": -0.010757004283368588,
+      "mean_logp_drop_all": -0.010757004283368588,
+      "verdict": "not_necessary",
+      "denoising_verdict": "ambiguous",
+      "combined_classification": "AMBIGUOUS"
+    },
+    {
+      "feature_id": 5747,
+      "label": "Tokens related to file paths and directory structures",
+      "category": "file_path",
+      "n_positions": 5,
+      "n_concept_next_positions": 2,
+      "per_position_results": [
+        {
+          "position": 75263,
+          "original_activation": 27.004501342773438,
+          "f_clean_reencoded": 23.219209671020508,
+          "actual_next_token": 16,
+          "actual_next_str": "/",
+          "is_concept_next": true,
+          "baseline_logp": -0.0020123724825680256,
+          "patched_logp": -0.0008138681878335774,
+          "logp_drop": -0.0011985042947344482
+        },
+        {
+          "position": 677857,
+          "original_activation": 26.908273696899414,
+          "f_clean_reencoded": 17.657623291015625,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": false,
+          "baseline_logp": -0.03732861950993538,
+          "patched_logp": -0.026895474642515182,
+          "logp_drop": -0.010433144867420197
+        },
+        {
+          "position": 77106,
+          "original_activation": 26.893495559692383,
+          "f_clean_reencoded": 4.120000839233398,
+          "actual_next_token": 16,
+          "actual_next_str": "/",
+          "is_concept_next": true,
+          "baseline_logp": -0.007082001771777868,
+          "patched_logp": -0.006397956050932407,
+          "logp_drop": -0.0006840457208454609
+        },
+        {
+          "position": 911854,
+          "original_activation": 26.636213302612305,
+          "f_clean_reencoded": 21.826704025268555,
+          "actual_next_token": 575,
+          "actual_next_str": "\u00a0",
+          "is_concept_next": false,
+          "baseline_logp": -0.3218206465244293,
+          "patched_logp": -0.3005388677120209,
+          "logp_drop": -0.021281778812408447
+        },
+        {
+          "position": 915150,
+          "original_activation": 24.819202423095703,
+          "f_clean_reencoded": 6.2619948387146,
+          "actual_next_token": 466,
+          "actual_next_str": "ie",
+          "is_concept_next": false,
+          "baseline_logp": -0.04727364704012871,
+          "patched_logp": -0.05777682736515999,
+          "logp_drop": 0.01050318032503128
+        }
+      ],
+      "mean_logp_drop": -0.0009412750077899545,
+      "mean_logp_drop_all": -0.004618858674075454,
+      "verdict": "not_necessary",
+      "denoising_verdict": "thermometer",
+      "combined_classification": "THERMOMETER"
+    },
+    {
+      "feature_id": 10047,
+      "label": "Newline tokens inside CSS/XSL/HTML/XML blocks",
+      "category": "newline",
+      "n_positions": 1,
+      "n_concept_next_positions": 1,
+      "per_position_results": [
+        {
+          "position": 749954,
+          "original_activation": 24.35235595703125,
+          "f_clean_reencoded": 23.83661651611328,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": true,
+          "baseline_logp": -0.018391672521829605,
+          "patched_logp": -3.5574774742126465,
+          "logp_drop": 3.539085801690817
+        }
+      ],
+      "mean_logp_drop": 3.539085801690817,
+      "mean_logp_drop_all": 3.539085801690817,
+      "verdict": "necessary",
+      "denoising_verdict": "driver",
+      "combined_classification": "TRUE_DRIVER"
+    },
+    {
+      "feature_id": 13131,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "n_positions": 3,
+      "n_concept_next_positions": 3,
+      "per_position_results": [
+        {
+          "position": 632743,
+          "original_activation": 23.15884017944336,
+          "f_clean_reencoded": 23.171947479248047,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": true,
+          "baseline_logp": -1.6663602590560913,
+          "patched_logp": -1.5682648420333862,
+          "logp_drop": -0.09809541702270508
+        },
+        {
+          "position": 841121,
+          "original_activation": 23.123632431030273,
+          "f_clean_reencoded": 22.99859619140625,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": true,
+          "baseline_logp": -0.7638567090034485,
+          "patched_logp": -0.9458805322647095,
+          "logp_drop": 0.182023823261261
+        },
+        {
+          "position": 829602,
+          "original_activation": 23.090869903564453,
+          "f_clean_reencoded": 22.903629302978516,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": true,
+          "baseline_logp": -0.42125850915908813,
+          "patched_logp": -2.0010147094726562,
+          "logp_drop": 1.5797562003135681
+        }
+      ],
+      "mean_logp_drop": 0.5545615355173746,
+      "mean_logp_drop_all": 0.5545615355173746,
+      "verdict": "necessary",
+      "denoising_verdict": "driver",
+      "combined_classification": "TRUE_DRIVER"
+    },
+    {
+      "feature_id": 11488,
+      "label": "Newline tokens in various contexts",
+      "category": "newline",
+      "n_positions": 4,
+      "n_concept_next_positions": 1,
+      "per_position_results": [
+        {
+          "position": 988573,
+          "original_activation": 22.678762435913086,
+          "f_clean_reencoded": 22.683435440063477,
+          "actual_next_token": 13269,
+          "actual_next_str": "023",
+          "is_concept_next": false,
+          "baseline_logp": -3.304525852203369,
+          "patched_logp": -9.636022567749023,
+          "logp_drop": 6.331496715545654
+        },
+        {
+          "position": 350617,
+          "original_activation": 22.599388122558594,
+          "f_clean_reencoded": 22.565704345703125,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": true,
+          "baseline_logp": -2.1320276260375977,
+          "patched_logp": -0.19822336733341217,
+          "logp_drop": -1.9338042587041855
+        },
+        {
+          "position": 5022,
+          "original_activation": 22.593984603881836,
+          "f_clean_reencoded": 22.596101760864258,
+          "actual_next_token": 5817,
+          "actual_next_str": "\u2022",
+          "is_concept_next": false,
+          "baseline_logp": -8.310482025146484,
+          "patched_logp": -14.599538803100586,
+          "logp_drop": 6.289056777954102
+        },
+        {
+          "position": 958852,
+          "original_activation": 22.57768440246582,
+          "f_clean_reencoded": 22.563241958618164,
+          "actual_next_token": 6491,
+          "actual_next_str": " People",
+          "is_concept_next": false,
+          "baseline_logp": -8.618494033813477,
+          "patched_logp": -19.11768341064453,
+          "logp_drop": 10.499189376831055
+        }
+      ],
+      "mean_logp_drop": -1.9338042587041855,
+      "mean_logp_drop_all": 5.296484652906656,
+      "verdict": "not_necessary",
+      "denoising_verdict": "driver",
+      "combined_classification": "OR_CIRCUIT"
+    },
+    {
+      "feature_id": 13821,
+      "label": "Newline tokens inside code and prose blocks",
+      "category": "newline",
+      "n_positions": 1,
+      "n_concept_next_positions": 0,
+      "per_position_results": [
+        {
+          "position": 422802,
+          "original_activation": 19.71944236755371,
+          "f_clean_reencoded": 19.742786407470703,
+          "actual_next_token": 186,
+          "actual_next_str": "\t",
+          "is_concept_next": false,
+          "baseline_logp": -0.7599114775657654,
+          "patched_logp": -0.24778440594673157,
+          "logp_drop": -0.5121270716190338
+        }
+      ],
+      "mean_logp_drop": -0.5121270716190338,
+      "mean_logp_drop_all": -0.5121270716190338,
+      "verdict": "not_necessary",
+      "denoising_verdict": "driver",
+      "combined_classification": "OR_CIRCUIT"
+    },
+    {
+      "feature_id": 15245,
+      "label": "Newline tokens inside XML/HTML/CSS blocks",
+      "category": "newline",
+      "n_positions": 5,
+      "n_concept_next_positions": 0,
+      "per_position_results": [
+        {
+          "position": 345156,
+          "original_activation": 18.333576202392578,
+          "f_clean_reencoded": 18.302440643310547,
+          "actual_next_token": 337,
+          "actual_next_str": " 1",
+          "is_concept_next": false,
+          "baseline_logp": -1.3758549690246582,
+          "patched_logp": -3.020087957382202,
+          "logp_drop": 1.644232988357544
+        },
+        {
+          "position": 432666,
+          "original_activation": 18.33038902282715,
+          "f_clean_reencoded": 18.346572875976562,
+          "actual_next_token": 26,
+          "actual_next_str": "9",
+          "is_concept_next": false,
+          "baseline_logp": -4.452104568481445,
+          "patched_logp": -7.345026016235352,
+          "logp_drop": 2.8929214477539062
+        },
+        {
+          "position": 640545,
+          "original_activation": 18.228925704956055,
+          "f_clean_reencoded": 18.14385223388672,
+          "actual_next_token": 70,
+          "actual_next_str": "e",
+          "is_concept_next": false,
+          "baseline_logp": -0.009645642712712288,
+          "patched_logp": -2.284949779510498,
+          "logp_drop": 2.2753041367977858
+        },
+        {
+          "position": 70045,
+          "original_activation": 18.22118377685547,
+          "f_clean_reencoded": 18.222274780273438,
+          "actual_next_token": 52,
+          "actual_next_str": "S",
+          "is_concept_next": false,
+          "baseline_logp": -3.7465744018554688,
+          "patched_logp": -7.875288963317871,
+          "logp_drop": 4.128714561462402
+        },
+        {
+          "position": 119475,
+          "original_activation": 18.20597267150879,
+          "f_clean_reencoded": 18.024005889892578,
+          "actual_next_token": 3306,
+          "actual_next_str": "document",
+          "is_concept_next": false,
+          "baseline_logp": -8.988550186157227,
+          "patched_logp": -8.504865646362305,
+          "logp_drop": -0.4836845397949219
+        }
+      ],
+      "mean_logp_drop": 2.091497718915343,
+      "mean_logp_drop_all": 2.091497718915343,
+      "verdict": "necessary",
+      "denoising_verdict": "driver",
+      "combined_classification": "TRUE_DRIVER"
+    },
+    {
+      "feature_id": 12697,
+      "label": "Logical operators and negation symbols",
+      "category": "logical_operators",
+      "n_positions": 5,
+      "n_concept_next_positions": 0,
+      "per_position_results": [
+        {
+          "position": 284231,
+          "original_activation": 18.067840576171875,
+          "f_clean_reencoded": 15.562063217163086,
+          "actual_next_token": 50038,
+          "actual_next_str": "coupling",
+          "is_concept_next": false,
+          "baseline_logp": -0.09218854457139969,
+          "patched_logp": -0.0839729830622673,
+          "logp_drop": -0.008215561509132385
+        },
+        {
+          "position": 128581,
+          "original_activation": 17.215925216674805,
+          "f_clean_reencoded": 0.9687392115592957,
+          "actual_next_token": 9617,
+          "actual_next_str": " directory",
+          "is_concept_next": false,
+          "baseline_logp": -0.010958842933177948,
+          "patched_logp": -0.011915932409465313,
+          "logp_drop": 0.000957089476287365
+        },
+        {
+          "position": 725709,
+          "original_activation": 16.172958374023438,
+          "f_clean_reencoded": 12.231895446777344,
+          "actual_next_token": 2133,
+          "actual_next_str": " body",
+          "is_concept_next": false,
+          "baseline_logp": -0.26013967394828796,
+          "patched_logp": -0.1971045881509781,
+          "logp_drop": -0.06303508579730988
+        },
+        {
+          "position": 312547,
+          "original_activation": 16.129396438598633,
+          "f_clean_reencoded": 14.751669883728027,
+          "actual_next_token": 673,
+          "actual_next_str": " time",
+          "is_concept_next": false,
+          "baseline_logp": -0.020358648151159286,
+          "patched_logp": -0.02067689411342144,
+          "logp_drop": 0.0003182459622621536
+        },
+        {
+          "position": 806897,
+          "original_activation": 15.85810661315918,
+          "f_clean_reencoded": 10.108333587646484,
+          "actual_next_token": 25734,
+          "actual_next_str": "CLASS",
+          "is_concept_next": false,
+          "baseline_logp": -0.3231758177280426,
+          "patched_logp": -0.4131215214729309,
+          "logp_drop": 0.0899457037448883
+        }
+      ],
+      "mean_logp_drop": 0.003994078375399113,
+      "mean_logp_drop_all": 0.003994078375399113,
+      "verdict": "not_necessary",
+      "denoising_verdict": "ambiguous",
+      "combined_classification": "AMBIGUOUS"
+    },
+    {
+      "feature_id": 1989,
+      "label": "Decimal points in numerical contexts",
+      "category": "decimal_numerical",
+      "n_positions": 5,
+      "n_concept_next_positions": 1,
+      "per_position_results": [
+        {
+          "position": 720687,
+          "original_activation": 15.115351676940918,
+          "f_clean_reencoded": 15.086836814880371,
+          "actual_next_token": 24,
+          "actual_next_str": "7",
+          "is_concept_next": true,
+          "baseline_logp": -2.6557016372680664,
+          "patched_logp": -3.929259777069092,
+          "logp_drop": 1.2735581398010254
+        },
+        {
+          "position": 543013,
+          "original_activation": 14.947595596313477,
+          "f_clean_reencoded": 14.956847190856934,
+          "actual_next_token": 44117,
+          "actual_next_str": " Veteran",
+          "is_concept_next": false,
+          "baseline_logp": -12.672905921936035,
+          "patched_logp": -16.330005645751953,
+          "logp_drop": 3.657099723815918
+        },
+        {
+          "position": 288176,
+          "original_activation": 14.888020515441895,
+          "f_clean_reencoded": 14.77419662475586,
+          "actual_next_token": 1623,
+          "actual_next_str": " On",
+          "is_concept_next": false,
+          "baseline_logp": -4.382442474365234,
+          "patched_logp": -7.090075492858887,
+          "logp_drop": 2.7076330184936523
+        },
+        {
+          "position": 515768,
+          "original_activation": 14.861306190490723,
+          "f_clean_reencoded": 14.719813346862793,
+          "actual_next_token": 1916,
+          "actual_next_str": " To",
+          "is_concept_next": false,
+          "baseline_logp": -4.944418430328369,
+          "patched_logp": -8.953558921813965,
+          "logp_drop": 4.009140491485596
+        },
+        {
+          "position": 260156,
+          "original_activation": 14.852587699890137,
+          "f_clean_reencoded": 14.781569480895996,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "is_concept_next": false,
+          "baseline_logp": -1.310473918914795,
+          "patched_logp": -2.179008722305298,
+          "logp_drop": 0.8685348033905029
+        }
+      ],
+      "mean_logp_drop": 1.2735581398010254,
+      "mean_logp_drop_all": 2.503193235397339,
+      "verdict": "necessary",
+      "denoising_verdict": "thermometer",
+      "combined_classification": "AND_CIRCUIT"
+    }
+  ]
+}

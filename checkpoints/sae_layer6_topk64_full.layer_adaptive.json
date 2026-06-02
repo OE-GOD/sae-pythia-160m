@@ -1,0 +1,133 @@
+{
+  "n_total": 180,
+  "baseline_full_atp": {
+    "pearson": 0.9466188230950792,
+    "rmse": 0.004597769764792957,
+    "ap_forward_passes": 0
+  },
+  "baseline_full_ap": {
+    "pearson": 1.0,
+    "rmse": 0.0,
+    "ap_forward_passes": 180
+  },
+  "threshold_sweep": [
+    {
+      "T": 7,
+      "ap_layers": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "atp_layers": [],
+      "n_ap": 180,
+      "n_atp": 0,
+      "pearson": 1.0,
+      "rmse": 0.0,
+      "cost_pct_vs_full_ap": 100.0
+    },
+    {
+      "T": 8,
+      "ap_layers": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "atp_layers": [
+        7
+      ],
+      "n_ap": 144,
+      "n_atp": 36,
+      "pearson": 0.9999157631223882,
+      "rmse": 0.00019013835923615977,
+      "cost_pct_vs_full_ap": 80.0
+    },
+    {
+      "T": 9,
+      "ap_layers": [
+        9,
+        10,
+        11
+      ],
+      "atp_layers": [
+        7,
+        8
+      ],
+      "n_ap": 108,
+      "n_atp": 72,
+      "pearson": 0.9987477646305588,
+      "rmse": 0.000726946669235735,
+      "cost_pct_vs_full_ap": 60.0
+    },
+    {
+      "T": 10,
+      "ap_layers": [
+        10,
+        11
+      ],
+      "atp_layers": [
+        7,
+        8,
+        9
+      ],
+      "n_ap": 72,
+      "n_atp": 108,
+      "pearson": 0.9983123542398715,
+      "rmse": 0.000847178391292496,
+      "cost_pct_vs_full_ap": 40.0
+    },
+    {
+      "T": 11,
+      "ap_layers": [
+        11
+      ],
+      "atp_layers": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "n_ap": 36,
+      "n_atp": 144,
+      "pearson": 0.9919196707021601,
+      "rmse": 0.0018368646964977504,
+      "cost_pct_vs_full_ap": 20.0
+    },
+    {
+      "T": 12,
+      "ap_layers": [],
+      "atp_layers": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "n_ap": 0,
+      "n_atp": 180,
+      "pearson": 0.9466188230950792,
+      "rmse": 0.004597769764792957,
+      "cost_pct_vs_full_ap": 0.0
+    }
+  ],
+  "target_pearson": 0.99,
+  "best_T": {
+    "T": 11,
+    "ap_layers": [
+      11
+    ],
+    "atp_layers": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "n_ap": 36,
+    "n_atp": 144,
+    "pearson": 0.9919196707021601,
+    "rmse": 0.0018368646964977504,
+    "cost_pct_vs_full_ap": 20.0
+  }
+}

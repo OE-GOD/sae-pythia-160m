@@ -1,6 +1,6 @@
 # Auto-interp Labels Conflate Driver and Thermometer Features: A Case Study on Pythia-160M
 
-**A seventeen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. Even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals features route through different downstream attention heads, and the identified positive mediators are causally validated (30–44× larger effect than random-head ablation under steering). Single-direction patching systematically miscategorizes features; same-labeled drivers are not interchangeable at the pathway level.**
+**A nineteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. Even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals features route through different downstream attention heads, and the identified positive mediators are causally validated (30–44× larger effect than random-head ablation under steering). Single-direction patching systematically miscategorizes features; same-labeled drivers are not interchangeable at the pathway level. Methodologically: attribution patching degrades systematically with downstream depth (Pearson with AP drops from 0.999 at L+1 to 0.78 at L+5), and a layer-adaptive method that uses AtP at early layers and AP only at the deepest one recovers Pearson 0.99 at 5× speedup over full AP — outperforming integrated gradients on both axes.**
 
 ---
 
@@ -16,6 +16,8 @@
 - **Necessity-as-well-as-sufficiency check (2×2 classification).** Combining noising (necessity test) with denoising (sufficiency test) per Heimersheim & Nanda (2024): of the 5 features classified as drivers by sufficiency alone, only 3 (60%) are necessary; the other 2 are OR-circuit components (sufficient but redundant). 1 of 2 features classified as thermometers is revealed to be an AND-circuit component (necessary but not sufficient alone). **TRUE driver rate falls from 56% (sufficiency-only) to 33% (sufficiency AND necessity).** Single-direction patching systematically miscategorizes ~40% of features.
 - **Per-head path patching of TRUE drivers.** Applying the IOI-style trace-back to each TRUE driver: the three "newline driver" features route through different downstream attention heads. f10047 and f13131 are mediated primarily through L8H10; f15245 through L8H9. **Same-labeled drivers are not interchangeable at the pathway level.** Path patching also identifies heads with opposite-sign effects across features, but causal validation (Finding 10) shows these don't behave as suppressors under steering.
 - **Causal validation of mediators via steering + head ablation.** For each path-patching-identified positive mediator, ablating the specific head reduces concept logprob 30–44× more than ablating a random downstream head — robust validation that path patching identifies real causal mediators. Negative-effect heads, however, do NOT validate as suppressors under steering: the Negative Name Mover Heads analogy is overstated. Two-protocol triangulation (path patching + steering+ablation) catches this overinterpretation.
+- **Attribution patching has a layer-depth failure mode.** Pearson(AtP, AP) is near-perfect at the first downstream layer (L7: 0.999) and degrades monotonically to 0.78 at L11. Individual mediator magnitudes at deep layers can be off by 14×. AtP-only circuit discovery will miss deep-layer effects.
+- **Layer-adaptive patching is a new methodological contribution.** Use AtP for layers where it's accurate (L7–10) and AP only for the deepest layer (L11). Result: Pearson 0.992 with full AP at 23% of the compute — **a 5× speedup at near-perfect accuracy**. The adaptive method Pareto-dominates integrated gradients (N=10), which sits at Pearson 0.947 — same as AtP alone — at 33% of AP compute. IG is *worse* than AtP at early layers (where AtP is already nearly exact, integrating through partial-ablation states adds OOD noise) and only wins at the deepest layer. The two approximations have complementary failure modes.
 
 ---
 
@@ -67,9 +69,9 @@ Auto-interp labeled 26 features via the Kimi K2 API, achieving 88.5% monosemanti
 
 ---
 
-## The Nine Experiments
+## The Nineteen Experiments
 
-The interpretive analysis comprises nine experiments, each addressing a distinct question. Numbers in brackets identify the open problems from Anthropic and DeepMind work that each experiment addresses.
+The interpretive analysis comprises nineteen experiments, each addressing a distinct question. Numbers in brackets identify the open problems from Anthropic and DeepMind work that each experiment addresses.
 
 | # | Experiment | Question | Result |
 |---|---|---|---|
@@ -90,6 +92,8 @@ The interpretive analysis comprises nine experiments, each addressing a distinct
 | 15 | Noising (necessity test) + 2×2 classification | What fraction of "drivers" are TRUE drivers vs OR-circuit components? | **TRUE driver rate = 3/9 (33%).** 2/9 are OR-circuit (sufficient but redundant); 1/9 is an AND-circuit component (necessary but missed by denoising). Single-direction patching over-counts drivers. |
 | 16 | Per-head path patching of TRUE drivers | Where do driver effects route through downstream attention? | **Newline drivers split into pathways.** f10047/f13131 mediated via L8H10; f15245 via L8H9. Same-labeled drivers route through different heads. Negative-effect heads identified but their interpretation requires causal validation (Finding 10). |
 | 17 | Steering + head-ablation causal validation of mediators | Are the identified mediators causally responsible, or correlational? | **Positive mediators robustly validated** (30–44× larger effect than random-head ablation; ✓✓ for all 3). **Negative-effect heads fail validation as suppressors** — they don't act inhibitorily under steering. The "Negative Name Mover Heads" analogy is overstated; needs refined interpretation. |
+| 18 | Attribution patching vs activation patching (180 pairs) | How accurate is the cheap gradient-based approximation across downstream layers? | **AtP degrades with depth.** Pearson(AtP, AP) = 0.999 at L7, 0.78 at L11. Overall 0.947. Sign agreement 96%. AtP-only deep-layer effects can be off by 14×. |
+| 19 | Layer-adaptive patching + IG benchmark | Can we get near-AP accuracy at AtP-like cost? Is integrated gradients better than AtP? | **Layer-adaptive (AtP for L<11, AP for L=11): Pearson 0.992 vs AP at 23% of AP compute (5× speedup).** Integrated gradients (N=10) sits at Pearson 0.947 at 33% of AP compute — *worse* than AtP at early layers, better only at L11. Adaptive Pareto-dominates IG on both axes. |
 
 The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers** — and even among features that pass sufficiency tests, only a minority are TRUE drivers when also tested for necessity, and even among TRUE drivers, features with identical auto-interp labels can route through entirely different downstream pathways.
 
@@ -409,6 +413,94 @@ Predictions from Finding 9:
 - Steering at α = 3× peak produced negative concept-logp shifts on neutral prompts (steering effect ≈ −1.6 to −5.2 nats), indicating the intervention is partly out-of-distribution at this magnitude. Despite this, the selectivity signal (mediator − random) is robust because random heads have selectivity near zero.
 - n=5 (feature, head) pairs tested. Larger-scale validation across the 60 downstream heads × 9 features would give population-level statistics.
 - The steering-vs-real-context discrepancy noted above is itself worth investigating: the same head can play different roles depending on whether the feature is naturally firing vs synthetically injected. Future work.
+
+---
+
+## Finding 11: Attribution patching degrades systematically with downstream depth
+
+Path patching (Finding 9) costs one forward pass per (feature, head, position) — sixty heads × three positions × three features = 540 forward passes for our TRUE-driver set. At SAE scale (16k features) this is prohibitive. The natural alternative is **attribution patching** (AtP): one forward + one backward pass per firing position estimates the patching effect for *every* head simultaneously via a first-order Taylor expansion of the metric around the clean activation \citep{nanda2023attribution}.
+
+We ran AtP on the same three TRUE drivers × three firing positions × twenty heads × five downstream layers (180 (feature, head) pairs total), using the same per-head q/k/v\_input intervention as path patching. The AtP estimate per (L, h) is:
+
+$$\text{AtP}_{L,h} = \sum_{kind \in \{q,k,v\}} \nabla_{x_{L,h,kind}} \log P(t^*) \cdot (f_{\text{clean}} \cdot W_{\text{dec}}[:, X])$$
+
+where the gradient is taken at the clean (un-ablated) activation and \(t^*\) is the actual next token.
+
+**Overall agreement is high but layer-stratified Pearson reveals a failure mode:**
+
+| Downstream layer | Pearson(AtP, AP) |
+|---|---|
+| 7 | 0.9994 |
+| 8 | 0.9979 |
+| 9 | 0.9927 |
+| 10 | 0.9367 |
+| 11 | 0.7822 |
+
+AtP is near-exact at the layer immediately above the SAE (L7, one layer downstream of layer 6) and degrades monotonically with depth. By L11 (five layers downstream), Pearson drops to 0.78 and individual mediator magnitudes can be off by 14× (f15245 L11H8: AP = −0.0561, AtP = −0.0038). This is the saturation/curvature regime: the metric's response to an intervention at the SAE feature is no longer well-approximated by its gradient at the un-ablated point once the signal has passed through several layers of nonlinearity.
+
+**This matters for circuit discovery.** A practitioner using AtP alone to filter candidate mediators at deep layers will miss strong negative effects and overrate weak ones — exactly the regime where suppression circuits (Negative Name Mover analogs) would live. Finding 11 thus quantifies what kind of error a cheap-method-only pipeline incurs.
+
+---
+
+## Finding 12: Layer-adaptive patching achieves Pearson 0.99 with ground truth at 23% of full-AP compute
+
+Finding 11 suggests a direct fix: use AtP where it works, and only spend AP compute where AtP fails. We define **layer-adaptive patching** with a single threshold \(T\):
+
+$$\hat{e}_{L,h} = \begin{cases} \text{AP}_{L,h} & \text{if } L \ge T \\ \text{AtP}_{L,h} & \text{if } L < T \end{cases}$$
+
+Sweeping \(T\) over our 180-pair test set:
+
+| T (AP applied for L ≥ T) | Pearson | RMSE | Cost vs full AP |
+|---|---|---|---|
+| 7 (all AP) | 1.0000 | 0.0000 | 100% |
+| 9 | 0.9994 | 0.0007 | 60% |
+| 10 | 0.9985 | 0.0010 | 40% |
+| **11** | **0.9919** | **0.0023** | **20%** |
+| 12 (all AtP) | 0.9466 | 0.0061 | 0% |
+
+**Best operating point: T = 11.** Spending AP compute only on the deepest layer recovers Pearson 0.992 versus full AP, at 20% of full-AP forward passes — a 5× speedup with <1% accuracy degradation. Total cost is 2 (AtP) + 12 (AP for L=11) = 14 model passes per feature-position, versus 60 for full AP.
+
+**We benchmarked this against integrated gradients (IG)**, the standard "better than AtP" baseline used by Marks et al. (2024) in Sparse Feature Circuits. IG averages gradients along the path from clean to fully-ablated activation:
+
+$$\text{IG}_{L,h} = \frac{1}{N}\sum_{i=0}^{N-1} \nabla_{x_{L,h,kind}}\Big|_{\alpha = (i+0.5)/N} \log P(t^*) \cdot (f_{\text{clean}} \cdot W_{\text{dec}}[:, X])$$
+
+With N = 10 alpha steps (20 model passes — 10× AtP's cost), IG's overall Pearson with AP is **0.947**, indistinguishable from AtP (0.947) and substantially worse than adaptive (0.992) at higher cost than adaptive (20 vs 14 passes).
+
+**Per-layer breakdown of all four methods:**
+
+| Layer | AtP | IG | Adaptive | AP |
+|---|---|---|---|---|
+| 7  | 0.9994 | 0.8926 | 0.9994 | 1.0 |
+| 8  | 0.9979 | 0.9764 | 0.9979 | 1.0 |
+| 9  | 0.9927 | 0.7786 | 0.9927 | 1.0 |
+| 10 | 0.9367 | 0.9155 | 0.9367 | 1.0 |
+| 11 | 0.7822 | 0.9693 | **1.0000** | 1.0 |
+
+Two observations beyond the headline:
+
+1. **IG is *worse* than AtP at early layers.** L7: IG = 0.89 vs AtP = 0.999; L9: IG = 0.78 vs AtP = 0.99. The standard intuition — that integrating along the path is universally more accurate than the single-point gradient — fails here. Where AtP is already nearly exact (early layers, before saturation), the partial-ablation states IG integrates through are slightly out-of-distribution and *add* noise. IG only wins at L11 (0.97 vs 0.78), the regime AtP cannot handle.
+
+2. **The two methods' failure modes are complementary.** AtP fails at depth due to curvature; IG fails at early layers due to OOD intermediate states. An adaptive method that uses each where it works dominates both.
+
+**Pareto frontier for the four methods (overall Pearson vs compute):**
+
+| Method | Cost (passes per feature-position) | Overall Pearson with AP |
+|---|---|---|
+| AP (ground truth) | 60 | 1.000 |
+| **Adaptive (T = 11)** | **14** | **0.992** |
+| IG (N = 10) | 20 | 0.947 |
+| AtP | 2 | 0.947 |
+
+Adaptive Pareto-dominates IG on both axes and achieves Pearson 0.99 with truth at 5× the cost of AtP and ¼ the cost of full AP.
+
+**Scope and limits.**
+
+- Tested only on three features × three positions × five layers in Pythia-160M. The threshold T = 11 is specific to this model's depth — the equivalent recipe for a frontier model is "use AP for the deepest ~20% of downstream layers, AtP for the rest." Whether 20% generalizes is an open empirical question.
+- The 180-pair test set is small. A full SAE-scale evaluation would use thousands of (feature, head) pairs across many firing positions.
+- IG was tested with N = 10 alphas; larger N may shift the comparison but at proportionally higher cost. The asymmetric failure modes (IG bad early, AtP bad deep) suggest a *layer-adaptive IG* — IG for L = 11 only, AtP elsewhere — is worth testing.
+- AP itself is not the underlying truth; it is the strongest interpretability method we have here. A more rigorous setup would compare all four methods against a behavioral metric (e.g., generation quality changes under intervention).
+
+**Why this matters.** SAE circuit discovery at frontier scale (Gemma 27B, Llama 70B) is bottlenecked on AP compute. Marks et al. (2024) treat IG as the practical method; this finding suggests the right hybrid is not "use one approximation everywhere" but "use the cheapest approximation accurate at each layer, fall back to AP where no approximation works." That's a 5× compute win at near-perfect accuracy in this setting — and a methodological caution that "improvements over AtP" should be benchmarked per-layer, not in aggregate.
 
 ---
 

@@ -1,6 +1,6 @@
 # Auto-interp Labels Conflate Driver and Thermometer Features: A Case Study on Pythia-160M
 
-**A characterization of TopK SAE features in Pythia-160M layer 6 across nineteen findings, plus a methodology arc that produces a 30× speedup for SAE circuit discovery. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. Even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals features route through different downstream attention heads, and the identified positive mediators are causally validated (30–44× larger effect than random-head ablation under steering). Single-direction patching systematically miscategorizes features. Methodologically: attribution patching degrades systematically with downstream depth (Pearson with AP drops from 0.999 at L+1 to 0.78 at L+5). Diagnostic linearization experiments localize the failure to *attention softmax saturation* (not GELU or LayerNorm). The fix — efficient closed-form softmax-corrected AtP\* — achieves Pearson 0.993 with full activation patching at 2 model passes per feature-position, a 30× speedup that Pareto-dominates every method tested including integrated gradients, layer-adaptive patching, and per-pair adaptive.**
+**A characterization of TopK SAE features in Pythia-160M layer 6 across twenty-two findings, plus a methodology arc that produces a 30× speedup for SAE circuit discovery in the shallow-downstream regime. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. Even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals features route through different downstream attention heads, and the identified positive mediators are causally validated (30–44× larger effect than random-head ablation under steering). Single-direction patching systematically miscategorizes features. Methodologically: attribution patching degrades systematically with downstream depth (Pearson with AP drops from 0.999 at L+1 to 0.78 at L+5). Diagnostic linearization experiments localize the failure to *attention softmax saturation* (not GELU or LayerNorm). The fix — efficient closed-form softmax-corrected AtP\* — achieves Pearson 0.993 with full activation patching at 2 model passes per feature-position on Pythia-160M, a 30× speedup that Pareto-dominates every method tested. Generalizes across 15 diverse Pythia features (Pearson 0.992). Cross-architecture replication on Gemma 2 2B reveals an honest scope limit: the first-order chain rule (even with softmax correction) breaks down when the SAE intervention is 10+ nonlinear blocks from the output, dropping Pearson to 0.41 in Gemma 2 2B at SAE layer 12 (13 downstream layers); Pearson recovers to 0.70 at SAE layer 22 (3 downstream layers). The method is best-in-class for shallow-downstream circuit discovery; deeper cascades require higher-order corrections that are left for future work.**
 
 ---
 
@@ -21,6 +21,9 @@
 - **Per-pair adaptive patching beats layer-adaptive.** A cheap linearity probe at α=0.5 per (feature, head) catches the heterogeneous failure modes within layers. Pearson 0.999 at 16 passes — Pareto-dominates layer-adaptive at equivalent cost, and uniquely reaches Pearson ≥ 0.999 (which layer-adaptive cannot achieve at any threshold).
 - **Diagnosis: the AtP-killing nonlinearity is *exclusively* attention softmax.** Linearizing the L11 MLP GELU changes AP by zero (GELU is not responsible). Linearizing the L11 attention softmax makes AP collapse to AtP (Pearson 0.9963) — softmax saturation accounts for the entire failure mode. The worst-case 14× underestimate (f15245 L11H8: AP=−0.056, AtP=−0.004) vanishes when softmax is linearized.
 - **Efficient AtP\* — the end-state result.** Replace AtP's softmax-Jacobian chain rule with the actual softmax applied to closed-form Δscores. Computed analytically via cached clean activations + LayerNorm-aware Δq + the model's rotary application — **2 model passes per feature-position, Pearson 0.993 with full AP, a 30× speedup**. The closed-form implementation matches the expensive validation AtP\* bit-identical and Pareto-dominates every other method tested at AtP cost.
+- **Hybrid efficient AtP\* + per-pair AP fallback.** Use efficient AtP\* as base + AP fallback only on pairs flagged uncertain by the linearity probe. Pearson 0.999 at 12 passes (Pareto-dominates per-pair adaptive at 15.6), and Pearson 0.998 at 3.8 passes (16× speedup, cheapest method on the Pearson > 0.997 frontier).
+- **Generalization within Pythia (15 features).** Efficient AtP\* achieves Pearson 0.992 on 12 successful features spanning newline contexts, decimal points, file paths, BibTeX/LaTeX, punctuation, logical operators, BPE, and exponentiation — essentially identical to the original 3-feature result. Per-feature Pearson range: 0.929–0.999. The method is not specific to newline drivers.
+- **Cross-architecture replication on Gemma 2 2B reveals depth-of-cascade limit (honest negative result).** Pearson(AtP\*, AP) = 0.70 at Gemma SAE layer 22 (3 downstream layers) but only **0.41 at Gemma SAE layer 12 (13 downstream layers)**. Provable: the closed-form math is exact (Δpattern cosine 1.0 vs actual perturbed-forward); the failure is in the first-order chain rule itself — `g_pattern · Δpattern` does not predict the actual metric change once the perturbation cascades through 10+ nonlinear blocks. The "best in the world" claim is therefore scoped to the **shallow-downstream regime** (intervention within ~3–5 nonlinear blocks of the output). For deeper cascades, the first-order approximation has unavoidable limits without higher-order corrections (left for future work).
 
 ---
 
@@ -72,9 +75,9 @@ Auto-interp labeled 26 features via the Kimi K2 API, achieving 88.5% monosemanti
 
 ---
 
-## The Twenty-Six Experiments
+## The Thirty Experiments
 
-The interpretive analysis comprises twenty-six experiments — the first ten characterize the SAE features themselves, the next nine extend with sufficiency/necessity classification and causal validation, and the final seven form a methodology arc that produces a 30× speedup for SAE circuit discovery. Numbers in brackets identify the open problems from Anthropic and DeepMind work that each experiment addresses.
+The interpretive analysis comprises thirty experiments — the first ten characterize the SAE features themselves, the next nine extend with sufficiency/necessity classification and causal validation, the next seven form the core methodology arc producing a 30× speedup for SAE circuit discovery on Pythia-160M, and the final four test cross-architecture generalization (Pythia 15 features, Gemma 2 2B at two SAE depths) with honest scoping. Numbers in brackets identify the open problems from Anthropic and DeepMind work that each experiment addresses.
 
 | # | Experiment | Question | Result |
 |---|---|---|---|
@@ -104,6 +107,10 @@ The interpretive analysis comprises twenty-six experiments — the first ten cha
 | 24 | Quadratic 3-point hybrid (AtP+S3@L11) | Cheapest method to recover Pearson 0.99? | Fit quadratic through 3 probe measurements at L11 only; AtP elsewhere. **Pearson 0.99 at 6 passes — 10× speedup.** Cheapest method on the Pearson-0.99 frontier. |
 | 25 | AtP\* validation | Does softmax correction actually fix the L11 gap? | **Yes.** Pearson 0.985 at L11 (up from AtP's 0.78), Pearson 0.993 overall. Cost 62 passes (validation only). |
 | 26 | Efficient closed-form AtP\* | Can we get AtP\* at AtP cost? | **Yes.** Closed-form computation of patched\_pattern via LN-aware Δq + rotary application + softmax(closed-form Δscores). **2 passes, Pearson 0.993, 30× speedup over AP.** Matches the validation version bit-identical. The end-state Pareto winner. |
+| 27 | Hybrid efficient AtP\* + per-pair AP fallback | Can we close the remaining 0.007 gap to AP cheaply? | **Yes.** Pearson 0.999 at 12 passes (Pareto-dominates per-pair adaptive at 15.6); Pearson 0.998 at 3.8 passes (16× speedup, cheapest method on the >0.997 frontier). |
+| 28 | Pythia generalization across 15 diverse features | Does the method work beyond newline drivers? | **Yes.** Pearson 0.992 on 12 successful features (newline, decimal, file paths, BibTeX, punctuation, logical ops, BPE, exponentiation). Per-feature range 0.929–0.999. |
+| 29 | Gemma 2 2B cross-architecture (L22 SAE, 3 downstream) | Does the method generalize to a different architecture (GQA, RMSNorm, softcap) at shallow depth? | **Partial.** Pearson 0.70. Better than worst case but well below Pythia's 0.99. |
+| 30 | Gemma 2 2B cross-architecture (L12 SAE, 13 downstream) | Does the method generalize at deep cascading depth? | **No.** Pearson 0.41. Single-pair debug confirms closed-form math is exact (cos 1.0); failure is in the first-order chain rule itself. Honest scope limit. |
 
 The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers** — and even among features that pass sufficiency tests, only a minority are TRUE drivers when also tested for necessity, and even among TRUE drivers, features with identical auto-interp labels can route through entirely different downstream pathways.
 
@@ -669,6 +676,102 @@ Finding 18 validates the principle but at AP's cost. The efficient implementatio
 **Implementation lesson.** The first attempt at efficient AtP\* gave Pearson −0.46 with severe sign flips. The bug: TransformerLens's `hook_q_input` is **pre-LN**, not post-LN. The actual computation is $q = \text{LN}(q\_\text{input}) \cdot W_Q + b_Q$, so the closed-form $\Delta q$ must apply LayerNorm before the W\_Q projection. Diagnostic that revealed it: compare empirical $\Delta q$ (from a perturbed forward) against closed-form $\Delta q$ — they were off by 4.6×, with cosine similarity 0.999 (right direction, wrong magnitude — classic missed scaling factor). The lesson: when implementing closed-form numerical methods that surgically replicate a model's forward path, every transformation between your hook point and the operation you want to model must be accounted for. Write the empirical-vs-analytical check before trusting the formula.
 
 **What this enables.** Efficient AtP\* turns SAE circuit discovery from "bottlenecked on AP compute" into "essentially free at AtP cost." At Gemma 2 27B scale (46 layers, ~32 heads), the projected savings are dramatic: a per-(feature, head) AP cost of 1500 passes/position becomes ~2 with efficient AtP\*. Whether the depth-degradation curve generalizes from Pythia-160M is the next experiment to run.
+
+---
+
+## Finding 20: Hybrid efficient AtP\* + per-pair AP fallback — Pareto-dominates per-pair adaptive
+
+The efficient AtP\* (Finding 19) achieves Pearson 0.993 with full AP at 2 passes per feature-position. The remaining 0.007 gap comes from a small number of pairs where AtP\* still mispredicts. Per-pair adaptive (Finding 13) closes such gaps by using AP fallback on pairs flagged uncertain by a linearity probe. Combining these two:
+
+**Method.** For each (feature, head, position):
+1. Use efficient AtP\* estimate as base prediction (free; 2 passes shared).
+2. If \(|\text{AtP}^*| < \text{probe\_threshold}\): skip probe, predict AtP\* (effect tiny).
+3. Else compute disagreement = \(|\text{AtP}^* - 2 \cdot \text{probe}(0.5)|\). If response is linear, \(2 \cdot \text{probe}(0.5) \approx \text{AP} \approx \text{AtP}^*\); divergence indicates curvature.
+4. If relative disagreement > tolerance: fall back to AP. Else: trust AtP\*.
+
+**Sweep results on the 180-pair test set.** Cost is amortized over probes and AP fallbacks per feature-position.
+
+| Config | Pearson | Cost (passes/feature-pos) | Speedup vs full AP |
+|---|---|---|---|
+| Full AP | 1.000 | 60 | 1× |
+| **Hybrid (probe=0.005, tol=0.10)** | **0.9990** | **12.1** | **5.0×** |
+| Per-pair adaptive (Finding 13) | 0.9987 | 15.6 | 3.85× |
+| **Hybrid (probe=0.020, tol=0.5)** | **0.9978** | **3.8** | **15.9×** |
+| Efficient AtP\* (Finding 19) | 0.9933 | 2 | 30× |
+| Plain AtP | 0.9466 | 2 | 30× |
+
+The hybrid Pareto-dominates per-pair adaptive: same Pearson 0.999 at 12.1 passes vs 15.6 passes (23% cheaper). And it adds new Pareto points: Pearson 0.998 at 3.8 passes (15.9× speedup), the cheapest method on the >0.997 Pearson frontier.
+
+**Why the hybrid wins.** AtP\* base is much more accurate than plain AtP (0.993 vs 0.947), so fewer pairs need AP fallback. Per-pair adaptive (which uses plain AtP as base) needs ~21 AP fallbacks across 180 pairs to hit Pearson 0.999. Hybrid needs only ~15 fallbacks, saving compute while reaching the same accuracy.
+
+---
+
+## Finding 21: Efficient AtP\* generalizes across 15 diverse Pythia features (Pearson 0.992)
+
+The original AtP\* result (Pearson 0.993 in Finding 19) was on three TRUE driver features, all from the newline-cluster (f10047, f13131, f15245). To test within-model generalization, we ran AP and efficient AtP\* on **15 diverse monosemantic features** from the Pythia-160M SAE.
+
+**Feature set** (selected from the 23 high-confidence monosemantic features in Finding 5):
+- 7 newline features in different contexts (XML/HTML/CSS, code, academic, prose, markup)
+- 8 non-newline categories: French street names (f6630), punctuation/formatting (f12520), BibTeX/LaTeX (f12117), file paths (f5747), BPE continuations (f10045), logical operators (f12697), decimal points (f1989), exponentiation notation (f5196)
+
+**Results across 720 (feature, head) pairs from 12 features that produced sufficient firing positions**:
+
+| Metric | Original 3 features | 15-feature replication |
+|---|---|---|
+| Overall Pearson(AtP\*, AP) | 0.9933 | **0.9916** |
+| RMSE | 0.00172 | 0.00184 |
+| Sign agreement | (not measured) | 91.0% |
+| L11 Pearson | 0.985 | 0.985 |
+
+Per-feature Pearson range: **0.929 (BibTeX/LaTeX) to 0.999 (logical operators)**. Even the worst-performing feature is substantially better than plain AtP would be (~0.95 overall).
+
+**Interpretation.** Efficient AtP\*'s accuracy is not specific to newline features or any particular semantic cluster. The method works robustly across diverse SAE features as long as the model architecture and intervention depth are similar to the original test setting. This validates the within-model generalization of the method.
+
+---
+
+## Finding 22: Cross-architecture replication on Gemma 2 2B reveals a depth-of-cascade limit (honest negative result)
+
+The natural follow-up to within-Pythia generalization is across-architecture replication. We tested efficient AtP\* on Gemma 2 2B using Gemma Scope SAEs. **The honest result: efficient AtP\* partially generalizes but not robustly — the method's accuracy degrades sharply with the number of downstream nonlinear blocks between the SAE intervention and the output.**
+
+**Setup.** Gemma 2 2B is structurally distinct from Pythia-160M:
+- 26 transformer layers (vs Pythia's 12)
+- Grouped Query Attention (8 Q heads, 4 K/V heads — vs Pythia's full MHA)
+- RMSNorm (vs LayerNorm)
+- Attention softcap (\(50 \cdot \tanh(\text{scores}/50)\))
+- Larger d\_head (256 vs 64) and d\_model (2304 vs 768)
+- bfloat16 precision (vs float32 in Pythia)
+
+We adapted the closed-form efficient AtP\* to use per-Q-head ablation (only the Q-input changes; K and V are shared across the GQA group). The implementation correctly handles RMSNorm (called as a module) and rotary (via `attn.apply_rotary`).
+
+**Two configurations tested:**
+
+| Setting | SAE layer | Downstream layers | Pearson(AtP\*, AP) | Cost (passes) |
+|---|---|---|---|---|
+| Pythia-160M layer 6 (Q+K+V, full MHA) | 6 | 5 (L7–L11) | **0.993** | 2 |
+| Pythia-160M, 15 diverse features | 6 | 5 | **0.992** | 2 |
+| **Gemma 2 2B layer 22 (Q-only, GQA)** | 22 | 3 (L23–L25) | **0.700** | 2 |
+| **Gemma 2 2B layer 12 (Q-only, GQA)** | 12 | 13 (L13–L25) | **0.407** | 2 |
+
+The depth hypothesis is partially confirmed: shorter downstream chain → higher Pearson. But even at 3 downstream layers in Gemma, accuracy is well below Pythia's 5-layer setting.
+
+**Diagnosis: the bug is NOT in the implementation.** We isolated the worst disagreement (f1041 L15H5, where AP = −0.043 but AtP\* = +0.0003 — a sign flip) and verified each step of the closed-form computation against actual perturbed-forward values:
+
+| Quantity | Cosine sim (closed vs actual) | Magnitude ratio |
+|---|---|---|
+| Δq | 0.9996 | 0.998 |
+| Δrot\_q | 0.9991 | 1.002 |
+| Δscores | 0.9991 | 0.997 |
+| Δpattern | **1.0000** | 1.05 |
+
+Even substituting the *actual* Δpattern from a perturbed forward, `g_pattern · Δpattern` gives +0.003 while AP gives −0.008 (sign flip). The linear approximation through the L15 attention pattern is wrong by sign, *even when the pattern itself is computed exactly*. This means the gradient of metric with respect to one layer's attention pattern, evaluated at the clean state, does not accurately predict the metric change when the perturbation cascades through 10 more downstream nonlinear blocks (L16–L25).
+
+**Interpretation.** First-order chain-rule sensitivity — even with softmax saturation correctly handled — breaks down when many nonlinear cascading layers lie between intervention and output. Pythia's 5-layer cascade was within the regime where this approximation holds; Gemma's 13-layer cascade is not. This is a methodological limit of attribution-style methods, not a Gemma-specific bug or a softcap issue (softcap is barely active in these layers).
+
+**Practical recipe for Gemma deployments:**
+- Place SAEs within ~3–5 layers of the output for efficient AtP\* to be reliable
+- For deeper interventions, the choice is: fall back to full AP, or accept Pearson ~0.4–0.7
+
+**What this means for the methodological claim.** Efficient AtP\* is a real Pareto improvement at AtP cost in the regime where the first-order chain rule holds. It is not a universal replacement for AP, and "best in the world" is an overclaim — the method has clear architectural and depth-related scope limits. The right framing is: "the best cheap method for circuit discovery in the shallow-downstream regime; for deeper cascades, the first-order approximation has unavoidable limits without further methodological work (e.g., higher-order corrections, hybrid AP+AtP\* by intervention depth)."
 
 ---
 

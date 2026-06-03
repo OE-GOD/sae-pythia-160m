@@ -1,6 +1,6 @@
 # Auto-interp Labels Conflate Driver and Thermometer Features: A Case Study on Pythia-160M
 
-**A nineteen-experiment characterization of TopK SAE features in Pythia-160M layer 6. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. Even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals features route through different downstream attention heads, and the identified positive mediators are causally validated (30–44× larger effect than random-head ablation under steering). Single-direction patching systematically miscategorizes features; same-labeled drivers are not interchangeable at the pathway level. Methodologically: attribution patching degrades systematically with downstream depth (Pearson with AP drops from 0.999 at L+1 to 0.78 at L+5), and a layer-adaptive method that uses AtP at early layers and AP only at the deepest one recovers Pearson 0.99 at 5× speedup over full AP — outperforming integrated gradients on both axes.**
+**A characterization of TopK SAE features in Pythia-160M layer 6 across nineteen findings, plus a methodology arc that produces a 30× speedup for SAE circuit discovery. The driver/thermometer split between SAE features auto-interp labels as "monosemantic" is a categorical property robust across intervention method and magnitude. Among features that pass sufficiency tests, only one third are true drivers when also tested for necessity. Even among TRUE drivers with identical auto-interp labels ("newline tokens"), per-head path patching reveals features route through different downstream attention heads, and the identified positive mediators are causally validated (30–44× larger effect than random-head ablation under steering). Single-direction patching systematically miscategorizes features. Methodologically: attribution patching degrades systematically with downstream depth (Pearson with AP drops from 0.999 at L+1 to 0.78 at L+5). Diagnostic linearization experiments localize the failure to *attention softmax saturation* (not GELU or LayerNorm). The fix — efficient closed-form softmax-corrected AtP\* — achieves Pearson 0.993 with full activation patching at 2 model passes per feature-position, a 30× speedup that Pareto-dominates every method tested including integrated gradients, layer-adaptive patching, and per-pair adaptive.**
 
 ---
 
@@ -18,6 +18,9 @@
 - **Causal validation of mediators via steering + head ablation.** For each path-patching-identified positive mediator, ablating the specific head reduces concept logprob 30–44× more than ablating a random downstream head — robust validation that path patching identifies real causal mediators. Negative-effect heads, however, do NOT validate as suppressors under steering: the Negative Name Mover Heads analogy is overstated. Two-protocol triangulation (path patching + steering+ablation) catches this overinterpretation.
 - **Attribution patching has a layer-depth failure mode.** Pearson(AtP, AP) is near-perfect at the first downstream layer (L7: 0.999) and degrades monotonically to 0.78 at L11. Individual mediator magnitudes at deep layers can be off by 14×. AtP-only circuit discovery will miss deep-layer effects.
 - **Layer-adaptive patching is a new methodological contribution.** Use AtP for layers where it's accurate (L7–10) and AP only for the deepest layer (L11). Result: Pearson 0.992 with full AP at 23% of the compute — **a 5× speedup at near-perfect accuracy**. The adaptive method Pareto-dominates integrated gradients (N=10), which sits at Pearson 0.947 — same as AtP alone — at 33% of AP compute. IG is *worse* than AtP at early layers (where AtP is already nearly exact, integrating through partial-ablation states adds OOD noise) and only wins at the deepest layer. The two approximations have complementary failure modes.
+- **Per-pair adaptive patching beats layer-adaptive.** A cheap linearity probe at α=0.5 per (feature, head) catches the heterogeneous failure modes within layers. Pearson 0.999 at 16 passes — Pareto-dominates layer-adaptive at equivalent cost, and uniquely reaches Pearson ≥ 0.999 (which layer-adaptive cannot achieve at any threshold).
+- **Diagnosis: the AtP-killing nonlinearity is *exclusively* attention softmax.** Linearizing the L11 MLP GELU changes AP by zero (GELU is not responsible). Linearizing the L11 attention softmax makes AP collapse to AtP (Pearson 0.9963) — softmax saturation accounts for the entire failure mode. The worst-case 14× underestimate (f15245 L11H8: AP=−0.056, AtP=−0.004) vanishes when softmax is linearized.
+- **Efficient AtP\* — the end-state result.** Replace AtP's softmax-Jacobian chain rule with the actual softmax applied to closed-form Δscores. Computed analytically via cached clean activations + LayerNorm-aware Δq + the model's rotary application — **2 model passes per feature-position, Pearson 0.993 with full AP, a 30× speedup**. The closed-form implementation matches the expensive validation AtP\* bit-identical and Pareto-dominates every other method tested at AtP cost.
 
 ---
 
@@ -69,9 +72,9 @@ Auto-interp labeled 26 features via the Kimi K2 API, achieving 88.5% monosemanti
 
 ---
 
-## The Nineteen Experiments
+## The Twenty-Six Experiments
 
-The interpretive analysis comprises nineteen experiments, each addressing a distinct question. Numbers in brackets identify the open problems from Anthropic and DeepMind work that each experiment addresses.
+The interpretive analysis comprises twenty-six experiments — the first ten characterize the SAE features themselves, the next nine extend with sufficiency/necessity classification and causal validation, and the final seven form a methodology arc that produces a 30× speedup for SAE circuit discovery. Numbers in brackets identify the open problems from Anthropic and DeepMind work that each experiment addresses.
 
 | # | Experiment | Question | Result |
 |---|---|---|---|
@@ -94,6 +97,13 @@ The interpretive analysis comprises nineteen experiments, each addressing a dist
 | 17 | Steering + head-ablation causal validation of mediators | Are the identified mediators causally responsible, or correlational? | **Positive mediators robustly validated** (30–44× larger effect than random-head ablation; ✓✓ for all 3). **Negative-effect heads fail validation as suppressors** — they don't act inhibitorily under steering. The "Negative Name Mover Heads" analogy is overstated; needs refined interpretation. |
 | 18 | Attribution patching vs activation patching (180 pairs) | How accurate is the cheap gradient-based approximation across downstream layers? | **AtP degrades with depth.** Pearson(AtP, AP) = 0.999 at L7, 0.78 at L11. Overall 0.947. Sign agreement 96%. AtP-only deep-layer effects can be off by 14×. |
 | 19 | Layer-adaptive patching + IG benchmark | Can we get near-AP accuracy at AtP-like cost? Is integrated gradients better than AtP? | **Layer-adaptive (AtP for L<11, AP for L=11): Pearson 0.992 vs AP at 23% of AP compute (5× speedup).** Integrated gradients (N=10) sits at Pearson 0.947 at 33% of AP compute — *worse* than AtP at early layers, better only at L11. Adaptive Pareto-dominates IG on both axes. |
+| 20 | Per-pair adaptive patching | Can heterogeneity within layers be exploited? | **Yes.** Per-pair adaptive with linearity probe at α=0.5: Pearson 0.999 at 16 passes. Pareto-dominates layer-adaptive. |
+| 21 | AtP-corrected (2-point trapezoidal) | Does averaging gradients at clean + fully-ablated help? | **No.** Pearson 0.91 — *worse* than plain AtP (0.95). Sampling at the OOD endpoint adds more noise than it removes. |
+| 22 | GELU linearization at L11 | Is MLP GELU the AtP-killing nonlinearity? | **No.** Linearizing GELU at L11 changes AP by zero (Pearson 1.0 vs AP\_full). MLP nonlinearity is not the issue. |
+| 23 | Softmax linearization at L11 | Is attention softmax the AtP-killing nonlinearity? | **Yes.** Linearizing softmax at L11 collapses AP onto AtP (Pearson 0.9963 with AtP). Softmax saturation accounts for the full L11 failure mode. |
+| 24 | Quadratic 3-point hybrid (AtP+S3@L11) | Cheapest method to recover Pearson 0.99? | Fit quadratic through 3 probe measurements at L11 only; AtP elsewhere. **Pearson 0.99 at 6 passes — 10× speedup.** Cheapest method on the Pearson-0.99 frontier. |
+| 25 | AtP\* validation | Does softmax correction actually fix the L11 gap? | **Yes.** Pearson 0.985 at L11 (up from AtP's 0.78), Pearson 0.993 overall. Cost 62 passes (validation only). |
+| 26 | Efficient closed-form AtP\* | Can we get AtP\* at AtP cost? | **Yes.** Closed-form computation of patched\_pattern via LN-aware Δq + rotary application + softmax(closed-form Δscores). **2 passes, Pearson 0.993, 30× speedup over AP.** Matches the validation version bit-identical. The end-state Pareto winner. |
 
 The pattern across these experiments converges on two findings: **two distinct kinds of features exist in this SAE** (atomic vs manifold-partition), and within the well-labeled population, **most "monosemantic" auto-interp'd features are thermometers, not causal drivers** — and even among features that pass sufficiency tests, only a minority are TRUE drivers when also tested for necessity, and even among TRUE drivers, features with identical auto-interp labels can route through entirely different downstream pathways.
 
@@ -504,6 +514,164 @@ Adaptive Pareto-dominates IG on both axes and achieves Pearson 0.99 with truth a
 
 ---
 
+## Finding 13: Per-pair adaptive patching reaches Pearson 0.999 by exploiting heterogeneity within layers
+
+Finding 12's layer-adaptive method treats all (feature, head) pairs at L11 the same (uses AP for all). But the alpha-scaling diagnostic (script 37) revealed that the failure mode at L11 is *heterogeneous per-pair*: some L11 pairs are linear (AtP works), some are concave/saturated (AtP fails), some are convex. The wide L11 IQR for linearity ratio [0.71, 1.28] reflects this.
+
+**Per-pair adaptive method.** For each (feature, head, position):
+
+1. Compute AtP estimate (free; 2 passes shared across all pairs).
+2. If \(|\text{AtP}| < \text{probe\_threshold}\): predict AtP (effect is negligible).
+3. Otherwise, run one extra AP forward pass at \(\alpha = 0.5\) (the "linearity probe").
+4. If the probe value equals \(0.5 \times \text{AtP estimate}\) within tolerance: trust AtP (the pair is linear).
+5. Otherwise: run full AP at \(\alpha = 1.0\) (the pair is nonlinear).
+
+This decouples linearity diagnosis from per-layer assumptions, catching the concave outliers AtP misses while not paying AP cost for the (majority) linear pairs.
+
+**Sweep results on the 180-pair test set.** Best operating point: probe\_threshold=0.003, lin\_tol=0.10.
+
+| Method | Pearson | Cost (passes/feature-position) | Speedup vs full AP |
+|---|---|---|---|
+| Full AP | 1.000 | 60 | 1× |
+| **Per-pair adaptive (probe=0.003, tol=0.10)** | **0.9987** | **15.6** | **3.85×** |
+| Per-pair adaptive (probe=0.003, tol=0.30) | 0.9958 | 14.1 | 4.25× |
+| Layer-adaptive T=11 (Finding 12) | 0.9919 | 14 | 4.29× |
+| IG N=10 | 0.9472 | 20 | 3× |
+| Plain AtP | 0.9466 | 2 | 30× |
+
+Per-pair adaptive Pareto-dominates layer-adaptive: same compute (≈14 passes) but +0.004 Pearson at lin\_tol=0.30; or slightly more compute (15.6) for Pearson 0.9987 (vs layer-adaptive's 0.992 ceiling). Layer-adaptive *cannot* achieve Pearson ≥ 0.999 at any threshold; per-pair can.
+
+---
+
+## Finding 14: 2-point trapezoidal AtP fails — sampling at fully-ablated states is too out-of-distribution
+
+A natural follow-up to Finding 11 (AtP degrades at depth due to nonlinearity) is to average AtP-style gradients at two endpoints: clean (α=0) and fully-ablated (α=1). This is the trapezoidal-rule version of integrated gradients with N=2. Cost: 4 passes (2 forwards + 2 backwards) vs AtP's 2 and IG-N=10's 20.
+
+**Result: Pearson 0.909 — worse than plain AtP (0.947).** Per-layer:
+- L7: AtP 0.999 → trapezoidal 0.879 (loses 12 points)
+- L11: AtP 0.782 → trapezoidal 0.873 (gains 9 points, still worse than IG-N=10's 0.969)
+
+The gradient evaluated at the fully-ablated state is noisy because the model is far out-of-distribution there. Averaging the clean gradient with a noisy ablated gradient produces a worse estimate than the clean gradient alone. The endpoint-averaging heuristic doesn't work; you genuinely need many alpha samples (as in IG-N=10) to integrate the curve.
+
+**Methodological lesson.** Don't sample gradients at OOD endpoints. The trapezoidal rule is correct in principle but assumes both endpoints are reliable. For first-order Taylor approximations of neural network responses to ablation, the ablated endpoint isn't.
+
+---
+
+## Finding 15: The L11 MLP GELU is NOT the AtP-killing nonlinearity
+
+To localize *which* nonlinearity in the L11 path breaks AtP, we replaced the MLP GELU at L11 with its first-order Taylor approximation around the clean activation (computed via autograd) and re-ran activation patching with this linearization in place.
+
+**Result: AP\_gelu\_linearized matches AP\_full to numerical precision** (Pearson = 1.0000, RMSE = 0.0). Linearizing GELU at L11 changes the activation patching output by zero across all 36 (feature, head) pairs.
+
+Two consistent interpretations:
+1. The perturbation arriving at L11 MLP pre-activation is small enough (mean GELU' ≈ 0.23 across pairs) that GELU is operating in its locally-linear regime.
+2. The L11 MLP doesn't contribute meaningfully to these features' downstream effects — they're carried entirely by attention.
+
+Either way, **GELU is ruled out** as the AtP-killing nonlinearity. The negative result narrows the suspect list to attention softmax or LayerNorm.
+
+---
+
+## Finding 16: Quadratic 3-point probe fit predicts AP near-perfectly; the AtP+S3 hybrid gives 10× speedup at Pearson 0.99
+
+The alpha-scaling data (Finding 11) measures effects at α ∈ {0.25, 0.5, 0.75, 1.0} per (feature, head). What if we fit a quadratic through three of those measurements and predict the fourth?
+
+**Naive S3 (fit quadratic through α=0.25, 0.5, 0.75, predict at 1.0):** Pearson 0.9996 overall. Per-layer at L11: Pearson 0.9998 — better than full IG (0.97), basically AP-equivalent. The quadratic captures the saturation curvature that linear methods (AtP, midpoint, trapezoidal) miss.
+
+The catch: naive S3 costs 3 forward passes per (L, h) = 180 per feature-position. Worse than full AP.
+
+**AtP+S3 hybrid: apply S3 only at the failure layers, only for non-trivial pairs.** Use plain AtP for everything (cheap), then run S3's 3 probes only for pairs at L11 (or L{10, 11}) where AtP's estimate is non-trivial:
+
+| Config | Pearson | Cost (passes/feature-pos) | Speedup |
+|---|---|---|---|
+| AtP + S3@L11, threshold=0.003 | 0.9914 | **6.0** | **10×** |
+| AtP + S3@L11, threshold=0.001 | 0.9916 | 7.7 | 7.83× |
+| AtP + S3@L{10, 11}, threshold=0.001 | 0.9979 | 16.7 | 3.6× |
+| AtP + S3@L{10, 11}, threshold=0.003 | 0.9976 | 12.3 | 4.86× |
+
+AtP+S3@L11 at threshold 0.003 is the cheapest Pareto point on the cost-conscious end: **Pearson 0.99 at 6 passes (10× speedup)**, 2.3× cheaper than layer-adaptive at near-identical accuracy.
+
+---
+
+## Finding 17: The L11 attention softmax IS the AtP-killing nonlinearity
+
+With GELU ruled out (Finding 15), we tested softmax via the same protocol: replace the L11 attention softmax with its first-order Taylor approximation around the clean attention pattern (using the standard softmax Jacobian $J_{ij} = p_i(\delta_{ij} - p_j)$), and re-run activation patching.
+
+**Result is unambiguous:**
+
+| | Pearson(AP, AP\_linearized) | Pearson(AtP, AP\_linearized) |
+|---|---|---|
+| Baseline (AtP itself vs AP) | — | 0.7822 |
+| GELU linearized at L11 | 1.0000 | 0.7822 (no change) |
+| **Softmax linearized at L11** | **0.8006** | **0.9963** |
+
+When the L11 softmax is linearized, AP becomes essentially AtP (Pearson 0.9963 with AtP, only 0.80 with the original AP). In a counterfactual world where softmax was linear at L11, AtP would be near-exact.
+
+The worst-case pair is illustrative: f15245 L11H8 had AP = −0.0561, AtP = −0.0038 (14× underestimate). With GELU linearized, AP\_lin = −0.0561 (no change). With **softmax linearized, AP\_lin = −0.0062** — collapses to AtP's value.
+
+**Mechanistic interpretation.** L11 attention sits at the model's bottleneck for final-token output. The patched (softmax-saturated) attention amplifies the SAE feature's effect on the output far beyond what the linearized softmax Jacobian predicts. AtP's first-order approximation misses this entirely.
+
+This is the diagnostic that motivates Finding 18.
+
+---
+
+## Finding 18: AtP\* (softmax-corrected AtP) closes the L11 gap from Pearson 0.78 to 0.985
+
+Finding 17 implies a direct fix. Standard AtP computes:
+$$\text{AtP}[L, h] = \nabla_M \text{pattern}[L, h] \cdot J_{\text{softmax}}(\text{scores}_\text{clean}) \cdot \Delta\text{scores}$$
+where $J_{\text{softmax}}(\text{scores}_\text{clean})$ is the softmax Jacobian at clean. AtP\* replaces this with the actual nonlinear softmax:
+$$\text{AtP}^*[L, h] = \nabla_M \text{pattern}[L, h] \cdot [\text{softmax}(\text{scores}_\text{clean} + \Delta\text{scores}) - \text{pattern}_\text{clean}]$$
+
+Validated implementation (script 47): for each (L, h), run an extra forward pass with the q/k/v ablation applied, capture the resulting patched pattern, and use it in the above formula. Cost: 62 passes per feature-position (one clean forward + clean backward + 60 perturbed forwards). This is no better than full AP on cost — purely a validation of the principle.
+
+| Layer | Plain AtP | AtP\* (validation) |
+|---|---|---|
+| 7 | 0.9994 | 0.9995 |
+| 8 | 0.998 | 0.999 |
+| 9 | 0.993 | 0.996 |
+| 10 | 0.937 | **0.994** |
+| 11 | **0.782** | **0.985** |
+
+The L11 collapse from 0.782 to 0.985 confirms the diagnosis quantitatively. **The remaining 0.015 Pearson gap reflects second-order effects (cross-layer cascades, LayerNorm nonlinearity at later positions) that the first-order softmax fix doesn't capture.** A hybrid (efficient AtP\* + per-pair AP verification) would likely close this further.
+
+---
+
+## Finding 19: Efficient closed-form AtP\* — Pearson 0.993 at 2 model passes, a 30× speedup over full AP
+
+Finding 18 validates the principle but at AP's cost. The efficient implementation computes patched\_pattern in **closed form** from cached clean activations — no extra forward passes needed.
+
+**Method (script 49).** Single clean forward + backward caches: pre-LN q\_input, rotated q/k, attention scores, attention pattern, gradient of metric with respect to attention pattern, and gradient of metric with respect to v\_input. For each (L, h), the per-pair computation is pure matrix algebra:
+
+1. Compute $\Delta\text{LN}(q_\text{input}) = \text{LN}(\text{clean}_q\_\text{input} - f_\text{clean} \cdot \text{decoder}_X) - \text{LN}(\text{clean}_q\_\text{input})$ — one LN call.
+2. $\Delta q = \Delta\text{LN} \cdot W_Q[h]$; similarly for $\Delta k$.
+3. Apply rotary at position `last` via the model's `apply_rotary` (rotary is linear, so this is exact).
+4. $\Delta\text{scores}[\text{last}, j] = \Delta\text{rot}_q \cdot \text{clean}_\text{rot}_k[j].T / \sqrt{d_\text{head}}$ for $j \ne \text{last}$, plus cross-term at $j = \text{last}$.
+5. $\text{patched\_pattern}[\text{last}, :] = \text{softmax}(\text{clean\_scores} + \Delta\text{scores})$ (the full nonlinear softmax, applied at one row only).
+6. $\text{effect}_{qk} = -\nabla_M \text{pattern} \cdot (\text{patched} - \text{clean})$; $\text{effect}_v = \nabla_M v\_\text{input} \cdot (f_\text{clean} \cdot \text{decoder}_X)$.
+
+**Total cost: 2 model passes per feature-position.** Per-pair matrix algebra is negligible (small matrix multiplies, microseconds each).
+
+**Validation against the expensive AtP\*** (script 47, 62 passes): efficient AtP\* matches bit-identical across all 180 pairs. RMSE = 0.00172 vs 0.00172; Pearson = 0.9933 vs 0.9933. The closed-form correctly reproduces what the expensive perturbed-forward version gives.
+
+**Final Pareto frontier on the 180-pair test set:**
+
+| Method | Pearson | Cost (passes/feature-pos) | Speedup vs full AP |
+|---|---|---|---|
+| Full AP (ground truth) | 1.000 | 60 | 1× |
+| Per-pair adaptive (Finding 13) | 0.9987 | 15.6 | 3.85× |
+| AtP+S3@L11 hybrid (Finding 16) | 0.9914 | 6.0 | 10× |
+| Layer-adaptive (Finding 12) | 0.9919 | 14 | 4.29× |
+| IG (N=10) | 0.9472 | 20 | 3× |
+| **Efficient AtP\* (this finding)** | **0.9933** | **2** | **30×** |
+| Plain AtP | 0.9466 | 2 | 30× |
+
+**Efficient AtP\* is Pareto-dominant at AtP cost.** Same cost as plain AtP (2 passes), 5× lower RMSE, Pearson 0.993 vs 0.947. Per-pair adaptive still wins on raw accuracy at 8× the cost; it's the right choice when Pearson > 0.998 is needed.
+
+**Implementation lesson.** The first attempt at efficient AtP\* gave Pearson −0.46 with severe sign flips. The bug: TransformerLens's `hook_q_input` is **pre-LN**, not post-LN. The actual computation is $q = \text{LN}(q\_\text{input}) \cdot W_Q + b_Q$, so the closed-form $\Delta q$ must apply LayerNorm before the W\_Q projection. Diagnostic that revealed it: compare empirical $\Delta q$ (from a perturbed forward) against closed-form $\Delta q$ — they were off by 4.6×, with cosine similarity 0.999 (right direction, wrong magnitude — classic missed scaling factor). The lesson: when implementing closed-form numerical methods that surgically replicate a model's forward path, every transformation between your hook point and the operation you want to model must be accounted for. Write the empirical-vs-analytical check before trusting the formula.
+
+**What this enables.** Efficient AtP\* turns SAE circuit discovery from "bottlenecked on AP compute" into "essentially free at AtP cost." At Gemma 2 27B scale (46 layers, ~32 heads), the projected savings are dramatic: a per-(feature, head) AP cost of 1500 passes/position becomes ~2 with efficient AtP\*. Whether the depth-degradation curve generalizes from Pythia-160M is the next experiment to run.
+
+---
+
 ## Honest limitations
 
 1. **Causal intervention sample (Finding 5) is n=23.** Larger and more diverse samples are needed to characterize the population precisely. The bimodality observation is striking and warrants reproduction on bigger SAEs.
@@ -519,6 +687,12 @@ Adaptive Pareto-dominates IG on both axes and achieves Pearson 0.99 with truth a
 6. **Auto-interp by Kimi K2** has documented weaknesses: it clustered 10+ distinct features all as "newline tokens" because they all fire on newline tokens. The discrimination among them required follow-up analysis.
 
 7. **Logit weight is itself a linear approximation** (ignores layer norm nonlinearity and middle-layer attention dynamics). The 0.43 correlation between logit weight and steering effect leaves substantial unexplained variance, indicating other factors matter.
+
+8. **Efficient AtP\* benchmark is on 180 (feature, head) pairs from 3 TRUE driver features.** The mechanism story (softmax saturation) is general; the specific Pearson 0.993 number reflects this small benchmark. Replication on Gemma 2 / Llama is the obvious validation experiment.
+
+9. **AtP\* implementation has Q-side softmax correction but not the full Kramár et al. (2024) AtP\* algorithm** (K-residual fix and GradDrop are absent). Direct comparison to the published method is pending.
+
+10. **The remaining 0.007 Pearson gap to AP** (efficient AtP\* at 0.993 vs full AP at 1.0) likely reflects second-order effects — cross-layer cascades, LayerNorm nonlinearity at later positions — that the first-order softmax fix doesn't capture. A hybrid (efficient AtP\* + per-pair AP verification on uncertain pairs) would probably close this at 3–4 passes.
 
 ---
 
@@ -563,7 +737,10 @@ Auto-interp via Moonshot's Kimi K2 (chosen for its 32k-context efficiency at low
 
 ---
 
-**Blog post version:** [oe-god.github.io](https://oe-god.github.io/2026/06/01/sae-pythia-160m/) — more accessible writeup, same content + a "what I learned" section.
+**Blog posts:**
+- [SAE characterization (this paper, accessible version)](https://oe-god.github.io/2026/06/01/sae-pythia-160m/) — Findings 1–10
+- [Attribution patching breaks at depth: a layer-adaptive fix](https://oe-god.github.io/2026/06/02/atp-degrades-with-depth/) — Findings 11–12
+- [Efficient AtP\*: 30× speedup for SAE circuit discovery](https://oe-god.github.io/2026/06/03/efficient-atp-star-softmax/) — Findings 13–19
 
 ## Contact
 

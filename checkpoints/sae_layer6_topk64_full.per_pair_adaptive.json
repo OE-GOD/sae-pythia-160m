@@ -1,0 +1,173 @@
+{
+  "method": "per_pair_adaptive",
+  "n_total_entries": 180,
+  "n_features": 3,
+  "n_positions": 3,
+  "sweep_results": [
+    {
+      "probe_thr": 0.001,
+      "lin_tol": 0.1,
+      "n_probe": 138,
+      "n_ap_fb": 32,
+      "pearson": 0.9989988049313944,
+      "rmse": 0.0006833657309584242,
+      "cost_per_fpos": 20.888888888888893,
+      "cost_pct_vs_full_ap": 34.81481481481482,
+      "speedup": 2.8723404255319145
+    },
+    {
+      "probe_thr": 0.001,
+      "lin_tol": 0.2,
+      "n_probe": 138,
+      "n_ap_fb": 17,
+      "pearson": 0.9967015280676181,
+      "rmse": 0.0011696967354336435,
+      "cost_per_fpos": 19.222222222222225,
+      "cost_pct_vs_full_ap": 32.03703703703704,
+      "speedup": 3.1213872832369938
+    },
+    {
+      "probe_thr": 0.001,
+      "lin_tol": 0.3,
+      "n_probe": 138,
+      "n_ap_fb": 12,
+      "pearson": 0.9960914761666559,
+      "rmse": 0.0012710184445175602,
+      "cost_per_fpos": 18.666666666666668,
+      "cost_pct_vs_full_ap": 31.11111111111111,
+      "speedup": 3.214285714285714
+    },
+    {
+      "probe_thr": 0.003,
+      "lin_tol": 0.1,
+      "n_probe": 102,
+      "n_ap_fb": 20,
+      "pearson": 0.9986630479659484,
+      "rmse": 0.0007833577299182496,
+      "cost_per_fpos": 15.555555555555557,
+      "cost_pct_vs_full_ap": 25.925925925925927,
+      "speedup": 3.8571428571428568
+    },
+    {
+      "probe_thr": 0.003,
+      "lin_tol": 0.2,
+      "n_probe": 102,
+      "n_ap_fb": 10,
+      "pearson": 0.9963801514720019,
+      "rmse": 0.0012275912245638973,
+      "cost_per_fpos": 14.444444444444445,
+      "cost_pct_vs_full_ap": 24.074074074074076,
+      "speedup": 4.153846153846154
+    },
+    {
+      "probe_thr": 0.003,
+      "lin_tol": 0.3,
+      "n_probe": 102,
+      "n_ap_fb": 7,
+      "pearson": 0.9957762159860671,
+      "rmse": 0.0013222011428462013,
+      "cost_per_fpos": 14.111111111111112,
+      "cost_pct_vs_full_ap": 23.518518518518523,
+      "speedup": 4.251968503937007
+    },
+    {
+      "probe_thr": 0.005,
+      "lin_tol": 0.1,
+      "n_probe": 76,
+      "n_ap_fb": 16,
+      "pearson": 0.9602636214809128,
+      "rmse": 0.003986314389615106,
+      "cost_per_fpos": 12.222222222222221,
+      "cost_pct_vs_full_ap": 20.37037037037037,
+      "speedup": 4.909090909090909
+    },
+    {
+      "probe_thr": 0.005,
+      "lin_tol": 0.2,
+      "n_probe": 76,
+      "n_ap_fb": 8,
+      "pearson": 0.9579076229200967,
+      "rmse": 0.004095259315978294,
+      "cost_per_fpos": 11.333333333333334,
+      "cost_pct_vs_full_ap": 18.888888888888893,
+      "speedup": 5.294117647058823
+    },
+    {
+      "probe_thr": 0.005,
+      "lin_tol": 0.3,
+      "n_probe": 76,
+      "n_ap_fb": 5,
+      "pearson": 0.9573160988765723,
+      "rmse": 0.004124607194948934,
+      "cost_per_fpos": 11.0,
+      "cost_pct_vs_full_ap": 18.333333333333332,
+      "speedup": 5.454545454545454
+    },
+    {
+      "probe_thr": 0.01,
+      "lin_tol": 0.1,
+      "n_probe": 34,
+      "n_ap_fb": 8,
+      "pearson": 0.9568332086261586,
+      "rmse": 0.004149260397708309,
+      "cost_per_fpos": 6.666666666666666,
+      "cost_pct_vs_full_ap": 11.11111111111111,
+      "speedup": 9.0
+    },
+    {
+      "probe_thr": 0.01,
+      "lin_tol": 0.2,
+      "n_probe": 34,
+      "n_ap_fb": 2,
+      "pearson": 0.9546170119123358,
+      "rmse": 0.004251836036787612,
+      "cost_per_fpos": 6.0,
+      "cost_pct_vs_full_ap": 10.0,
+      "speedup": 10.0
+    },
+    {
+      "probe_thr": 0.01,
+      "lin_tol": 0.3,
+      "n_probe": 34,
+      "n_ap_fb": 2,
+      "pearson": 0.9546170119123358,
+      "rmse": 0.004251836036787612,
+      "cost_per_fpos": 6.0,
+      "cost_pct_vs_full_ap": 10.0,
+      "speedup": 10.0
+    },
+    {
+      "probe_thr": 0.02,
+      "lin_tol": 0.1,
+      "n_probe": 14,
+      "n_ap_fb": 3,
+      "pearson": 0.9479289141489456,
+      "rmse": 0.004548292635867337,
+      "cost_per_fpos": 3.888888888888889,
+      "cost_pct_vs_full_ap": 6.481481481481481,
+      "speedup": 15.428571428571429
+    },
+    {
+      "probe_thr": 0.02,
+      "lin_tol": 0.2,
+      "n_probe": 14,
+      "n_ap_fb": 0,
+      "pearson": 0.9466188230950792,
+      "rmse": 0.004597769764792957,
+      "cost_per_fpos": 3.5555555555555554,
+      "cost_pct_vs_full_ap": 5.925925925925926,
+      "speedup": 16.875
+    },
+    {
+      "probe_thr": 0.02,
+      "lin_tol": 0.3,
+      "n_probe": 14,
+      "n_ap_fb": 0,
+      "pearson": 0.9466188230950792,
+      "rmse": 0.004597769764792957,
+      "cost_per_fpos": 3.5555555555555554,
+      "cost_pct_vs_full_ap": 5.925925925925926,
+      "speedup": 16.875
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "method": "probe_then_predict",
+  "n_total": 180,
+  "method_results": {
+    "S1: 2*probe(0.5)": {
+      "pearson": 0.9735650196424108,
+      "rmse": 0.003259873862442275
+    },
+    "S2: empirical-AtP from alpha=0.25": {
+      "pearson": 0.9569458024538369,
+      "rmse": 0.0041417206949234345
+    },
+    "S3: quadratic 3-point fit, eval at 1.0": {
+      "pearson": 0.9996357760884456,
+      "rmse": 0.00042467060728494785
+    },
+    "S4: per-layer lin-reg (a*AtP + b*probe05) LOFO-CV": {
+      "pearson": 0.979960538222326,
+      "rmse": 0.0028513462889564454
+    }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "ckpt": "checkpoints/sae_layer6_topk64_full.pt",
+  "method": "ap_with_gelu_linearized",
+  "target_layer": 11,
+  "feature_results": {
+    "10047": {
+      "target_layer": 11,
+      "n_heads": 12,
+      "n_positions": 1,
+      "per_position_meta": [
+        {
+          "position": 650071,
+          "f_clean": 24.05601692199707,
+          "actual_next_token": 575,
+          "actual_next_str": "\u00a0",
+          "baseline_logp": -0.4574931561946869
+        }
+      ],
+      "mean_mediation_gelu_linearized": [
+        7.420778274536133e-06,
+        0.0,
+        5.125999450683594e-06,
+        0.0001341700553894043,
+        -6.258487701416016e-07,
+        -2.0831823348999023e-05,
+        0.0002848207950592041,
+        -0.000299304723739624,
+        -5.0961971282958984e-06,
+        -4.875659942626953e-05,
+        1.3619661331176758e-05,
+        -0.0011878907680511475
+      ]
+    },
+    "13131": {
+      "target_layer": 11,
+      "n_heads": 12,
+      "n_positions": 3,
+      "per_position_meta": [
+        {
+          "position": 164365,
+          "f_clean": 23.63009262084961,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "baseline_logp": -0.9376900792121887
+        },
+        {
+          "position": 720687,
+          "f_clean": 23.171016693115234,
+          "actual_next_token": 24,
+          "actual_next_str": "7",
+          "baseline_logp": -2.6556458473205566
+        },
+        {
+          "position": 666507,
+          "f_clean": 22.699859619140625,
+          "actual_next_token": 187,
+          "actual_next_str": "\n",
+          "baseline_logp": -0.1225629523396492
+        }
+      ],
+      "mean_mediation_gelu_linearized": [
+        -0.00010426839435240254,
+        -9.052207315107808e-05,
+        -0.018762214109301567,
+        0.011199668049812317,
+        -1.4652808886239654e-06,
+        0.00198817509226501,
+        0.004966696258634329,
+        -0.0009417260880582035,
+        -0.00018587957310955971,
+        -0.001045815646648407,
+        -0.001534531475044787,
+        0.0006074855918996036
+      ]
+    },
+    "15245": {
+      "target_layer": 11,
+      "n_heads": 12,
+      "n_positions": 3,
+      "per_position_meta": [
+        {
+          "position": 179890,
+          "f_clean": 18.308225631713867,
+          "actual_next_token": 33050,
+          "actual_next_str": " Till",
+          "baseline_logp": -10.180639266967773
+        },
+        {
+          "position": 531991,
+          "f_clean": 18.27065658569336,
+          "actual_next_token": 22905,
+          "actual_next_str": "bey",
+          "baseline_logp": -11.422932624816895
+        },
+        {
+          "position": 572067,
+          "f_clean": 18.120555877685547,
+          "actual_next_token": 6277,
+          "actual_next_str": " Michael",
+          "baseline_logp": -3.9602744579315186
+        }
+      ],
+      "mean_mediation_gelu_linearized": [
+        -0.0007594426278956234,
+        -3.97364289028701e-07,
+        -0.0633540153503418,
+        -0.005732695106416941,
+        4.847844593314221e-06,
+        0.015186786651611328,
+        0.003749926807358861,
+        -0.005351463798433542,
+        -0.056089162826538086,
+        0.0012295246124267578,
+        0.004058996681123972,
+        -0.011217514984309673
+      ]
+    }
+  }
+}

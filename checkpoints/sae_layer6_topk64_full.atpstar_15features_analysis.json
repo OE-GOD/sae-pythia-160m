@@ -1,0 +1,69 @@
+{
+  "method": "atpstar_vs_ap_15features",
+  "n_features": 12,
+  "n_pairs": 720,
+  "overall_pearson": 0.9916404767826905,
+  "overall_rmse": 0.0018427802924589588,
+  "per_feature": {
+    "1989": {
+      "pearson": 0.9975099723339846,
+      "rmse": 0.0005260198869579891,
+      "label": "Decimal points in numerical contexts"
+    },
+    "2255": {
+      "pearson": 0.992018496029208,
+      "rmse": 0.0026470099958114095,
+      "label": "Newline tokens in various contexts"
+    },
+    "5747": {
+      "pearson": 0.998435633991377,
+      "rmse": 3.6997540618879055e-05,
+      "label": "Tokens related to file paths and directory s"
+    },
+    "6484": {
+      "pearson": 0.9911200828947773,
+      "rmse": 0.0022647715735224392,
+      "label": "Newline tokens inside XML/HTML/CSS blocks"
+    },
+    "10047": {
+      "pearson": 0.9972914354897429,
+      "rmse": 0.0008931530800215948,
+      "label": "Newline tokens inside CSS/XSL/HTML/XML block"
+    },
+    "10925": {
+      "pearson": 0.9956508933017884,
+      "rmse": 0.00114944650696608,
+      "label": "Newline tokens inside academic/technical tex"
+    },
+    "12117": {
+      "pearson": 0.9290579025683612,
+      "rmse": 0.0005685218480633877,
+      "label": "BibTeX/LaTeX citation references"
+    },
+    "12520": {
+      "pearson": 0.9937240179722294,
+      "rmse": 0.002999857080868068,
+      "label": "Punctuation and formatting tokens"
+    },
+    "12697": {
+      "pearson": 0.9993885370519755,
+      "rmse": 0.0003371923420639079,
+      "label": "Logical operators and negation symbols"
+    },
+    "13131": {
+      "pearson": 0.9955737240741471,
+      "rmse": 0.0010965973427757934,
+      "label": "Newline tokens in various contexts"
+    },
+    "14584": {
+      "pearson": 0.9985215039309716,
+      "rmse": 4.775069724671296e-06,
+      "label": "Newline tokens inside code and markup blocks"
+    },
+    "15245": {
+      "pearson": 0.9912498154438943,
+      "rmse": 0.003946973021765529,
+      "label": "Newline tokens inside XML/HTML/CSS blocks"
+    }
+  }
+}
